@@ -1,0 +1,325 @@
+[529,1] [dvitiiya.h pariccheda.h] 
+
+[529,2] naapy aagamaad gamayitu.m "sakya.m cittam anaak.rti |
+[529,3] na pratyak.sapratik.sipte pramaa.naantarasa.mgati.h ||1||
+[529,4] na ca pravacane 'py asya bodhaka.m mukhyam ak.saram |
+[529,5] loka.h svaabhinive"sa.m tu tatraiva pratibimbayet ||2||
+[529,6] vaasanaalu.thita.m cittam arthaabhaasam iti "srutau |
+[529,7] lu.thati.r(lu.thita.r) "sle.sa.naartho 'ya.m nopaghaataarthalo.thita.h ||3||
+[529,8] vinaartham arthaabhaasaa dhii.h katham ity atra kathyate |
+[529,9] vaasanaayogata iti samanantara"saktita.h ||4||
+[529,10] vyatirekiiva nirde"so na ca bhedasya (126a) vedaka.h |
+[529,11] suvar.na.m ku.n.dalaakaara.m karotiiti na ki.m vaca.h ||5||
+[529,12] vaasanopahatatva.m caani.s.taruupodayaan matam |
+[529,13] prav.rttyaak.sepi sa.mkalpasuutisaamarthyagarbhata.h ||6||
+[529,14] advaita"sikharaarohe na prav.rttiniv.rttaya.h |
+[529,15] taa eva sa.msaara iti taddhetu.h katham i.syataam ||7||
+[529,16] vineyacittaamukhataavasthaapek.sam ida.m vaca.h |
+[529,17] tenaarthaabhaasam ity etat saamaanya.m bhedadhi.s.thitam ||8||
+[529,18] darpa.ne d.r"syate ruupam iti baalaabhimaanata.h |
+[529,19] anuudya vedanaakaare tadaaropanivaara.nam ||9||
+[529,20] tathaa bhaave.su bhaavatva.m j~naanakaare.su baahyataa |
+[529,21] yathaa timiri.naa d.r.s.ta"s candrayo"s candrataasatii ||10||
+[529,22] nimnoccavirahaad baahyenaikatva.m naasti darpa.ne |
+[529,23] naanta.rpravi.s.tanirbhaasaat p.rthaktva.m pratipaatinaa ||11||
+[530,1] bhaavair aakaarasa.mj~nair vaa lak.syate bodharuupataa |
+[530,2] saamaanya.m j~naanasa.mkhyaatam ata evaap.rthagvaca.h ||12||
+[530,3] loke ruu.dha.m p.rthag iva j~naanam aadar"sasannibham |
+[530,4] aakaaraa.h pratibimbaabhaa ubhayo.h kalpita.m na sat ||13||
+[530,5] bodhasya naikataa baahyai.h svaruupavirahaaptita.h |
+[530,6] naanyatvam agrahapraapter na sattaa caaprakaa"sina.h ||14||
+[530,7] .rjukramena caadar"se ekaanekatvavarjitam |
+[530,8] iti yukta.m na bhaavaa"s ca yujyante darpa.nopamaa.h ||15||
+[530,9] sarvadharmaa.h svadhiir eva sthitaa"s citte samaahite |
+[530,10] abaadhyaa.m kalpitair dharmair "suunyataam aa"sritaa yata.h ||16||
+[530,11] tatprakaa"satayaa citta.m svam evaite sitaadaya.h |
+[530,12] kalpitaas tv aprakaa"satvaan na dharmaa na ca dharmataa ||17||
+[530,13] "suunyataakhyaa yathaa bhaati vikalpe bhediniiva saa |
+[530,14] bhinnayaa hi tayaa "suunyaa dharmair dharmaa na tair amii ||18||
+[530,15] baahyagraahasya haane 'pi graahakasthitivaara.nam |
+[530,16] tathataaramba.ne sthitvaa cittamaatravyatikrama.h ||19||
+[530,17] aaropyahaanaad aaropavi.syasyaapi maa sma bhuut |
+[530,18] citrasyocchedad.rkpaata ity anaabhaasavaara.nam ||20||
+[530,19] niraabhaase sthito yogiity aabhaasa.h kalpanaa mataa |
+[530,20] ekaapohena yat tasyaamii.sad aabhaasate bahi.h ||21||
+[530,21] samantabhaasaad aabhaasa.h prapa~nco vaa kadambavat |
+[530,22] vicitrakalpanaaruu.dho heya"s citre 'pi cetasi ||22||
+[530,23] tadaagantumaladhva.msaat tadaakaa"satalopamam |
+[530,24] j~neyenaabhitulaa j~neyanirvi"si.s.tatayaa sphu.taa ||23||
+[531,1] prakaa"samaatra.m tad ida.m diipasantaanasannibham |
+[531,2] aprakaa"saa"ngavirahaan na svaakaaraprakaa"sanaat ||24||
+[531,3] aprakaa"saka.nasyaapi na puurvam api sa.mbhava.h |
+[531,4] bhramavyavasthaapek.saa tu samalaamalataasthiti.h ||25||
+[531,5] baadhe naama nimittaanaam aakaarasya ca na k.sati.h |
+[531,6] naamamaatra.m muner dharmaa.h santu vaa kalpitaatmanaa ||26||
+[531,7] d.r.s.taa vikalpaakaare 'pi d.r.s.taakhyaatibhaataya.h |
+[531,8] katha.m pa"syasi sa.mkhyaa.m bho bhaavite pratibhaasate ||27||
+[531,9] niraabhaase sthitivato 'py avikalpasthitir mataa |
+[531,10] satokhyaanam asatkhyaana.m vyaakhyaata iyataa bhrama.h ||28||
+[531,11] ava"syaadeyam etac ca sato 'khyaana.m kim anyathaa |
+[531,12] paraasphuurtau na hi bhraanti.h svaasphuurtau ca na cittataa ||29||
+[531,13] agraahyagraahakasyaata.h svasya naavasiti.h sata.h |
+[531,14] avasaayo 'sato graahyagraahakasyaapy ato bhrama.h ||30||
+[531,15] tathaa (126b) caabhuutakalpo 'sti dvaya.m tatra na vidyate |
+[531,16] na graahyagraahakaad anyad dvaya"sabdena cocyate ||31||
+[531,17] abhuutaparikalpaas tu cittacaittaas tridhaatukaa.h |
+[531,18] vihaaya citraakaara.m ca kaa tridhaatuvyavasthiti.h ||32||
+[531,19] na caakaaraatirikto '.m"sa"s cittam aapaadita.m kvacit |
+[531,20] vaibhaa.sikam atikramya sthitir e.saa hi duurata.h ||33||
+[531,21] abhuuta.m kalpyate yatra yena vaa p.r.s.thyakalpata.h |
+[531,22] abhuutaparikalpo 'sau buddhi"s citraiva yujyate ||34||
+[531,23] abhuutadvitayaaropaapek.sayaanvayasa.mgate.h |
+[531,24] ad.r"sye tv atiriktaa.m"se naaropo naama kasyacit ||35||
+[532,1] kalpita.m ca dvaya.m taavan niilam eva na bhaasanaat |
+[532,2] ata.h svabhaavas tu yo 'pi vaktavya.h kalpitaadi.su ||36||
+[532,3] kalpita.m sphurad eveti saahasa.m kim ata.h param |
+[532,4] mariicini"scaye 'py ambha.h kalpita.m sphurad astu kim ||37||
+[532,5] tathaabhyupagame paatha.rkaarya.m tenaabhidhiiyataam |
+[532,6] asattvaan naivam iti cet, yad asat tat katha.m paya.h ||38||
+[532,7] aaropaad iti cet tarhi bhavatvaaropamaatrakam |
+[532,8] na tu svabhaavasphura.na.m sphura.ne tatkriyaaptita.h ||39||
+[532,9] satyataiva prasajyeta tathaa baadhaapi ki.mkarii |
+[532,10] baadhayaa tatkriyaahaanau, na payas tatkriya.m hi tat ||40||
+[532,11] tatpaatha.h katham aarope sphuratiiti nigadyate |
+[532,12] graahyagraahakayor evam aaropa.h sphura.na.m na tu ||41||
+[532,13] svaprakaa"sasvabhaavatvaad bhaagayor ubhayor api |
+[532,14] ki.m graahya.m graahi vaa ki.m syaat svasvalak.sa.nahaanita.h ||42||
+[532,15] sphurad eva tato ruupa.m svabhaavo 'stu turiiyaka.h |
+[532,16] ad.r"syaatmani d.r"syasya kalpanety api kaapi dhii.h ||43||
+[532,17] citre ca paratantro 'to dhii.h kalpitavikalpitaa |
+[532,18] dharmataaruupanir.niitau vyaktam etac ca lak.saya ||44||
+[532,19] kalpitasya dvayasyaiva paratantrasya bhaasina.h |
+[532,20] ropaapavaadau madhyaantavibhaage vihataavata.h ||45||
+[532,21] suutraala.mkaaram aaryiiya.m bhaa.syayukta.m ca cintaya |
+[532,22] yatra ruupaadir aakhyaata.h paratantraparisphu.ta.h ||46||
+[532,23] tadaadk.rti"s ca tatraasti tadbhaava"s ca na vidyate |
+[532,24] tasmaad astitvanaastitva.m maayaadi.su vidhiiyate ||47||
+[533,1] na bhaavas tatra caabhaavo naabhaavo bhaava eva ca |
+[533,2] bhaavaabhaavaavi"se.sa"s ca maayaadi.su vidhiiyate ||48||
+[533,3] tathaadvayaabhataa caasti tadbhaava"s ca na vidyate |
+[533,4] tasmaad astitvanaastitva.m ruupaadi.su vidhiiyate ||49||
+[533,5] na bhaavas tatra caabhaavo naabhaavo bhaava eva ca |
+[533,6] bhaavaabhaavaavi"se.sa"s ca ruupaadi.su vidhiiyate ||50||
+[533,7] samaaropaapavaadaantaprati.sedhaartham i.syate |
+[533,8] hiinayaanena yaanasya prati.sedhaartham eva ca ||51||
+[533,9] ruupaadi.sv iti caabhuutaparikalpaatmake.sv iti |
+[533,10] bhaa.syiiyaviv.rti.m pa"sya tasya vistaram eva vaa ||52||
+[533,11] naapaneyamata.h ki~ncid upaneya.m na ki~ncana |
+[533,12] dra.s.tavya.m bhuutato bhuuta.m bhuutadar"sii vimucyate ||53||
+[533,13] pratyak.savastuvi.sayo vimar"so 'ya.m yadii.syate |
+[533,14] na citraad anyad adhyak.sa.m yatna.h "saastradvaye 'py ayam ||54||
+[533,15] dharmadhaatuvimar"soktau dharmii dharmagirodita.h |
+[533,16] tathaa caanantaragiraa vyaktam etad itiiritam ||55||
+[533,17] ata eva ca dharmasya pa"scaac chedo hi nirv.rti.h |
+[533,18] do.so 'ya.m sviik.rto 'liikanaamnaakaa(127a)rak.sayasp.rhai.h ||56||
+[533,19] "suunyataa naama dharmo 'sti ruupaadivyatirekata.h |
+[533,20] yo bhaavya ity upaalambhalaabho 'naakaaravaadinaam ||57||
+[533,21] arthaan sa vij~naaya ca jalpamaatraan
+[533,22] santi.s.thate tannibhacittamaatre |
+[533,23] ity aaha nirvedhapathe 'tha d.r.s.tau
+[533,24] pratyak.sataapti.m khalu dharmadhaato.h ||58||
+[534,1] graahyagraahakaruupe.na yo dvayena vivarjita.h |
+[534,2] iti tasya vi"se.sa.m ca na tv aakaarak.saya.m kvacit ||59||
+[534,3] dvayalak.sa.nahaanis tu sarvatreti parisphu.tam |
+[534,4] na graahyagraahakatva.m caak.rtiinaam ata eva ca ||60||
+[534,5] dvayaabhaasaa.h pravartante na vikalpaa.h puna"s ca te |
+[534,6] vyavadaanaarthanety atraapy aabhaaso 'dhyavasaayitaa ||61||
+[534,7] sarvaj~neye.sv asa.mmuu.tha.m na ca te.sv aamukha.m sadaa |
+[534,8] ity atra viv.rtau hetur anaakaaratayeti ya.h ||62||
+[534,9] graahyaprakaaraabhaavenety artho bimbodaye 'pi hi |
+[534,10] etac caanantara.m muulabhaa.syayor iik.sa.ne sphu.tam ||63||
+[534,11] eva.m madhyaantabhaagasya muule bhaa.sye 'pi iid.r"se |
+[534,12] agraagakarvaad ity artho vibhakta.h saadhu .tiikayaa ||64||
+[534,13] tathaa ca tadbhaa.syak.rtaadharmadharmatayonnaye | 
+[534,14] avikalpakavij~naanalak.sa.naprakrame svayam ||65||
+[534,15] aruupiiti pada.m graahyagraahitvenaaniruupa.naat |
+[534,16] anaabhaasam itiida.m caagocaratvena var.nitam ||66||
+[534,17] na tv aabhaasaviyogena graahyaabhaavena cet tathaa |
+[534,18] kim anena prayaasena mukhyam evocita.m vaca.h ||67||
+[534,19] naasminn aabhaasate ki~ncid gocaratvena sa.mmatam |
+[534,20] iti vyutpattir i.s.teha tasmaat tantre 'pi cottare ||68||
+[534,21] aki~ncane niraabhaase niraalambe niraa"sraye |
+[534,22] caku.spathavyatikraante 'py aruupi.ny anidar"sane ||69||
+[534,23] yathaa nimnonnata.m vyomni d.r"syate na ca tat tathaa |
+[534,24] buddhe.sv api tathaa sarva.m d.r"syate na ca tat tathaa ||70||
+[535,1] atraapi yadi d.r.s.taantavi"se.sa.nagu.no vibhau |
+[535,2] ava"syayojyo 'naabhaasaruupitve tadvad eva hi ||71||
+[535,3] aalambaa"srayayor haanir uurdhvaadho 'pek.sayaa samaa |
+[535,4] aki~ncanatvam aagantva"se.sado.saviyogata.h ||72||
+[535,5] svavi"se.sa.namaatraat tu k.rtaartha.m padyam aadimam |
+[535,6] buddhe.sv iti tathaa ceda.m bahutva.m bhedaka.m tata.h ||73||
+[535,7] khasaamyaan na ca nairuupya.m nai.rsvaruupya.m yathaiva na |
+[535,8] ropaapavaadasthaanoccaavacahaanyaa tu tulyataa ||74||
+[535,9] vasturuupe.su niicoccabhaavasa.mbhaavanaa bhavet |
+[535,10] avasturuupe "sa"nkaapi naastiiti kham udaah.rtam ||75||
+[535,11] yadi caanaak.rtij~naanam abhraantir bhraantir aak.rti.h |
+[535,12] trikaaya.rvyavahaaro 'nta.rsa.mbhogasya paraabhavaat ||76||
+[535,13] bhraantir aak.rtipu~njo 'sau yaavat taavan na buddhataa |
+[535,14] bodhe bhraantivirodhitvaad buddhaatmaa sa.mkatha.m bhavet ||77||
+[535,15] naapi sa.mv.rtir evaasau kalpanaiva hi sa.mv.rti.h |
+[535,16] na copacaaraat kaayatva.m tyaagasyaivopapattita.h ||78||
+[535,17] buddhaadhipatyaad dhanyaanaa.m tadaabhaasa"s ca nocita.h |
+[535,18] niraakaarataraas te hi buddhas tu bhaamayaadhika.h ||79||
+[535,19] buddhaadhipatya.m sthaane ca sthaane te.saa.m ca dhanyataa |
+[535,20] a.n.tabhramaa.naa.m yad aya.m taad.rksthuulabhramodaya.h ||80||
+[535,21] yathaa ca vyaaptinityatve svaabhipraaye.na var.nite |
+[535,22] na sa.mbhoge tathaa vyaakhyaa tatsvaatantryam ida.m mahat ||81||
+[535,23] sarvai"s ca lak.sa.nai"s citrair ma.n.titaatmeti citra(128b)vaak |
+[535,24] cakre"salak.sa.naga.naad vi"se.saayeti bhaa.syak.rt ||82||
+[536,1] dharmakaayapradhaanatvadar"sanaayottare.na yat |
+[536,2] cakre"sasyaapi bhaaviiti naaliikatvaady avar.nayat ||83||
+[536,3] aya.m ca suutraala.mkaaro viruddho yady aliikataa |
+[536,4] dvayor dvayaarthasa.mpatti.h sarvaakaaraa prati.s.thitaa ||84||
+[536,5] sa.mbhoga.h svaarthasa.mpatti.h paraartha"sriis tu nirmiti.h |
+[536,6] prati.s.thite te svaabhaavye sa.mbhoge ceti bhaa.syagii.h ||85||
+[536,7] eva.m ca dharmakaayasya kaayo nirmaa.nakaara.nam |
+[536,8] svaarthasa.mpadasan khyaatisa.mbhoga iti viplava.h ||86||
+[536,9] aakaa"savaade dehatvaan na bahutva.m muner iti |
+[536,10] bahutva.m naak.rtivyaapta.m cittacaittaatmanaam iva ||87||
+[536,11] .tiikaa tv aatmagrahaabhaavaan mune.h svaparahaa.nita.h |
+[536,12] na bhuumeti vadanty aaha deham aatmagraha.m sphu.tam ||88||
+[536,13] svaartha.h paraartha.h paramaarthakaayataa
+[536,14] tadaa"sritaa sa.mv.rttikaayataa ca |
+[536,15] phala.m visa.myogavipaakabhaavaa[536,16] d ity uttare tantravare 'tha ko 'rtha.h ||89||
+[536,17] svaartha.h svaabhaaviko 'nyaartha.h sa.mbhogo mata eva na.h |
+[536,18] prastaave 'tra tayo.h ki.m tu paramaarthatvasa.mvidhi.h ||90||
+[536,19] paaramparye.na saak.saad vaa saa.mv.rtas tau samaa"srita.h |
+[536,20] nirmaa.nakaaya.h khyaata.m ca nirmaa.na.m pauru.sa.m phalam ||91||
+\var{pauru.sa.m\lem
+    \conj (cf.\ Saakaarasiddhi), \omits\ \ms, saa.mv.rta.m \edT}
+[536,21] vada.ms tathaagatagu.naan nirmaa.na.m hi tyajet katham |
+[536,22] paaramaarthikam ity eva.m v.rttau kaayaav anuudya tau ||92||
+[536,23] aatmasa.mpattyadhi.s.thaane vidhi"s ca na virudhyate |
+[536,24] aatmasa.mpat dvidhaa ruupani.spattyaabhyudayena ca ||93||
+[537,1] aadyaayaam aadimaadhi.s.thaa dvitiiyasya dvitiiyake |
+[537,2] acintyalokaatiitaadikhyaataanekavi"se.sane ||94||
+% NB Seems not t
+[537,3] athavaatmani sa.mbhoge sa.mpattau ca tayor balam |
+[537,4] ratnavigrahavaj j~neya.h kaaya.h svaabhaavika.h "subha.h ||95||
+[537,5] ak.rtrimattvaat(ak.rtrimatvaat) prak.rter gu.naratnaa"srayatvata.h |
+[537,6] mahaadharmaadhiraajatvaat sa.mbhoga"s cakravartivat ||96||
+[537,7] pratibimbasvabhaavatvaan nirmaa.na.m hemabimbavat |
+[537,8] eva.m vaktari naathe tu svapak.sarasikai.h k.rta.h ||97||
+[537,9] sa.mbhoga.h saa.mv.rto hitvaa nirmaa.na.m dhik svatantrataam |
+[537,10] mahaakaru.nayaa k.rtsna.m lokam aalokya lokavit ||98||
+[537,11] dharmakaayaad avicalan nirmaa.nai"s citraruupibhi.h |
+[537,12] ityaadinaa prabandhena yac caatraiva pradar"sanam ||99||
+[537,13] ukta.m nirvaa.naparyantajaatakaade.h puna"s ca ya.h |
+[537,14] sarvatra devabhavane braahmyaad avicalan padaat ||100||
+[537,15] pratibhaasa.m yathaa brahmaa dar"sayed aprayatnata.h |
+[537,16] tadvan munir anaabhogaan nirmaa.nair lokadhaatu.su ||101||
+[537,17] dharmakaayaad avicalan bhavyaanaam eti dar"sanam |
+[537,18] ityaadi vistaras tatra dharmakaayaat p.rthag giraa ||102||
+[537,19] sa.mbhogaatmaa na cet ko 'nya.h kaaryabhaarako muni.h ||103||
+[537,20] kvacid dharmya.m cakra.m bahumukha"satair dar"sayati sa
+[537,21] kvacij jnmaantardhi.m kvacid api ca citraa~njanavidhim |
+[537,22] kvacit k.rtsnaa.m bodhi.m kvacid api sanirmaa.nam asak.r-
+[537,23] n na ca sthaanaat tasmaad vicalati sa sarva.m ca kurute ||104||
+[537,24] ity aaha suutraala.mkaare 'py atra sthaanam anaa"srava.h |
+[537,25] dhaatur bhaa.syodito dharmakaayaacalanam eva tat ||105||
+[538,1] tathaapy aliika evaatmaa caakaara"s ca bhramo mata.h |
+[538,2] kaaryabhaaras tadanyasmaad iti lajjaiva lajjitaa ||106||
+[538,3] astu caaliikabhaavena bhrama.h (128a) sthuule nirarthaka.h |
+[538,4] ava"syaheyas tv aakaarabhaara.h syaad i.syate yadi ||107||
+[538,5] nirabbhragaganaakaaraj~naanasyevaava"se.sa.naat |
+[538,6] trikaayasiddhim uddhuuya param evedam udgatam ||108||
+[538,7] sa.mbhogabha"nge taddharmo dharmakaayo na vidyate |
+[538,8] tatkaarya.m na ca nirmaa.na.m saadhvii bauddhak.rtaantataa ||109||
+[538,9] nanv astam etu sa.mbhogo dharmakaayo 'stv anaak.rti.h |
+[538,10] tata eva ca nirmaa.na.m saadhvii bauddhak.rtaantataa ||110||
+[538,11] bhramatvaad eva sa.mbhoga.m hitvaana"ngada"saa"sraya.h |
+[538,12] vi"suddhe.h sa hi paryantas tattrayii sa"ngatir na kim ||111||
+[538,13] yuvaraajanayenaitad virodhiity upapaaditam |
+[538,14] tathaapi yadi carcaayaa.m kautuka.m ki~ncid ucyate ||112||
+[538,15] anaakaaraprakaa"sa"s ced dharmakaayo 'bhidhiiyate |
+[538,16] kas tarhi buddhasa.mbhogo na praheyatayocita.h ||113||
+[538,17] kaaryaartha.m dhriyamaa.no 'pi bhramatvaat sugata.h katham |
+[538,18] yadi kaaryopayogii ca m.r.saaliikatvapo.sa.nam ||114||
+[538,19] tathaa ca sati na bhraantir abhraantes tyajana.m na ca |
+[538,20] tato 'nabbhravata.h saamyasiddhisiddhaantanirdhuti.h ||115|| 
+[538,21] tad asyaava"syaheyasya hetur naarambham arhati |
+[538,22] tato 'pi naasau sugato dharma eva jino yadi ||116||
+[538,23] dharmakaayo jinasyeti vyavahaaro na sidhyati |
+[538,24] vyaav.rttibhedadvaare.naapy ekasyaivaabhidhaanata.h ||117||
+[539,1] jinaadinaa.m abhedena kaayaa.h syu.h "satam anyathaa |
+[539,2] na ca buddho jinasyeti vyavahaaro 'sti kutracit ||118||
+[539,3] dharmi.no dharmavaacii tu bhid eva vyavahaarabhaak |
+[539,4] dhaatryaas taror vaa tatutaa na tu dhaatrii taror iti ||119||
+[539,5] dharmamaatre mate buddhe buddho dharmasya yujyate |
+[539,6] buddhasya dharmakaayas tu dharmas tasya gu.no yadi ||120||
+[539,7] tathaa sati niraakaara.h kaayas turyasama"s ca te |
+[539,8] ga.naniiyaa na vaa haanaat sa.mbhogena tanutrayii ||121||
+[539,9] sama.h suuk.sma"s ca sa.mbaddha.h kaaya.h svaabhaaviko mata.h |
+[539,10] iti codya.m virudhyeta sa.mbaddhapadavar.nane ||122||
+[539,11] saa.mbhogikena kaayena sa.mbaddha iti bhaa.syata.h |
+[539,12] sa.mbhoge sati taddharmas tena sa.mbandham arhati ||123||
+[539,13] tadabhaave na taadaatmya.m bhaave 'py atyantabhedata.h |
+[539,14] sa.mbhogabuddhataahetur iti tatraiva kiirtanaat ||124||
+[539,15] kaaryakaara.nabhaava"s cet kaarya.m naavastu kasyacit |
+[539,16] avastudharmataamaatra.m katha.m hetur apiiti cet ||125||
+[539,17] na madhyaantanaye bhaa.sye tadaalambanatodgataa |
+[539,18] taddhetutokto dharmaa.naa.m .tiikaiva.m tatra tatra ca ||126||
+[539,19] tada.m"so vaa p.rthakk.rtya san puraapi tathocyate |
+[539,20] yathaa vikrama evaasya raaj~na.h sarvaarthasaadhaka.h ||127||
+[539,21] niraakaaraat kvacij janma kasyacin noktam aatmani |
+[539,22] suutraala.mkaaragadita.m duu.sa.na.m tulyam atra tu ||128||
+[539,23] pratiityabhaavaprabhave 'py aya.m jana.h
+[539,24] samak.sav.rtti "srayate 'nyakaaritam |
+[539,25] -todbhavateti maat.rkaayaam |
+[540,1] tama.hprakaara.h katamo 'yam iid.r"so
+[540,2] yato vipa"syan sad asan niriik.sate ||129||
+[540,3] kartaa bhoktaa ca d.r.s.tebhyo bhinno 'ha.mkaaragocara.h |
+[540,4] nira~njanas tadekaava"se.saa mukti"s ca yoginaam ||130||
+[540,5] ity aatmavaada evaaya.m na ca nityo 'kriyaad.r"sa.h |
+[540,6] svabhaavanityataa praaptaa dharmakaayatayaasya ca ||131||
+[540,7] prak.rtyaa"sra.msanenaapi prabandhe (128b) na ca nityataa |
+[540,8] atra svaabhaavike tasyaarthasya bhaa.sye.na yojanaat ||132||
+[540,9] kaaryabhramavyavasthaayaa.m ya.h svaabhaavika eva sa.h |
+[540,10] dharmakaaya iti prokto vyavadaanavyapek.sayaa ||133||
+[540,11] svabhaava.h "suunyataa dharma.h sa.mbhoga.h sugata.h svayam |
+[540,12] tasyaantaretaragu.nau bhittvaa kaayacatu.s.tayii ||134||
+[540,13] trikaaye dharmakaayoktir vakti svaabhaavika.m vapu.h |
+[540,14] sa.mbhogaa.m"sacatu.s.tve 'ntarnirmaa.na.m "se.sam atra ca ||135||
+[540,15] sarvatraanugata.m yadvan nirvikalpatayaa nabha.h |
+[540,16] cittaprak.rtivaimalyadhaatu.h sarvatragas tathaa ||136||
+[540,17] iti cottaratantre.na mukhya.m vyaapitvam iiritam |
+[540,18] sa.mpuur.na.m aatmavaado 'ya.m vyakto vedaantavaadinaam ||137||
+[540,19] dharmataayaas tu nityatvavyaapakatvaadi saa.mv.rtam |
+[540,20] svaabhaavye 'pi yathaakalpa.m prasiddha.m k.sa.nitaadivat ||138||
+[540,21] vinaa vi"se.sa.m na nyaayo vastuvas tv e.sa hiiyate |
+[540,22] ata evaabhisamaye taccha.mkaavaara.na.m vibhau ||139||
+[540,23] iti kaaritravaipulyaad buddho vyaapii nirucyate |
+[540,24] anucchedaac ca tasyaiva nitya ity api kathyate ||140||
+[541,1] yojya.m na ca tad evaatra prak.rtyaa nityatoditaa |
+[541,2] svaabhaavikaadhikaare hi vasturuupas tato na sa.h ||141||
+[541,3] vi"svakaarya.m ca sa.mbhoge "suddhis tadvirahe yadaa |
+[541,4] praagvad virodha.h sa.m"suddhisattvaarthau na ca "saa"svatau ||142||
+[541,5] yadi naasti niraakaara aatmanaa caasya tulyataa |
+[541,6] sa evaaya.m dharmakaaya ity upakramya bhuubhujaa ||143||
+[541,7] sa.mkle"sopacayadhva.msaatyantadhva.msai.h ka uttare |
+[541,8] tantre prakaa"sita.h sattvabodhisattvajinaatmaka.h ||144||
+[541,9] dharmakaayo dvidhaa j~neyo dharmadhaatu.h sunirmala.h |
+[541,10] tanni.syanda"s ca gaambhiiryavaicitryanayade"sanaa ||145||
+[541,11] iti vyaakhyaapi tatraiva ki.m tu dharme.na dharmigii.h |
+[541,12] prastuto dharmakaayas tu dharmadhaatu.h sunirmala.h ||146||
+[541,13] tathataa bhuutako.ti"s caanimitta.m paramaarthataa |
+[541,14] dharmadhaatu"s ca paryaayaa.h "suunyataayaa.h samaasata.h ||147||
+[541,15] iti ･madhyaantaviibhaage(madhyaantavib.raage) dharmadhaatu"s ca var.nita.h |
+[541,16] j~neya.h saparini.spannas tattva.m dhaatur anaa"srava.h ||148||
+[541,17] "suunyataa ca dvayenoktaa tatra kle"sada"saava"saat |
+[541,18] paratantragu.no j~neya.h sa.mbhogasya malak.saye ||149||
+[541,19] sarvaakaaraa.m vi"suddhi.m ye dharmaa.h praaptaa anaa"sravaa.h |
+[541,20] svaabhaaviko mune.h kaayas te.saa.m prak.rtilak.sa.na.h ||150||
+[541,21] atraapi caabhisamayaala.mkaare na virudhyate |
+[541,22] prak.rti.h kaara.na.m yasmaat tattva.m ca pratipaaditam ||151||
+[541,23] yad vaa svabhaava.h pratipaddharmaa.naa.m "suunyataiva saa |
+[541,24] sarve.saa.m ca mataa buddhaprastaavaat tu vi"suddhavaak ||152||
+[542,1] na "suddhisa.mg.rhiito 'pi sa.mbhogo ga.nito ga.ne |
+[542,2] p.rthakkaayo hi vaacyo 'sau dharmas tasya katha.m tadaa ||153||
+[542,3] mukhyatvaan na tu tasyaiva "se.sa.h parikaro 'sya hi |
+[542,4] ekaj~naanaatmakatvena tadgrahe.naiva g.rhyate ||154||
+[542,5] bhoga.h prati.s.thaakaarau ca tato bhinnau na yady api |
+[542,6] anyavadvyavaahaaras tu saa.mv.rta.h puru.saad bhidaa ||155||
+[542,7] iti dharmakaayasvaruupacintaaparyantapravacanam
+[542,8] aaryaasa"ngayuvaraajoktinir.nayo
+[542,9] dvitiiya.h ||
