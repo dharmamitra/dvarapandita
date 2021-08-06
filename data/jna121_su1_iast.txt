@@ -1,0 +1,322 @@
+[515,1] 12
+[515,2] || sākārasaṃgrahasūtram ||
+[515,3-528,7] prathamaḥ paricchedaḥ
+
+[515,4] prajñā yena khalīkṛtāmbaradaśām ākṛṣya naḥ preyasī
+[515,5] sāsūyaṃ sadasi sthiteṣu kṛtiṣu prakhyātakīrtiṣv api |
+[515,6] krūranyāyamayo nirākṛtinayo duḥśāsanaḥ sāmprataṃ
+[515,7] so 'yaṃ madbhujapañjare nipatitaḥ saṃrakṣyatāṃ kauravāḥ ||1||
+
+[515,8] sākāretaramadhyamāsu kṛtinām utthāpya nānāvidhā
+[515,9] vikrāntīr yuvarājanāyakanaye vyakte mamāyaṃ bharaḥ |
+[515,10] śrīnāgārjunapādasaṃmatipade bhāṣyāntimair varṇite
+[515,11] tannyūnādhikacintanāya saphale madhyasthabuddheḥ śramaḥ ||2||
+[515,12] sākāratvaṃ matīnāṃ bhavaśamaniyamaḥ sundaraṃ buddharūpaṃ
+[515,13] hetor vyāpteś ca hāner na tu sad iti sad ity eva vāstu svavitteḥ |
+[515,14] ācāryāryavirodhaḥ praguṇaparicayo dharmakāyo nayau ca
+[515,15] muktau sthityor abhedaḥ parama iti paraṃ śāsti sākārasiddhiḥ ||3||
+[515,16] āveṇikākhilaguṇābharaṇābhirūpa-
+[515,17] rūpasvavittyadhigatāmaladharmadhātuḥ |
+[515,18] dhātutrayīhitalatānikaraikakanda-
+[515,19] kandarpaketuravatādakaniṣṭhaniṣṭhaḥ ||4||
+[515,20] tatsādhanapravaṇaśāstraparamparāyā
+[515,21] yatnād vicitramatimātrajagatprasiddhyā
+[515,22] dhvasto 'khilas tadapavādiṣu tīrthikaugha-
+[515,23] s tanmārgasaṃgamaguṇaprathitās tv avāryāḥ ||5||
+[516,1] eketarātmavikalaḥ kila bhāsane 'pi
+[516,2] citrākṛtivyatikaro 'yam asatya eva |
+[516,3] tatrāpi satyam aparaṃ svavid abhyupetaṃ
+[516,4] tanmātraśeṣam avadānam iti kva nāthaḥ ||6||
+[516,5] yuktyāgamoktiyuvarāja(123a)nayānugo 'ya-
+[516,6] m adhveti sākṛtinaye nihitaḥ pravādaḥ |
+[516,7] vādasthitāv iva vivādimatakrameṇa
+[516,8] lekhāvidhes tu sa nayo 'jani viprakīrṇaḥ ||7||
+[516,9] samāsatas tena kariṣyate 'yaṃ
+[516,10] tadarthasaṃgrāhakasūtrakośaḥ |
+[516,11] patārthacaryā hi bhaven na veyaṃ
+[516,12] svārthas tu tattvābhyasanād avāryaḥ ||8||
+[516,13] prakāśo nāma na svapne 'py anākāro 'nubhūyate |
+[516,14] tato 'dṛśyamatasyākṣaṃ bādhakaṃ na tu sādhakam ||9||
+[516,15] jaṭatvena guṇādīnām adṛṣṭiḥ saviśeṣaṇā |
+[516,16] bādhane 'pekṣate tāvan na vilambaḥ svasaṃvidaḥ ||10||
+[516,17] bodhātmani site bhāsamāne siddhātha bodhadhīḥ |
+[516,18] pratīyamāne 'jāṃ vety agavi gotva gatir na kim ||11||
+[516,19] kiṃ ca pradeśo bhinnaś ced abādhyo bhedaniścayaḥ |
+[516,20] abhede tu pradeśasya svarūpābheda eva saḥ ||12||
+[516,21] na vātātapayor asti pratighātyaṇupuñjayoḥ |
+[516,22] deśāvibhedo buddhis tu tathānveti sthavīyasī ||13||
+[516,23] pratighātātyayāntena deśābhedo 'stu vā siteḥ |
+[516,24] avayavyaṇurūpatvavikalpe saiva dūṣaṇā ||14||
+[516,25] abhedabhāsane yathā kṣaṇayor bādhakād bhidā ||15||
+[517,1] abhedabhāsanān nāsti kṣaṇayor vyavasaiva tu |
+[517,2] asti nīladhiyoḥ spaṣṭaṃ nānyathā kvacid ekatā ||16||
+[517,3] na bādhāparyudāso 'sti sādhakaṃ pramitidvayam |
+[517,4] prasajyapakṣe bādhāyā hānis tāvad duranvayā ||17||
+[517,5] kadācit kenacid bādhān nīlavad veditaiva sā |
+[517,6] bādhāsphuraṇamātraṃ tu sandigdhe vitathe 'pi sat ||18||
+[517,7] tato na bhedasiddhyaṅgaṃ bhedo dharmaḥ svato yataḥ |
+[517,8] kṣanayos tu sator bhedaḥ kāryakālabhidā bhavet ||19||
+[517,9] na caivam ekakālatve kāryabhede 'py apoddhṛte |
+[517,10] abhedabhāsino dīpapītasyeva prakāśinaḥ ||20||
+[517,11] kiṃ ca bādhātra nātreti pṛthagbhāse dvayor bhavet |
+[517,12] bādhāyogyasvabhāvasya vibhāgenopalambhataḥ ||21||
+[517,13] na cānākārabhāgasya pṛthagbhāso 'sti nīlataḥ |
+[517,14] deśavyāptyavasāyas tu bādhake 'syaiva sādhakaḥ ||22||
+[517,15] siddho 'pi tatra hetuś cen na samarthaḥ prakalpyate |
+[517,16] nūnaṃ na sādhyasaṃbandho nākāre 'pi tataḥ kṣamaḥ ||23||
+[517,17] bhāsanaṃ bhāsa iti ca dharmo nīle 'sti bhāsini |
+[517,18] tasya svabhāvabhūtatvād bādhābādhau samau dvayoḥ ||24||
+[517,19] na nīlasya prakāśaś cet sāhasaṃ kim ataḥ param |
+[517,20] parato 'pi bhavann asya prakāśo 'śakyavāraṇaḥ ||25||
+[517,21] nānyato 'pi prakāśo 'sya prakāśo 'syānya eva cet |
+[517,22] na tan nīlaṃ prakāśeta prakāśe 'nyasya kiṃ phalam ||26||
+% NB MS prakāśe 'nyasya kiṃ!!! Read prakāśe 'nyasya tasya kim as in Sākārasiddhi above!!
+[517,23] yataḥ kuto 'pi vā tasmāt prakāśo 'syānapahnavaḥ |
+[517,24] dīpena bhāsamānasya ghaṭādeḥ kiṃ na bhāsanam ||27||
+[518,1] tasya bādhoktir aphalā dharmyabādhāvakāśataḥ |
+[518,2] yatas tadbhāsanaṃ tat tu bhāsamānaṃ na dṛśyate ||28||
+[518,3] yadi prakāśo nīlādiḥ kiṃ prakāśāntareṇa vaḥ |
+[518,4] athāprakāśo nīlādiḥ kiṃ prakāśāntareṇa vaḥ ||29||
+[518,5] dhvasto 'nyena prakāśo hi prasiddham aparaṃ na ca |
+[518,6] kasyābādhaṛ(123b) kuto hetoḥ sarvasyāśrayasaṃśayāt ||30||
+[518,7] athāsti sphuraṇaṃ tāvan nīladharmas tu tanmatam |
+[518,8] tasyābādhanato bhedasiddhau siddhaṃ samīhitam ||31||
+[518,9] bhāsamānasya nīlasya tāvad dharmeṇa bhāṣayā |
+[518,10] avaśyabhāvyaṃ tadbhedapratijñānyā paṭuḥ sahā ||32||
+[518,11] kutaś ca bhāsamātraṃ tadabādhyaṃ svavidā yadi |
+[518,12] svavittāv api nīlādi kiṃ na bādhābhidhāvati ||33||
+[518,13] svasaṃvittir na nīlasya yadi kiṃ na prakāśate |
+[518,14] prakāśyatāṃ pareṇeti niṣiddham idam īdṛśam ||34||
+[518,15] asattvān na paratvaṃ cet svaṃ nety eva kuto 'sya vit |
+[518,16] asvabhāsanaśaktiś ca nimīlyākṣi nigadyate ||35||
+[518,17] atha kalpitatādātmyād etadanyonyasaṃśayaḥ |
+[518,18] bhāsaḥ kalpitatādātmyād bhāsāt tādātmyakalpanam ||36||
+[518,19] kalpitaṃ kvacid arthe ca nopayogīti saṃmatam |
+[518,20] iyantaṃ kālam adhunā śraddheyam idam apy abhūt ||37||
+[518,21] tenānyāsaṃbhavād bhrāntivāsanopaplavān manaḥ |
+[518,22] alīkarūpair bhātīti prakriyāmātrapoṣaṇam ||38||
+[518,23] sādhyaśūnyaś ca dṛṣṭāntaḥ svapno 'līkair itīha ca |
+[518,24] svādiḥ sahārthān nānyārthābhāsanaṃ kena kasyacit ||39||
+[519,1] avidyayāpi nirbhāntaḥ ākārāḥ santu tatkṛtāḥ |
+[519,2] prakāśās tu prajāyante yathā dīpaḥ svahetutaḥ ||40||
+[519,3] tathāpi hetvapekṣā cet svaprakāśatvabādhanī |
+[519,4] bhinno 'py anubhavo 'nyasmād udayan kiṃ svavedanaḥ ||41||
+[519,5] tat kvacit svavido 'bhāvān nāsti vyavahṛtir bhavet |
+[519,6] bhaved vākārapuñje 'pi samānanyāyasaṃbhavāt ||42||
+[519,7] bhāsamānasya ca bhavet svaprakāśaḥ pareṇa vā |
+[519,8] nīlādāv iti cinteyaṃ na tv abhāsiny anākṛtau ||43||
+[519,9] na ca kāryatayā bhāsamātraṃ ･hetibhir(hetubhir) ākṛteḥ |
+[519,10] svasaṃbhave 'nyavyāpārāpekṣaṃ kāryaṃ hi kathyate ||44||
+[519,11] śaktyabhāvāc ca kāryatvābhāvas teneva bādhitaḥ |
+[519,12] ākārād ākṛter janmadṛṣṭer anyatra cintyatām ||45||
+[519,13] na vā śaktaṃ sitaṃ kāryaṃ kiṃ nānyāpekṣasaṃbhavāt |
+[519,14] śaktyā vyāptaṃ tad iti cec chaktir apy anumīyatām ||46||
+[519,15] kāryatve hi na sandehaḥ śaktiḥ sādhyā tu saṃśayāt |
+[519,16] keśākāro 'pi nākāryo 'dhyastakeśas tv aśaktikaḥ ||47||
+[519,17] dṛṣṭā ca prāgupādānābhāve kasya prakāśyatā |
+[519,18] prakāśadharmā nīlo 'yaṃ tasmāj jāto 'bhyupeyatām ||48||
+[519,19] abādhayā ca bhinnatve bādhābhāvaḥ kuto mataḥ |
+[519,20] svasaṃvedanasāmarthyaṃ saṃpraty eva nirākṛtam ||49||
+[519,21] anāropitabhāvāc ced anāropamatiḥ kutaḥ |
+[519,22] abādhayānāropaś ced etad anyonyasaṃśrayam ||50||
+[519,23] prakāśasya prakāśatvaṃ nāropyaṃ rūpam eva tat |
+[519,24] nīlasyāpi na nīlatvam āropyaṃ rūpam eva tat ||51||
+[520,1] na prakāśaṃ vinā nīlaḥ prakāśas taṃ vināpi cet |
+[520,2] anyo 'pi vyāpako dharmaḥ kalpitaḥ ko na tādṛśaḥ ||52||
+[520,3] na ca prakāśaḥ pīte 'pi nīla eva sthito hi yaḥ |
+[520,4] sāmānyam anyathā (124a) kasmād akasmād vinivāryate ||53||
+[520,5] anyatve ca yathā nīlaṃ na prakāśaṃ vinā tathā |
+[520,6] na rte nīlāt prakāśo 'sau saprakāśo 'tha sākṛtiḥ ||54||
+[520,7] mithaś ced vyabhicāreṇa bhedo nīlotpalena kim |
+[520,8] vastrodake 'pi bhedaḥ kiṃ kiṃ na rūpanirūpaṇāt ||55||
+[520,9] bīje 'pi kālabhedena tarjanyā bhedarūpaṇe |
+[520,10] mānena bhedo 'bhedo vā naivaṃ nīlaprakāśayoḥ ||56||
+[520,11] nīladharmaḥ prakāśo 'smān na bhedyo bhedinaḥ punaḥ |
+[520,12] kalpitasya sa evātmā bhaṇyate bhāsino na kim ||57||
+[520,13] kalpitaṃ tasya jātyāde rūpaṃ kiṃ na tad eva tat |
+[520,14] pramāṇena tu tat satyam asatyaṃ veti cintyate ||58||
+[520,15] tena bhāne 'pi nīlādir alīko vastusanmataḥ |
+[520,16] ayogād bādhakasyeti vibhāgaḥ kiṃ kṛto bhavet ||59||
+[520,17] na vā tasya pramāsiddhiḥ śaktiyogo 'pi saṃbhavī |
+[520,18] ākṛtiṃ vākṛter eva sāmarthyasyopalambhataḥ ||60||
+[520,19] viruddhadharmādhyāsāc ca na vinā bhedasādhanam |
+[520,20] dharmau viruddhau bhinnādhikaraṇau yadi sidhyataḥ ||61||
+[520,21] deśakālākṛtikṛto bhedo 'dhikaraṇasya ca |
+[520,22] na saṃbhavī nīladhiyos tat kva dharmavirodhivat ||62||
+[520,23] deśakālapratībhāsabhedābhāve 'pi bhedanam |
+[520,24] nīlotpalādāv iva tad bhavato yadi sidhyati ||63||
+[521,1] antaḥ sphuratsukhādy eva svasaṃvedyaṃ mano yadi |
+[521,2] nīlādyākāravirahād anākāraṃ ca saṃmatam ||64||
+[521,3] pratibhāsād yadi jñānaṃ sukhaṃ so 'sti siter api |
+[521,4] abhedena prakāśaś cet sukhasyaivaṃ siter api ||65||
+[521,5] yathā bhinnaṃ sukhān nīlaṃ nīlād bhinnaṃ tathā sukham |
+[521,6] yathā nāhaṃ mataṃ nīlaṃ tathā nāhaṃ mataṃ sukham ||66||
+[521,7] ahaṃ sukhīti vyavahṛn nāhaṃ nīlīti cen matiḥ |
+[521,8] vyavahārabhāvābhāvau nārthasādhanabādhanau ||67||
+[521,9] sādhāraṇyābhimānena na bhaved api sā sthitiḥ |
+[521,10] tathāpi kvacid asty eva gomān daṇḍī dukūlavān ||68||
+[521,11] antaḥ śātādiviṣayaṃ bahiḥ śītādigocaram |
+[521,12] vedanaṃ tat tad ākāraṃ bādhakagrastam eva ca ||69||
+[521,13] hānād deśavitānasya bādhakasaṃbhavaḥ kila |
+[521,14] doṣo deśe 'ṇumātre 'pi kiyaty alpe vihanyate ||70||
+[521,15] kutrāpy avartamānasya kadācin na hi vartanam |
+[521,16] tad asya vidyamānatvaṃ sukhādeḥ sādhu sādhitam ||71||
+[521,17] vidyate yadi kutrāpi deśas tasya sa eva hi |
+[521,18] śarīrād abahirbhūtā vedyante ca sukhādayaḥ ||72||
+[521,19] mānaṃ hastavitastyādi jñāyate niyataṃ na cet |
+[521,20] tataḥ kiṃ bhūbhujām eva bhūmān aniyamo 'rthavān ||73||
+[521,21] sparśanāt spṛśyarūpābhyāṃ cānyatra viṣayendriye |
+[521,22] na mānaniyamo 'stīti tatrāpi kim abādhanam ||74||
+[521,23] yatrāpi niścayo māne śakyas tatrāpi nāṇuśaḥ |
+[521,24] niścaye 'py aṅgulādīnāṃ tattvato na mitis tataḥ ||75||
+[522,1] taṭāgagāhane vyaktaṃ taptasyordhvādharāditaḥ |
+[522,2] sukhamānaṃ sphuṭatvena tatrāropyo na cānyataḥ ||76||
+[522,3] tatsparśanendriyadvārā mites taddeśatāmatiḥ |
+[522,4] ity api dhvastam iyatā bhramatvād asphuṭāptitaḥ ||77||
+[522,5] indriyabhrāntir eṣā cet na tato 'nyasukhātyayāt |
+[522,6] idam eva hi naḥ saukhyaṃ yat (124b) śātaṃ vedanaṃ sphuṭam ||78||
+[522,7] rūpādiṣv api vā kāsthā cakṣurādīndriyāśrayāt |
+[522,8] tathāpratīter ākhyātuṃ śakyatvād aparaṃ samam ||79||
+[522,9] nirbhāsaniyamājñāne yady adeśāḥ sukhādayaḥ |
+[522,10] kṣaṇarūpāparijñānād akālaṃ sakalaṃ jagat ||80||
+[522,11] yathā niyatakālatvaṃ tathā niyatadeśatā |
+[522,12] bādhakāvañcanāt tasmān nirākṛtigirātra kim ||81||
+[522,13] astu vā bādhakābhāvaḥ sattāśvāsas tu kiṃkṛtaḥ |
+[522,14] eketaratvayor ekasthityasiddher adeśataḥ ||82||
+[522,15] na cādarśanamātreṇa bādhakābhāvo 'pi sidhyati |
+[522,16] ekabādhaviyoge 'pi syād vā bādhāntarodayaḥ ||83||
+[522,17] anumānād abādhyatvasādhane yadi sādhanam |
+[522,18] kathañcid āśrayāsiddhidūṣaṇaṃ nātivartate ||84||
+[522,19] duḥkhadveṣādayo 'py evaṃ svabhāvāḥ sarvadehinām |
+[522,20] hānaṃ svato 'py aniṣṭeś ced asato 'pīcchayā sthitiḥ ||85||
+[522,21] yad yathā bhāvyate cetaḥ tat tathaiva sphuṭībhavet |
+[522,22] vyomākāram api syāc cen na prayojanahānitaḥ ||86||
+[522,23] saṃsāradoṣair aspṛṣṭaṃ lakṣaṇavyañjanojjvalam |
+[522,24] ātmabhāvaṃ vihāya tvaṃ vihāyas tvaṃ yadīcchasi ||87||
+[523,1] yadi tāvat khavad vyāpi tadvad evāsya dūṣaṇam |
+[523,2] jyotisnātaṭinmaṇījvālāsphuliṅgāditulāsv api ||88||
+[523,3] sāṃśe 'vayavivad doṣo niraṃśe paramāṇuvat |
+[523,4] na cāparaḥ prakāro 'sti mudhaivādeśaghoṣaṇam ||89||
+[523,5] guṇās tadekaniyatās tadekaniyatā ruciḥ |
+[523,6] tadekaniyataṃ mānaṃ bādhenaiva samaḥ paraḥ ||90||
+[523,7] para eva jino yeṣāṃ taiḥ svaśāstāpi hāritaḥ |
+[523,8] ṛjukramagṛhīto ya āgamāl lakṣaṇojjvalaḥ ||91||
+[523,9] yena rūpeṇa yan naikaṃ nānekaṃ tena tan na sat |
+[523,10] yathā śātam aśātena bhāsaś ca sitinā tathā ||92||
+[523,11] na dharmo dharmiṇo bhettuṃ śakya ity uktam eva hi |
+[523,12] na ca bhinnasya bhānasya nyāyenānena sādhanam ||93||
+[523,13] yadi nāma na nīlena prakāśasyāsti vastutā |
+[523,14] tathāpi bhinnabhānasya vastutvaṃ kena sidhyati ||94||
+[523,15] bandhyāsuto 'gnirūpeṇa naikāneko na tena san |
+[523,16] tatas tasyāpi vastutvaṃ kim astu bhavato miteḥ |95||
+[523,17] na san bandhyāsutaḥ siddhaḥ prakāśaḥ siddha eva san |
+[523,18] asiddho bheda evāsya sādhyate cet tad apy asat ||96||
+[523,19] tattvataḥ satyarūpeṇa siddhir bhedasya cen matā |
+[523,20] sā na siddhā na hi vyāpiviraho nāsty avastuni ||97||
+[523,21] pratītimātraṃ siddhiś ced bhinno 'py evaṃ na tāttvikaḥ |
+[523,22] vyāvahārikabhedas tu kiṃ na pītasitasya te ||98||
+[523,23] yadi prakāśasattāṃ ca bādhakāvasaraṃ hanan |
+[523,24] sādhayet tāvataivāstu bhedo mānam idaṃ vṛthā ||99||
+[524,1] tadaśaktāv api vyartham etat śauṭīryajṛmbhitam |
+[524,2] parasyopagamaḥ saṃpratyapramā katham āśrayaḥ ||100||
+[524,3] nīlabhāsor abhedāvabhāsinoḥ prastutā ca bhit |
+[524,4] na caivam anvayaḥ śakyas tathā sādhyamataḥ katham ||101||
+[524,5] yena naikam anekaṃ yad iti sāmānyato 'nvaye |
+[524,6] pītena naikāneko 'stu nīlabhāso na tena san ||102||
+[524,7] anukto 'pīcchayā vyāptaḥ sādhya ātmārthavan mataḥ |
+[524,8] viśeṣeṇānvayas tasmāt sāmānye siddhasādhanam ||103||
+[524,9] yathā śātam aśātena bhinnenaivātadātmakam |
+[524,10] tajjātinaiva pītena (125a) nīlabhāso 'stu tādṛśaḥ ||104||
+[524,11] naikānekaprakāśaś ca nīleneti yadocyate |
+[524,12] kas tadāstu prakāśārtho dharmamātraṃ yadīṣyate ||105||
+[524,13] dharmirūpād abhinnasya tasya tenaiva sā sthitiḥ |
+[524,14] aikyānaikyaṃ prakāśasya nīlenaivety asiddhatā ||106||
+[524,15] tasyāpi naikyānaikyaṃ ced anekānto 'pi vāñchate |
+[524,16] piṇḍena naikānekaṃ sad vastusad gotvam astu kim ||107||
+[524,17] kartṛsādhanapakṣe 'pi doṣa eva duruddharaḥ |
+[524,18] prakāśamānarūpaṃ hi śūnyaṃ tenātmanā bhavet ||108||
+[524,19] arthāntaraṃ prakāśākhyaṃ yadi sānvayasaṃjñakam |
+[524,20] nīlādibhyo 'tiriktasya na sattāsya phalaṃ na ca ||109||
+[524,21] niranvaye ca hetūnām āśrayāsiddhir atra te |
+[524,22] vyāvṛttimātrasiddhau ca prastute 'nupayogitā ||110||
+[524,23] pratyakṣaprativedyo 'yaṃ prakāśo dharmakāri cet |
+[524,24] pratyakṣagocaro dharmī nīlād anyo na vidyate ||111||
+[525,1] paratvam eva cet sādhyaṃ tat siddhaṃ katham arthyate |
+[525,2] sādhyaṃ tava kim apy astu dharmī kāryas tvadantayā ||112||
+[525,3] pariniṣṭhita evārtho vasturūpo yadā mataḥ |
+[525,4] vyavacchedadvaye niṣṭhānapekṣāyāṃ phalaṃ na vaḥ ||113||
+[525,5] nanu prakāśaḥ sāmānyaṃ dharmi kiṃ bhedaniṣṭhayā |
+[525,6] viśeṣaniṣṭhayā sādhyavidhūteś ca na tacchramaḥ ||114||
+[525,7] sa niṣṭhitaviśeṣo 'pi vivādapadam eṣa yaḥ |
+[525,8] dharmī tadekā vyāvṛttir anyā sādhyaṃ dhvanāv iva ||115||
+[525,9] yukto vyāvṛttimātreṇa sādhyasādhanasaṃsthitiḥ |
+[525,10] dharmirūpaṃ tu bhedena dṛṣṭam evopayujyate ||116||
+[525,11] sāmānyadharmayor eva vyāptiḥ śakyapratītikā |
+[525,12] ayam evam itītthaṃ tu dharmī sarvatra bhedabhāk ||117||
+[525,13] sāmānyāśrayaṇaṃ yatra tatrāvaśyam apekṣate |
+[525,14] viśeṣadarśanaṃ siddhiḥ sāmānyasyaiva nānyathā ||118||
+[525,15] na viśeṣaṃ vinā kvāpi sāmānyasya vyavasthitiḥ |
+[525,16] no ced abandhyātanayavyāvṛtteś ca samānatā ||119||
+[525,17] bhedaḥ sādhyasya dṛṣṭānte hetoḥ pakṣasapakṣayoḥ |
+[525,18] sāmānyasyāpy avaśyopadeśyo dharmī tv idantayā ||120||
+[525,19] vyaktibhedāḥ kṣaṇitvāder apy amī eva saṃmatāḥ |
+[525,20] prasiddhavyaktibhedaś ca śabdo dharmī tathāparaḥ ||121||
+[525,21] aprakāśaparāvṛttis tadvad evātra darśyatām |
+[525,22] idantayā yadi puro darśyetākāra eva saḥ ||122||
+[525,23] tataḥ prakāśaḥ sāmānyaṃ nīlādy evetivādinā |
+[525,24] svīkṛte vivid iṣyante sasvātmād iti dūṣake ||123||
+[526,1] siddhe dharmiṇi sandigdho dharmaḥ sādhanam arhati |
+[526,2] dharmirūpaviśeṣasya niṣṭhāyāṃ tu hato hataḥ ||124||
+[526,3] kṣaṇikatvādir apy evaṃ yadi dharmiṇi niṣṭhite |
+[526,4] hanyeta sādhayet kas taṃ saṃśayārthasya sādhanam ||125||
+[526,5] yena rūpeṇa yan naikaṃ nānekaṃ tena tan na sat |
+[526,6] yathā śātam aśātena prakāśenāsitaṃ tathā ||126||
+[526,7] vidyududdyotisaṃkāśaḥ prakāśaḥ kasyacit kvacit |
+[526,8] tam apekṣya sthiro bāhyaḥ prakāśe 'līkatā tataḥ ||127||
+[526,9] alīkanīlajanane yathā śaktir matā dhiyaḥ |
+[526,10] alīkabodhajanane tathā śaktir na kiṃ bahiḥ ||128||
+[526,11] naikaṃ tvayāpy aniṣṭher ity etad uktaṃ na labhyate |
+[526,12] īdṛksādhanam ajñātvā mamāniṣṭhir yato 'bhavat ||129||
+[526,13] prakāśaḥ kevalo (125b) nāpi kvacit kenacid īkṣitaḥ |
+[526,14] tato 'numānapratyāśā pratyāśaiva hi kevalā ||130||
+[526,15] tenaikānekahāniś cet svenaikānekasaṃbhavaḥ |
+[526,16] tataḥ svena sthitiḥ sādhyā hetvasiddhis tathāpi vaḥ ||131||
+[526,17] viparyayavivakṣā cet yad yad yenātmanā hi sat |
+[526,18] tat tat tenaikānekaṃ vā bhāsaś ca svena sann iti ||132||
+[526,19] nādye dṛṣṭāntasadbhāvo bhāsa eva hi saṃmataḥ |
+[526,20] na pakṣe copasaṃhāro vivādāt prakṛtaṃ na ca ||133||
+[526,21] yo bhramaḥ sarva evāsau dvicandrapratibhāsavat |
+[526,22] satyasaṅgī bhramaś cāyaṃ dvaitābhāsa itītare ||134||
+[526,23] khaṇṭadvayākāratayā janma vā dvaitabhāsanam |
+[526,24] grāhyagrāhakarūpāvasāyau veti vivakṣitam ||135||
+[527,1] atasminn atadākārā vedye sati matir bhramaḥ |
+[527,2] sarvathā vedyahānau tu na bhramo nāma tattvataḥ ||136||
+[527,3] yat kiñcid atathābhūtaṃ tathābhāvena kalpyate |
+[527,4] kīdṛk tasyāparādho 'stu kalpakasya tu yujyate ||137||
+[527,5] kalpako 'pi na kaścic ced bhramo nāma na kaścana |
+[527,6] tan nāsiddhatayā hetur vyavahārād atha bhramaḥ ||138||
+[527,7] vyavahārād avitathaṃ bahir eva kathaṃ bhramaḥ |
+[527,8] abahirvyavahāre tu yadāropas tadā bhramaḥ ||139||
+[527,9] āropātikrame yasmāt tattva eva vyavasthitiḥ |
+[527,10] bādhanād vitathatvena bhramas tad api kiṃ bhramaḥ ||140||
+[527,11] bhāsane 'līkam ity astu bhramatvaṃ vā kathaṃ bhavet |
+[527,12] atasmiṃs tadgrahābhāvād analīkamater iva ||141||
+[527,13] dvicandrapratibhāse 'pi bhramatvaṃ yac ca viśrutam |
+[527,14] dvicandragrāhicittasya tan na candradvayasya tu ||142||
+[527,15] grāhyagrāhakabhāvena kalpite 'ṃśadvaye dhiyaḥ |
+[527,16] grāhakāṃśe pramāṇatvaṃ grāhyāṃśe bhramatā katham ||143||
+[527,17] vedyatve vedakatve ca vyatīte bhāsamātrakam |
+[527,18] bodhakagrastam apy etad asatyaṃ syān na tu bhramaḥ ||144||
+[527,19] vedakābhimatatvena bhramatvaṃ vyāptam iṣyate |
+[527,20] tadvirodhiny aveditve bhramatvaṃ dūrato hatam ||145||
+[527,21] anyathādhyavasāye tu bhramatve nirvikalpakam |
+[527,22] na bhramas tena tenaiva satyasaṅgitvam astu ca ||146||
+[527,23] yad yatrāvasthite 'paiti tat tadbhinnaṃ paṭāmbuvat |
+[527,24] prakāśe 'vasthite 'paiti nīlādīti pare viduḥ ||147||
+[528,1] yad yatrāvasthite 'paiti tat tadbhinnaṃ paṭāmbuvat |
+[528,2] gotve cāvasthite 'paiti citrādīty api gīyatām ||148||
+[528,3] atha gotvam ago 'pohas tat taddhaumo 'nvayī katham |
+[528,4] bhāso 'pi bhāsināṃ dharmo nīlādīnāṃ kim anvayī ||149||
+[528,5] || iti sākārasaṃgrahe 
+[528,6] nirākārasādhakapramāṇābhāvanirṇayaḥ prathamaḥ ||
+ 
