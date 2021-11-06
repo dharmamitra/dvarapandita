@@ -15,7 +15,7 @@ import json
 import faiss
 import itertools
 #bucket_path = sys.argv[1]
-bucket_path = "/mnt/output/skt/data/folder0"
+bucket_path = "../../output"
 #lang = sys.argv[3]
 
 words = []
@@ -91,7 +91,8 @@ class calculate_all:
                 os.system("pigz \"" + self.path + filename + "_results.npy\"")
             
         def create_filelist(filepath,vector_path):
-            filelist =  glob.glob(filepath + '/**/*vectors.npy', recursive=True)
+            filelist =  glob.glob(filepath + '*vectors.npy', recursive=True)
+            print("FL",filelist)
             return_list = []
             for current_file in filelist:
                 #print(current_file)
@@ -144,8 +145,7 @@ def process_folder(path,lang):
     else:
         index = faiss.read_index(path + "vectors.idx")
         calculation = calculate_all(tibwords,index,path,vector_path,lang)
-        for directory in os.listdir(vector_path):
-            calculation.process_folder(vector_path + directory,path)
+        calculation.process_folder(vector_path,path)
 
 process_folder(bucket_path + "/", lang)
         

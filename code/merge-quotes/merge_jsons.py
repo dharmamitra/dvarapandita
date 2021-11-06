@@ -5,9 +5,23 @@ import gzip
 import os
 import multiprocessing
 from merge_quotes_tools import add_co_value
-from postprocess_quotes import postprocess_quotes_chn
+from postprocess_quotes import test_quote_chn
 
-lang = "skt"
+lang = "chn"
+min_length_chn = 7
+
+
+def filter_chinese(quote):
+    if quote['par_length'] >= min_length_chn and quote['root_length'] >= min_length_chn:
+        if test_quote_chn(quote):
+            return True 
+    if (quote['par_length'] >= 5 and quote['root_length'] >= 5) and ("　　" in quote['root_segtext'][0] or "　　" in quote['par_segtext'][0]) :
+        if test_quote_chn(quote):
+            return True 
+
+    
+
+
 
 def process_file(filename):
     list_of_filenames = []
@@ -41,7 +55,9 @@ def process_file(filename):
             par_segnr = quote['par_segnr'][0]
             current_filename = par_segnr.split(':')[0]             
             if current_filename != main_filename:
-                new_quotes.append(quote)        
+                if lang == "chn":
+                    if filter_chinese(quote):
+                        new_quotes.append(quote)        
                 # for quote in tqdm(quotes):
                 #     par_segnr = quote['par_segnr'][0]
                 #     current_par_category = par_segnr[0:3]
@@ -63,6 +79,6 @@ def process_all(tab_folder):
     quote_results = pool.map(process_file, filenames)
     pool.close()
 #process_all(sys.argv[1])
-process_all("/mnt/output/skt/json-split/")                
+process_all("/mnt/output/chn/json-split2/")                
 # test = gzip.open("/mnt/output/tib/json_unfiltered/K10acip-k_lha_sa-054-004-9.json.gz",'rt')
 # segments, quotes = json.load(test)

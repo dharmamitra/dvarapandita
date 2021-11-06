@@ -106,14 +106,14 @@ def process_all(folder,lang=''):
             search_index.extend(process_file(folder+filename,lang))
     return search_index
 
-# search_index.extend(process_all(skt_folder))
-# with open(search_index_path_sanskrit, 'w') as outfile:        
-#      json.dump(search_index, outfile,indent=4,ensure_ascii=False)
-
-search_intex = []
-search_index.extend(process_all(pli_folder))
-with open(search_index_path_pali, 'w') as outfile:        
+search_index.extend(process_all(skt_folder))
+with open(search_index_path_sanskrit, 'w') as outfile:        
      json.dump(search_index, outfile,indent=4,ensure_ascii=False)
+
+# search_intex = []
+# search_index.extend(process_all(pli_folder))
+# with open(search_index_path_pali, 'w') as outfile:        
+#      json.dump(search_index, outfile,indent=4,ensure_ascii=False)
 
      
 # search_index = []

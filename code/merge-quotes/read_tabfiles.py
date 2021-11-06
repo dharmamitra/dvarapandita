@@ -9,7 +9,6 @@ import os
 import itertools
 from quotes_constants import *
 from pathlib import Path
-from filter_prajnaparamita import test_category_pp
 from merge_quotes_algo import merge_quotes,get_data_from_quote
 
 
@@ -49,7 +48,7 @@ def load_tabfiles(file_words_path,word_result,windowsize,threshold,bucket_number
     print("BUCKET NUMBER",bucket_number)
     if bucket_number == 11:
         while count < 10:
-            current_filepath = main_path + "folder" + str(count) + "/" + main_filename + ".tab.gz"
+            current_filepath = main_path.replace('_words.p','.tab')
             quote_results.append(process_tabfile([current_filepath, word_result, windowsize,threshold]))
             filepath_list.append(current_filepath)
             count += 1
@@ -65,7 +64,7 @@ def load_tabfiles(file_words_path,word_result,windowsize,threshold,bucket_number
             root_segtext = result[0]
             quotes.extend(result[1])
     else:
-        current_filepath = main_path + "folder" + str(bucket_number) + "/" + main_filename + ".tab.gz"
+        current_filepath = main_path.replace('_words.p','.tab')
         #current_filepath = main_filename + ".tab.gz" # uncomment this for test runs on the _extract folder
         root_segtext,quotes = process_tabfile([current_filepath, word_result, windowsize,threshold])
         print("DONE PROCESSING TABFILE")
@@ -76,7 +75,7 @@ def process_tabfile(parameters):
     current_filepath,file_words,windowsize,threshold = parameters
     print("PROCESSING TABFILE", current_filepath)
     result_lines = []
-    with gzip.open(current_filepath,'rt') as current_file:
+    with open(current_filepath,'rt') as current_file:
         count = 0 
         for line in current_file:
             current_results = line.rstrip('\n').split('\t')
@@ -86,10 +85,6 @@ def process_tabfile(parameters):
     root_segtext, quotes = transform_lines_to_list(result_lines,threshold)
     del result_lines
     quotes = merge_quotes(quotes,windowsize)
-    for quote in quotes:
-        if quote['head_position_beg'] == 3110 and quote['quote_position_beg'] == 1413012:
-            print(quote)            
-
     return [root_segtext,quotes]
 
 
@@ -109,36 +104,33 @@ def transform_lines_to_list(results,threshold):
                 quote_list = quote.split("$")
                 add_flag = 0
                 quote_filename = quote_list[0].replace("#","_")
-                if head_filename != quote_filename:
-                    # this step is to filter out recursive pp-quotes, disable when not needed
-                    #if test_category_pp(head_filename,quote_filename):
-                    quote_position = int(quote_list[1])
-                    quote_segnr = quote_list[2].split(';')
-                    quote_score = float(quote_list[3])
-                    if quote_filename == head_filename:                        
-                        add_flag = 0                            
-                    if quote_score < threshold:
-                        add_flag = 1                   
-                    if add_flag == 1:
-                        quote = {
-                            "filename": quote_filename,
-                            "quote_score": [quote_score],                            
-                            "quote_position_beg": quote_position,
-                            "quote_position_last": quote_position,
-                            "head_position_beg": head_position,
-                            "head_position_last": head_position,
-                            "quote_offset_beg": 0,
-                            "quote_offset_end": 0,
-                            "head_offset_beg": 0,
-                            "head_offset_end": 0,
-                            "quote_segnr":quote_segnr,
-                            "position_pairs":[[quote_position,head_position]],
-                            "children":[],
-                            "head_segnr":head_segments}
-                        if not quote_filename in quotes:
-                            quotes[quote_filename] = [quote]
-                        else:
-                            quotes[quote_filename].append(quote)
+                quote_position = int(quote_list[1])
+                quote_segnr = quote_list[2].split(';')
+                quote_score = float(quote_list[3])
+                if quote_filename == head_filename:                        
+                    add_flag = 1 # modify this to include or exclude quotations from the same source/target                            
+                if quote_score < threshold:
+                    add_flag = 1                   
+                if add_flag == 1:
+                    quote = {
+                        "filename": quote_filename,
+                        "quote_score": [quote_score],                            
+                        "quote_position_beg": quote_position,
+                        "quote_position_last": quote_position,
+                        "head_position_beg": head_position,
+                        "head_position_last": head_position,
+                        "quote_offset_beg": 0,
+                        "quote_offset_end": 0,
+                        "head_offset_beg": 0,
+                        "head_offset_end": 0,
+                        "quote_segnr":quote_segnr,
+                        "position_pairs":[[quote_position,head_position]],
+                        "children":[],
+                        "head_segnr":head_segments}
+                    if not quote_filename in quotes:
+                        quotes[quote_filename] = [quote]
+                    else:
+                        quotes[quote_filename].append(quote)
         if head_segments[0] != last_segments:
             root_segtext.append({
                 "head_filename":head_filename.replace("#","_"),

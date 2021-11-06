@@ -1,8 +1,8 @@
-MAIN_FOLDER="/mnt/code/calculate-quotes/"
+MAIN_FOLDER="../"
 #MAIN_FOLDER="/home/ftsx015/code/calculate-quotes/"
 
 #WORK_FOLDER="/work/ftsx015/"
-WORK_FOLDER="/mnt/output/"
+WORK_FOLDER="../../"
 
 
 TIBETAN_WINDOWSIZE = 7
@@ -20,10 +20,7 @@ TIBETAN_MIN_LENGTH = 11
 CHINESE_MIN_LENGTH = 5
 PALI_MIN_LENGTH = 30
 
-
-
-PALI_TSV_DATA_PATH = "/home/basti/data/pali/tsv/"
-SANSKRIT_TSV_DATA_PATH = "/home/basti/data/segmented-sanskrit/tsv/"
+SANSKRIT_TSV_DATA_PATH = "../../data-jna/"
 
 TIBETAN_TSV_DATA_PATH = WORK_FOLDER + "tib/tsv/"
 TIBETAN_TSV_DATA_PATH = "/home/basti/data/tibetan/tsv-extract/"
@@ -31,18 +28,15 @@ CHINESE_TSV_DATA_PATH = "/home/basti/data/chinese/segmented-chinese/tsv/"
 #CHINESE_TSV_DATA_PATH = WORK_FOLDER +  "chn/tsv/"
 
 
-SANSKRIT_SEGMENT_DICT_PATH = MAIN_FOLDER + "data/segments/sanskrit_segments.json.gz"
+SANSKRIT_SEGMENT_DICT_PATH = MAIN_FOLDER + "data/sanskrit_segments.json"
 TIBETAN_SEGMENT_DICT_PATH = MAIN_FOLDER + "data/segments/tibetan_segments.json.gz"
 CHINESE_SEGMENT_DICT_PATH = MAIN_FOLDER + "data/segments/chinese_segments.json.gz"
 PALI_SEGMENT_DICT_PATH = MAIN_FOLDER + "data/segments/pali_segments.json.gz"
 
 
-SANSKRIT_DATA_PATH = WORK_FOLDER + "skt/data/"
-TIBETAN_DATA_PATH = WORK_FOLDER + "tib/data/"
-CHINESE_DATA_PATH = WORK_FOLDER + "chn/data/"
-PALI_DATA_PATH = WORK_FOLDER + "pli/data/"
+SANSKRIT_DATA_PATH = WORK_FOLDER + "output/"
 
-SANSKRIT_STOPWORDS = MAIN_FOLDER + "data/skt_stop.txt"
+SANSKRIT_STOPWORDS = "../data/skt_stop.txt"
 TIBETAN_STOPWORDS = MAIN_FOLDER + "data/tib_stop.txt"
 TIBETAN_STOPWORDS_REDUCED = MAIN_FOLDER + "data/tib_stop_reduced.txt"
 CHINESE_STOPWORDS = MAIN_FOLDER + "data/chn_stop.txt"

@@ -11,7 +11,7 @@ import multiprocessing
 import itertools
 from merge_quotes_algo import merge_quotes,get_data_from_quote
 from smith_waterman import get_aligned_offsets
-from postprocess_quotes import postprocess_quotes_tib,test_pattern
+#from postprocess_quotes import postprocess_quotes_tib,test_pattern
 from get_segment_dic import get_segment_dic,extend_dic_by_tsv
 from merge_quotes_tools import remove_punc,normalized_levenshtein,create_json_filename
 from read_tabfiles import load_file 
@@ -41,8 +41,7 @@ segment_dic_path = ''
 #tab_folder = sys.argv[1]
 
 max_results = 50000 # number of max results per segment
-#tsv_path = '/mnt/code/calculate-quotes/test/edition_etext_7_4.tsv'
-tsv_path = ''
+tsv_path = '../../data-akbh/T07vakobhau.tsv'
 #tab_filename = ''
 tab_filename = '/mnt/output/tib/tab/T06TD4064E.tab.gz'
 
@@ -74,7 +73,7 @@ if lang=='chn':
     threshold = 0.004#CHINESE_THRESHOLD
 
 
-segment_dic,segment_keys,segment_key_numbers,natural_keys = get_segment_dic(segment_dic_path,tsv_path)
+segment_dic,segment_keys,segment_key_numbers,natural_keys = get_segment_dic(tsv_path)
 
 #tab_folder = output_folder + "tab/"
 
@@ -393,7 +392,6 @@ def process_file(args):
     print("LOADED file")
     global root_segtext_json
     root_segtext_json = create_root_json(root_segtext)
-    return
     root_segtext = list({v['segnr']:v for v in root_segtext_json}.values())    
     print("CREATED ROOT JSON")
     chunksize = 1000
@@ -428,6 +426,7 @@ def process_file(args):
     print_quotes(return_quotes)
     json_str = json.dumps([root_segtext,return_quotes],indent=4,ensure_ascii=False) + "\n"               # 2. string (i.e. JSON)
     json_bytes = json_str.encode('utf-8')            # 3. bytes (i.e. UTF-8)
+    print(filename_json)
     with gzip.GzipFile(filename_json, 'w') as fout:   # 4. gzip
         fout.write(json_bytes)  
     
@@ -440,9 +439,9 @@ file_list = []
 def process_all(tab_folder,bucket_number=11):
     for file in tqdm(os.listdir(tab_folder)):
         filename = os.fsdecode(file)
-        if filename.endswith('words.p') and "stht" in filename: #not os.path.isfile(tab_folder + "/" + filename.replace("_words.p","") +".json.gz") and not os.path.isfile(tab_folder + "/" + filename.replace("_words.p","-" + str(bucket_number) + "") +".json.gz") and not "4104" in filename:
+        if filename.endswith('words.p') and not os.path.isfile(tab_folder + "/" + filename.replace("_words.p","") +".json.gz") and not os.path.isfile(tab_folder + "/" + filename.replace("_words.p","-" + str(bucket_number) + "") +".json.gz") and not "4104" in filename:
             current_filesize = Path(tab_folder+ "/" +filename).stat().st_size
-            if current_filesize > 0:
+            if current_filesize > 0 and not "D0008-5" in filename:
                 #file_list.append([tab_folder+ "/" +filename,bucket_number])
                 process_file([tab_folder+ "/" +filename,bucket_number])
         elif filename.endswith('words.p') and os.path.isfile(tab_folder + "/" + filename.replace("_words.p","") +".json.gz") and not os.path.isfile(tab_folder + "/" + filename.replace("_words.p","-" + str(bucket_number) + "") +".json.gz") and not "4104" in filename:
@@ -458,7 +457,7 @@ def process_all(tab_folder,bucket_number=11):
 
 #process_all("/mnt/output/tib/data/folder2",2)
 #path = sys.argv[1]
-path = "/mnt/output/skt/data/folder0"
+path = "../../output/"
 
 for c in range(0,1):
     process_all(path,c)
