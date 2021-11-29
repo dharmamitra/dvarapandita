@@ -12,7 +12,7 @@ import itertools
 from merge_quotes_algo import merge_quotes,get_data_from_quote
 from smith_waterman import get_aligned_offsets
 #from postprocess_quotes import postprocess_quotes_tib,test_pattern
-from get_segment_dic import get_segment_dic,extend_dic_by_tsv
+from get_segment_dic import get_segment_dic
 from merge_quotes_tools import remove_punc,normalized_levenshtein,create_json_filename
 from read_tabfiles import load_file 
 from quotes_constants import *
@@ -41,7 +41,7 @@ segment_dic_path = ''
 #tab_folder = sys.argv[1]
 
 max_results = 50000 # number of max results per segment
-tsv_path = '../../data-akbh/T07vakobhau.tsv'
+tsv_path = '../../data-andrey/'
 #tab_filename = ''
 tab_filename = '/mnt/output/tib/tab/T06TD4064E.tab.gz'
 
@@ -457,7 +457,7 @@ def process_all(tab_folder,bucket_number=11):
 
 #process_all("/mnt/output/tib/data/folder2",2)
 #path = sys.argv[1]
-path = "../../output/"
+path = "../../output-andrey"
 
 for c in range(0,1):
     process_all(path,c)

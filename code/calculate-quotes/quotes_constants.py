@@ -10,7 +10,7 @@ SANSKRIT_WINDOWSIZE = 6
 CHINESE_WINDOWSIZE = 6
 PALI_WINDOWSIZE = 5
 
-SANSKRIT_THRESHOLD = 0.2
+SANSKRIT_THRESHOLD = 0.03
 TIBETAN_THRESHOLD = 0.02 # war mal 0.025, das hat gut funktioniert...
 CHINESE_THRESHOLD = 0.01
 PALI_THRESHOLD = 0.01
@@ -34,7 +34,7 @@ CHINESE_SEGMENT_DICT_PATH = MAIN_FOLDER + "data/segments/chinese_segments.json.g
 PALI_SEGMENT_DICT_PATH = MAIN_FOLDER + "data/segments/pali_segments.json.gz"
 
 
-SANSKRIT_DATA_PATH = WORK_FOLDER + "output/"
+SANSKRIT_DATA_PATH = WORK_FOLDER + "output-jna/"
 
 SANSKRIT_STOPWORDS = "../data/skt_stop.txt"
 TIBETAN_STOPWORDS = MAIN_FOLDER + "data/tib_stop.txt"

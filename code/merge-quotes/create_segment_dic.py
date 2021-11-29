@@ -19,7 +19,7 @@ skt_replaces_dic = {}
 
 if lang == 'skt':
     segment_dic_path = '../data/sanskrit_segments.json'
-    folder = '../../data-akbh/'
+    folder = '../../data-andrey/'
     r = open('gretil-replaces.tab','r')
     for line in r:
         headword = line.split('\t')[0]

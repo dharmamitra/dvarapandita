@@ -16,7 +16,7 @@ chunk_size = 3000
 #folderpath = sys.argv[1] + "/"
 #lang = sys.argv[2]
 
-folderpath = "../../output/"
+folderpath = "../../output-andrey/"
 lang = "skt"
 
 # if lang == "tib":

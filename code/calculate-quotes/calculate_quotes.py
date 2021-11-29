@@ -15,7 +15,7 @@ import json
 import faiss
 import itertools
 #bucket_path = sys.argv[1]
-bucket_path = "../../output"
+bucket_path = "../../output-jna/folder0"
 #lang = sys.argv[3]
 
 words = []

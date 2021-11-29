@@ -242,6 +242,13 @@ def tib_sentence_similarity(senta,sentb):
     b_vec = np.average(tib_get_vectors_fast(sentb),axis=0).reshape(1, -1)
     return cosine_similarity(a_vec,b_vec)[0][0]
 
+
+def vector_similarity(senta,sentb):
+    a_vec = np.average(skt_get_vectors_fast(senta),axis=0).reshape(1, -1)
+    b_vec = np.average(skt_get_vectors_fast(sentb),axis=0).reshape(1, -1)
+    return cosine_similarity(a_vec,b_vec)[0][0]
+
+
 def tib_sentence_similarity_hier(senta,sentb):
     a_vec = vector_pool_hier(tib_get_vectors_fast(senta)).reshape(1, -1)
     b_vec = vector_pool_hier(tib_get_vectors_fast(sentb)).reshape(1, -1)
