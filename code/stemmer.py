@@ -49,5 +49,5 @@ def run_stemmer(path,lang,num_of_threads):
     pool = multiprocessing.Pool(processes=num_of_threads)
     quote_results = pool.map(stem_file, list_of_paths)
     pool.close()
-
+# remove this once tasks/Makefile is working
 run_stemmer("../test/","tib",1)    
