@@ -56,3 +56,5 @@ PUNC = "　 ！？｡。＂＃＄％＆＇（）＊＋，－／：；＜＝＞�
 LIST_OF_PP_CATEGORIES = ["K02","K03","K04","K05","K06","K07","T03"]
 
 TIBETAN_STEMFILE="../data/verbinator_tabfile.txt"
+
+TEXT_CHUNKSIZE=2000

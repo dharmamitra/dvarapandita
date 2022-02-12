@@ -3,8 +3,11 @@ import pandas as pd
 import sentencepiece as spm
 import ctranslate2
 import re
+import numpy as np
 import multiprocessing
 from utils.stemming import *
+from utils.constants import *
+
 
 def stem_file(data):
     path,lang = data
@@ -37,7 +40,9 @@ def stem_file(data):
         text_df['stemmed'] = \
             transres_exploded.groupby(chunk_exploded.index).apply(lambda lists:
         list(itertools.chain(*lists)) )
-    text_df.to_csv(path_short + ".tsv", sep='\t')
+    # write tsv files in chunks     
+    for num,chunk in text_df.groupby(np.arange(len(text_df))//TEXT_CHUNKSIZE):
+        chunk.to_csv(path_short + "-{}.tsv".format(num), sep='\t',index=False, chunksize=100)
 
 def run_stemmer(path,lang,num_of_threads):
     list_of_paths = []
@@ -50,4 +55,4 @@ def run_stemmer(path,lang,num_of_threads):
     quote_results = pool.map(stem_file, list_of_paths)
     pool.close()
 # remove this once tasks/Makefile is working
-run_stemmer("../test/","tib",1)    
+run_stemmer("/home/basti/data/tibetan/txt-cropped/","tib",16)    

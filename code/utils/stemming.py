@@ -86,7 +86,7 @@ def create_segnr(folio,count,filepath):
     if "NK" in filename or "NG" in filename or len(folio) == 0:
         return filename + ":" + str(count)
     else:
-        return filename + ":" + folio + '-' + str(count)\
+        return filename + ":" + folio.lower() + '-' + str(count)
 
 
 def get_folio_number(line):
@@ -120,7 +120,7 @@ def text2list(text_path,lang):
                     
             line = prefix + line  #.strip()
             if not re.search(r"[a-zA-Z]", line):
-                prefix += line + " "
+                prefix += line.strip() + " "
             else:
                 prefix = ""
                 line = line.strip()
