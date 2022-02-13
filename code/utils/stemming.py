@@ -1,7 +1,9 @@
+import sentencepiece as spm
+import ctranslate2
 from xliterator import unicode_to_internal_transliteration
 import re
 
-TIBETAN_STEMFILE="data/verbinator_tabfile.txt"
+TIBETAN_STEMFILE="../data/verbinator_tabfile.txt"
 
 
 
@@ -42,11 +44,16 @@ def prepare_tib(string):
     string = string.replace("+"," ")
     for word in string.split():
         if not "/" in word and not "@" in word and re.search("[a-zA-Z]",word):
-            word_stripped = word.split("'")[0]
-            result += multireplace(word_stripped,tib_stems) + " "
+            # todo: Orna fragen wegen den genauen Apostroph-handling hier?
+            word_stripped = word.replace("'i", "")
+            word_stripped = word.replace("'o", "")
+            # word_stripped = word.replace("'u", "")
+            word_stripped = word.replace("'ang", "")
+            word_stripped = word.replace("'am", "")            
+            result += multireplace(word_stripped,tib_stems).replace("'","") + " "
     return result
 
-def prepare(string,lang):
+def cleaned_line_preparation(string,lang):
     if lang == "skt":
         string = prepare_skt(string)
     elif lang == "tib":
@@ -78,65 +85,92 @@ def transres2stemlist(transres):
         stemlist.append(stem)
     return stemlist
 
-def create_segnr(folio,count,filepath):
+def create_fname_lnum(folio,count,filepath):
     # include folio numbers for KG/TG, not for other files
     filename = re.sub(".*/","",filepath)
     filename = re.sub("\..*","",filename)
     filename = filename.replace(":","-") 
     if "NK" in filename or "NG" in filename or len(folio) == 0:
-        return filename + ":" + str(count)
+        return filename,  str(count)
     else:
-        return filename + ":" + folio.lower() + '-' + str(count)
+        return filename, folio.lower() + '-' + str(count)
 
 
-def get_folio_number(line):
-    folio_number = ""
-    m =  re.search("@([0-9]+[abAB])",line)
-    if m:
-        folio_number = m.group(1)
-        return folio_number
-    # this is for NyGB
-    else:
-        m =  re.search("([0-9])+[^a-zA-Z@]+@",line)
-        if m:
-            folio_number = m.group(1)
-            return folio_number.lower()
+def get_folio_number(line, lang, text_path):
+    # For Tibetan, we extract the folio numbers from the lines
+    if lang == "tib" and not "NK" in text_path and not "NG" in text_path:
+        match =  re.search("@([0-9]+[abAB])",line)
+        if match:
+            return match.group(1)
+        # this is for NyGB
+        else:
+            match =  re.search("([0-9])+[^a-zA-Z@]+@",line)
+            if match:
+                return match.group(1)
 
-def text2list(text_path,lang):
-    lines = []
+def orig_line_preparation(line, lang, text_path):    
+    if lang == "tib":
+        line = line.lower()
+        if "T" in text_path:
+            line = line.replace("ts","tsh")
+            line = line.replace("tz","ts")
+        line = line.replace(',','/')
+        line = line.replace('|','/')
+    return line.strip()
+
+            
+def text2lists(text_path,lang):
+    orig_lines = []
     cleaned_lines = []
-    segmentnrs = []
+    filenames = []
+    line_numbers = []
     folio = ""
     count = 0 
     with open(text_path,"r") as text:
         prefix = ""
-        for line in text:
-            # For Tibetan, we extract the folio numbers from the lines
-            if lang == "tib":
-                new_folio = get_folio_number(line)
-                if new_folio and not"NK" in text_path and not "NG" in text_path:
+        for orig_line in text:
+            orig_line = prefix + orig_line
+            if not re.search(r"[a-zA-Z]", orig_line):
+                prefix += orig_line.strip() + " "
+            else:                
+                new_folio = get_folio_number(orig_line, lang, text_path)
+                if new_folio:
                     folio = new_folio
                     count = 0
-                    
-            line = prefix + line  #.strip()
-            if not re.search(r"[a-zA-Z]", line):
-                prefix += line.strip() + " "
-            else:
                 prefix = ""
-                line = line.strip()
-                # a bit of tibetan-specific preprocessing
-                if lang == "tib":
-                    line = line.lower()
-                    if "T" in text_path:
-                        line = line.replace("ts","tsh")
-                        line = line.replace("tz","ts")
-                    line = line.replace(',','/')
-                    line = line.replace('|','/')
-                segmentnr = create_segnr(folio,count,text_path)
-                cleaned_line = prepare(line,lang)
-                lines.append(line)
+                orig_line = orig_line_preparation(orig_line, lang, text_path)
+                filename,line_number = create_fname_lnum(folio, count, text_path)
+                
+                cleaned_line = cleaned_line_preparation(orig_line,lang)
+                orig_lines.append(orig_line)
                 cleaned_lines.append(cleaned_line)
-                segmentnrs.append(segmentnr)
+                filenames.append(filename)
+                line_numbers.append(line_number)                
                 count += 1
-    return [segmentnrs,lines,cleaned_lines]
+                
+    return [filenames, line_numbers, orig_lines,cleaned_lines]
         
+def skt_stemming(text_df):
+    chunk_lists = text_df['stemmed'].apply(lambda line: chunk_line(line), 120)
+    chunk_exploded = chunk_lists.explode()
+    chunk_list = chunk_exploded.tolist()
+    tokenizer = \
+        spm.SentencePieceProcessor(model_file = location + "spm/skt-tag8k.model")
+    tonenized_chunk_list = tokenizer.encode(chunk_list, out_type=str)
+    translator = ctranslate2.Translator(location + "model/",
+                                    intra_threads=4,
+                                    device='cpu')
+    transres_exploded = \
+        pd.Series(translator.translate_batch(tonenized_chunk_list,
+            max_batch_size=548),
+            index = chunk_exploded.index)
+
+    # pd.Series.apply: https://towardsdatascience.com/avoiding-apply-ing-yourself-in-pandas-a6ade4569b7f
+    transres_exploded = transres_exploded.apply(lambda line:
+        tokenizer.decode(line[0]['tokens']) )
+    # leave only the stems
+    transres_exploded = transres_exploded.apply(transres2stemlist)
+    text_df['stemmed'] = \
+        transres_exploded.groupby(chunk_exploded.index).apply(lambda lists:
+    list(itertools.chain(*lists)) )    
+    return text_df

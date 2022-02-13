@@ -1,0 +1,55 @@
+from random import randint
+from utils.vectorizing import *
+from utils.constants import *
+import multiprocessing
+import os
+import pandas as pd 
+import shutil
+
+def create_vec_df(file_df,lang):
+    windowsize = WINDOWSIZE[lang]
+    vector_model = get_vector_model(lang)
+    file_df['stemmed'] = file_df['stemmed'].apply(lambda line: line.split())
+    vec_df = file_df.explode("stemmed")
+    vec_df['weights'] = vec_df['stemmed'].apply(lambda word: get_weight(word,lang))
+    vec_df['vectors'] = vec_df['stemmed'].apply(lambda word:
+        get_vector(word,vector_model))
+    vector_list = vec_df['vectors'].tolist()
+    weight_list = vec_df['weights'].tolist()
+    vec_df['sumvectors'] = \
+        get_sumvectors(vector_list, weight_list, windowsize)
+    return vec_df
+
+
+def create_vectorfile(data):    
+    tsv_path,out_path,lang,buckets = data
+    print("NOW PROCESSING",tsv_path)
+
+    filename = os.path.basename(tsv_path).split('.')[0]
+    file_df = pd.read_csv(tsv_path, sep='\t') 
+    vec_df = create_vec_df(file_df,lang)
+    
+
+    bucket_number = randint(1,buckets)
+    bucket_path = out_path + "folder" + str(bucket_number)
+
+    if not os.path.isdir(bucket_path):
+        os.mkdir(bucket_path)
+    vec_df.to_pickle(bucket_path + "/" + filename + ".p")
+    
+
+def create_vectors(tsv_path, out_path, bucket_num, lang, threads):
+    list_of_paths = []
+    # make sure the buckets are clean
+    shutil.rmtree(out_path)
+    os.mkdir(out_path)
+    for cfile in os.listdir(tsv_path):
+        filename = os.fsdecode(cfile)
+        # make sure we only read tsv-files
+        if ".tsv" in filename:
+            list_of_paths.append([tsv_path+filename, out_path, lang, bucket_num])
+    pool = multiprocessing.Pool(processes=threads)
+    quote_results = pool.map(create_vectorfile, list_of_paths)
+    pool.close()
+
+

@@ -1,55 +1,26 @@
-MAIN_FOLDER="/mnt/code/calculate-quotes/"
-#MAIN_FOLDER="/home/ftsx015/code/calculate-quotes/"
+LANGS = ["skt","tib","pli","chn"]
 
-#WORK_FOLDER="/work/ftsx015/"
-WORK_FOLDER="/mnt/output/"
+WINDOWSIZE = {"skt": 6,
+              "tib": 7,
+              "chn": 6,
+              "pli": 5 }
 
+THRESHOLD = {"skt": 0.03,
+              "tib": 0.02,
+              "chn": 0.01,
+              "pli": 0.01 }
 
-TIBETAN_WINDOWSIZE = 7
-SANSKRIT_WINDOWSIZE = 6
-CHINESE_WINDOWSIZE = 6
-PALI_WINDOWSIZE = 5
-
-SANSKRIT_THRESHOLD = 0.03
-TIBETAN_THRESHOLD = 0.02 # war mal 0.025, das hat gut funktioniert...
-CHINESE_THRESHOLD = 0.01
-PALI_THRESHOLD = 0.01
-
-SANSKRIT_MIN_LENGTH = 25
-TIBETAN_MIN_LENGTH = 11
-CHINESE_MIN_LENGTH = 5
-PALI_MIN_LENGTH = 30
-
-
-
-PALI_TSV_DATA_PATH = "/home/basti/data/pali/tsv/"
-SANSKRIT_TSV_DATA_PATH = "/home/basti/data/sanskrit/tsv/"
-
-TIBETAN_TSV_DATA_PATH = WORK_FOLDER + "tib/tsv/"
-TIBETAN_TSV_DATA_PATH = "/home/basti/data/tibetan/tsv-extract/"
-CHINESE_TSV_DATA_PATH = "/home/basti/data/chinese/segmented-chinese/tsv-extract/"
-#CHINESE_TSV_DATA_PATH = WORK_FOLDER +  "chn/tsv/"
-
-
-SANSKRIT_SEGMENT_DICT_PATH = MAIN_FOLDER + "data/segments/sanskrit_segments.json.gz"
-TIBETAN_SEGMENT_DICT_PATH = MAIN_FOLDER + "data/segments/tibetan_segments.json.gz"
-CHINESE_SEGMENT_DICT_PATH = MAIN_FOLDER + "data/segments/chinese_segments.json.gz"
-PALI_SEGMENT_DICT_PATH = MAIN_FOLDER + "data/segments/pali_segments.json.gz"
-
-
-SANSKRIT_DATA_PATH = WORK_FOLDER + "skt/data/"
-TIBETAN_DATA_PATH = WORK_FOLDER + "tib/data/"
-CHINESE_DATA_PATH = WORK_FOLDER + "chn/data/"
-PALI_DATA_PATH = WORK_FOLDER + "pli/data/"
-
-SANSKRIT_STOPWORDS = MAIN_FOLDER + "data/skt_stop.txt"
-TIBETAN_STOPWORDS = MAIN_FOLDER + "data/tib_stop.txt"
-TIBETAN_STOPWORDS_REDUCED = MAIN_FOLDER + "data/tib_stop_reduced.txt"
-CHINESE_STOPWORDS = MAIN_FOLDER + "data/chn_stop.txt"
-PALI_STOPWORDS = MAIN_FOLDER + "data/pali_stop.txt"
-
+MIN_LENGTH = {"skt": 25,
+              "tib": 11,
+              "chn": 5,
+              "pli": 30 }
 
 QUERY_DEPTH = 100
+
+TEXT_CHUNKSIZE=2000
+
+STOPWORDS_PATH = "ref/"
+VECTOR_PATH = "ref/"
 
 PUNC = "　 ！？｡。＂＃＄％＆＇（）＊＋，－／：；＜＝＞＠［＼］＾＿｀｛｜｝～｟｠｢｣､、〃》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟〰〾〿–—‘’‛“”„‟…‧﹏./.|*_"
 
@@ -57,4 +28,6 @@ LIST_OF_PP_CATEGORIES = ["K02","K03","K04","K05","K06","K07","T03"]
 
 TIBETAN_STEMFILE="../data/verbinator_tabfile.txt"
 
-TEXT_CHUNKSIZE=2000
+
+
+

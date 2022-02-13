@@ -1,21 +1,13 @@
 from invoke import task
 
 from stemmer import run_stemmer 
-
+from create_vectors import create_vectors
 
 
 @task
-def stem_skt(path):
-    run_stemmer(path, "skt",num_of_threads=1)
+def stem(c, path, lang, threads=1):
+    run_stemmer(path, lang,num_of_threads=threads)    
+
+# def create_vectorfiles(c, tsv_path, out_path, bucket_num=1, lang, threads=1):
+#     create_vectors(tsv_path, out_path, bucket_num, lang, threads)
     
-@task
-def stem_tib(path):
-    run_stemmer(path, "tib",num_of_threads=1)
-
-@task
-def stem_chn(path):
-    run_stemmer(path, "chn",num_of_threads=1)
-
-@task
-def stem_pli(path):
-    run_stemmer(path, "pli",num_of_threads=1)
