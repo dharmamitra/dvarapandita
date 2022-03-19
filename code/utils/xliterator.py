@@ -4,7 +4,7 @@
 This module takes care of transliteration.
 """
 import sys, re, os
-
+import codecs
 SEPARATOR_PRIMARY=";"
 
 class Xlator(dict): # Xlator is initialized through a mapping
@@ -504,7 +504,97 @@ DICT_UNI_SL1 = {'ph':'P','bh':'B','ḍh':'Q','th':'T',"Th":'T','ṭh':'W','ch':'
 	'ñ':'Y','Ñ':'Y','Ṭ':'w','ḍ':'q','Ḍ':'q',\
 	'ṇ':'R','Ṇ':'R','ś':'S','Ś':'S','ṣ':'z','Ṣ':'z','ṭ':'w',
 	} 
+UNICODE_INTERN = [
+        (u'ā',  'A'),
+        (u'ī',  'I'),
+        (u'ū',  'U'),
+        (u'ṛ',  'R'),
+        (u'ṝ',  'L'), # ??
+        (u'ḷ',  '?'),
+        (u'ḹ',  '?'),
+        (u'ai', 'E'),
+        (u'au', 'O'),
+        # gutturals
+            (u'kh', 'K'),
+        (u'gh', 'G'),
+        (u'ṅ',  'F'),
+        # palatals
+            (u'ch', 'C'),
+        (u'jh', 'J'),
+        (u'ñ',  'Q'),
+        # retroflexes
+            (u'ṭh', 'W'),
+        (u'ṭ',  'w'),
+        (u'ḍh', 'X'),
+        (u'ḍ',  'X'),
+        (u'ṇ',  'N'),
+        # dentals
+            (u'th', 'T'),
+        (u'dh', 'D'),
+        # labials 
+            (u'ph', 'P'),
+        (u'bh', 'B'),
+        # others
+            (u'ś',  'S'),
+        (u'ṣ',  'z'),
+        (u'ṃ',  'M'),
+        (u'ḥ',  'H')
+]
+INTERN_UNICODE = [
+        (u'ā',  'A'),
+        (u'ī',  'I'),
+        (u'ū',  'U'),
+        (u'ṛ',  'R'),
+        (u'ṝ',  'L'), # ??
+        (u'ḷ',  '?'),
+        (u'ḹ',  '?'),
+        (u'ai', 'E'),
+        (u'au', 'O'),
+        # gutturals
+            (u'kh', 'K'),
+        (u'gh', 'G'),
+        (u'ṅ',  'F'),
+        # palatals
+            (u'ch', 'C'),
+        (u'jh', 'J'),
+        (u'ñ',  'Q'),
+        # retroflexes; ORDER MATTERS
+            (u'ṭ',  'w'),
+        (u'ṭh', 'W'),
+        (u'ḍ',  'X'),
+        (u'ḍh', 'X'),
+        (u'ṇ',  'N'),
+        # dentals
+            (u'th', 'T'),
+        (u'dh', 'D'),
+        # labials 
+            (u'ph', 'P'),
+        (u'bh', 'B'),
+        # others
+            (u'ś',  'S'),
+        (u'ṣ',  'z'),
+        (u'ṃ',  'M'),
+        (u'ḥ',  'H')
+]
+
+def unicode_to_internal_transliteration(s):
+        for src,dst in UNICODE_INTERN:
+                s = s.replace(src,dst)
+        out = s#ascii(s)
+        return out
+
+def internal_to_unicode_transliteration(s):
+        for src,dst in INTERN_UNICODE:
+                s = s.replace(dst,src)
+        out = s#ascii(s)
+        return out
+
+
 
 def x_UNI_to_SL1(in_str_UNI): # input: 
 	xlator_Obj = Xlator(DICT_UNI_SL1)
+	return xlator_Obj.xlate(in_str_UNI)	
+
+def x_SL1_to_UNI(in_str_UNI): # input: 
+	xlator_Obj = Xlator(_transposeDict(DICT_UNI_SL1))
 	return xlator_Obj.xlate(in_str_UNI)	

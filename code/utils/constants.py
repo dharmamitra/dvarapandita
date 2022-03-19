@@ -19,6 +19,8 @@ QUERY_DEPTH = 100
 
 TEXT_CHUNKSIZE=2000
 
+
+
 STOPWORDS_PATH = "ref/"
 VECTOR_PATH = "ref/"
 
@@ -28,6 +30,6 @@ LIST_OF_PP_CATEGORIES = ["K02","K03","K04","K05","K06","K07","T03"]
 
 TIBETAN_STEMFILE="../data/verbinator_tabfile.txt"
 
-
+EF_CONSTRUCTION = 40 # precision of the HNSW index, higher value = better precision, more computing time; 40 is a good tradeoff between speed and precision
 
 
