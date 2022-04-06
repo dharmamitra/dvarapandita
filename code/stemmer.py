@@ -4,7 +4,9 @@ import re
 import numpy as np
 import multiprocessing
 from utils.stemming import *
-from utils.constants import *
+from utils.stem_chinese import *
+
+from utils.stem_chinese import stem_chinese_file
 
 
 def write_df(df,path):
@@ -30,11 +32,18 @@ def run_stemmer(path,lang,num_of_threads):
     list_of_paths = []
     for cfile in os.listdir(path):
         filename = os.fsdecode(cfile)
-        # make sure we only read txt-files
-        if ".txt" in filename:
-            list_of_paths.append([path+filename,lang])
+        # make sure we only read txt-files for skt and tib
+        if lang == "skt" or lang == "tib":
+            if ".txt" in filename:
+                list_of_paths.append([path+filename,lang])
+        if lang == "chn":
+            if ".json" in filename:
+                list_of_paths.append([path+filename,lang])            
     pool = multiprocessing.Pool(processes=num_of_threads)
-    quote_results = pool.map(stem_file, list_of_paths)
+    if lang == "skt" or lang == "tib":
+        quote_results = pool.map(stem_file, list_of_paths)
+    if lang == "chn":
+        quote_results = pool.map(stem_chinese_file, list_of_paths)
     pool.close()
 
 

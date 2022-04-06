@@ -1,7 +1,9 @@
 import sentencepiece as spm
 import ctranslate2
-from xliterator import unicode_to_internal_transliteration
+from utils.intern_transliteration import unicode_to_internal_transliteration
 import re
+import os
+
 
 TIBETAN_STEMFILE="../data/verbinator_tabfile.txt"
 
@@ -53,6 +55,9 @@ def prepare_tib(string):
             result += multireplace(word_stripped,tib_stems).replace("'","") + " "
     return result
 
+
+
+
 def cleaned_line_preparation(string,lang):
     if lang == "skt":
         string = prepare_skt(string)
@@ -85,15 +90,12 @@ def transres2stemlist(transres):
         stemlist.append(stem)
     return stemlist
 
-def create_fname_lnum(folio,count,filepath):
+def create_lnum(folio,count,filename):
     # include folio numbers for KG/TG, not for other files
-    filename = re.sub(".*/","",filepath)
-    filename = re.sub("\..*","",filename)
-    filename = filename.replace(":","-") 
     if "NK" in filename or "NG" in filename or len(folio) == 0:
-        return filename,  str(count)
+        return str(count)
     else:
-        return filename, folio.lower() + '-' + str(count)
+        return folio.lower() + '-' + str(count)
 
 
 def get_folio_number(line, lang, text_path):
@@ -118,6 +120,10 @@ def orig_line_preparation(line, lang, text_path):
         line = line.replace('|','/')
     return line.strip()
 
+def create_fname(text_path):
+    filename = os.path.basename(text_path)
+    filename = filename.replace(":","-") 
+    return filename 
             
 def text2lists(text_path,lang):
     orig_lines = []
@@ -125,7 +131,8 @@ def text2lists(text_path,lang):
     filenames = []
     line_numbers = []
     folio = ""
-    count = 0 
+    count = 0
+    filename = create_fname(text_path)
     with open(text_path,"r") as text:
         prefix = ""
         for orig_line in text:
@@ -139,9 +146,8 @@ def text2lists(text_path,lang):
                     count = 0
                 prefix = ""
                 orig_line = orig_line_preparation(orig_line, lang, text_path)
-                filename,line_number = create_fname_lnum(folio, count, text_path)
-                
-                cleaned_line = cleaned_line_preparation(orig_line,lang)
+                line_number = create_lnum(folio, count, filename)                
+                cleaned_line = cleaned_line_preparation(orig_line, lang)
                 orig_lines.append(orig_line)
                 cleaned_lines.append(cleaned_line)
                 filenames.append(filename)

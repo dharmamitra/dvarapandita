@@ -2,10 +2,24 @@
 stem-tibetan:
 	invoke stem  --path "/home/basti/data/tibetan/txt-cropped/" --lang tib --threads 16
 
+stem-chinese:
+	invoke stem  --path "/home/basti/data/chinese/segmented-chinese/files/" --lang chn --threads 16
+
+
 stem-sanskrit:
 	invoke stem  --path "../data-kurt/" --lang skt --threads 16
 
 
 
 create-vectors-tibetan:
-	invoke create_vectorfiles --tsv_path "/home/basti/data/tibetan/txt-cropped/" --out_path "../tibetan-work/" --bucket_num 10 --lang "tib" --threads 16
+	invoke create-vectorfiles --tsv-path="/home/basti/data/tibetan/txt-cropped/" --out-path="../tibetan-work/" --bucket-num 10 --lang "tib" --threads 16
+
+
+create-vectors-chinese:
+	invoke create-vectorfiles --tsv-path="/home/basti/data/chinese/segmented-chinese/tsv-extract/" --out-path="../chinese-work/" --bucket-num 1 --lang "chn" --threads 16
+
+create-index-chn:
+	invoke create-new-index "../chinese-work/folder1/" 
+
+get-results-from-index-chn:
+	invoke get-results-from-index --bucket-path "../chinese-work/folder1/" --lang="chn"

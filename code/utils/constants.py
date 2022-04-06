@@ -7,7 +7,7 @@ WINDOWSIZE = {"skt": 6,
 
 THRESHOLD = {"skt": 0.03,
               "tib": 0.02,
-              "chn": 0.01,
+              "chn": 0.1,#0.01, # 0.01 ist default
               "pli": 0.01 }
 
 MIN_LENGTH = {"skt": 25,
@@ -15,9 +15,9 @@ MIN_LENGTH = {"skt": 25,
               "chn": 5,
               "pli": 30 }
 
-QUERY_DEPTH = 100
-
-TEXT_CHUNKSIZE=2000
+QUERY_DEPTH = 100 # max. depth of the queries, when using 10 buckets 20 could be enough; without buckets, 100 is a good value 
+MIN_DISTANCE = 500 # min. distance between the query token and the target token, in order to avoid that queries match with themselves 
+TEXT_CHUNKSIZE=2000 # ? brauchen wir das? 
 
 
 
