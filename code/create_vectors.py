@@ -9,7 +9,8 @@ import shutil
 def create_vec_df(file_df,lang):
     windowsize = WINDOWSIZE[lang]
     vector_model = get_vector_model(lang)
-    file_df['stemmed'] = file_df['stemmed'].apply(lambda line: line.split())
+    print("STEMS", file_df['stemmed'].tolist())
+    file_df['stemmed'] = file_df['stemmed'].str.split() # apply(lambda line: line.split())
     vec_df = file_df.explode("stemmed")
     vec_df['weights'] = vec_df['stemmed'].apply(lambda word: get_weight(word,lang))
     vec_df['vectors'] = vec_df['stemmed'].apply(lambda word:
@@ -28,7 +29,7 @@ def create_vectorfile(data):
     filename = os.path.basename(tsv_path).split('.')[0]
     file_df = pd.read_csv(tsv_path, sep='\t') 
     vec_df = create_vec_df(file_df,lang)
-    
+    print("GOT HERE")
 
     bucket_number = randint(1,buckets)
     bucket_path = out_path + "folder" + str(bucket_number)
@@ -45,9 +46,11 @@ def create_vectors(tsv_path, out_path, bucket_num, lang, threads):
     os.mkdir(out_path)
     for cfile in os.listdir(tsv_path):
         filename = os.fsdecode(cfile)
+        print("FILENAME", filename)
         # make sure we only read tsv-files
         if ".tsv" in filename:
             list_of_paths.append([tsv_path+filename, out_path, lang, bucket_num])
+            create_vectorfile([tsv_path+filename, out_path, lang, bucket_num])
     pool = multiprocessing.Pool(processes=threads)
     quote_results = pool.map(create_vectorfile, list_of_paths)
     pool.close()

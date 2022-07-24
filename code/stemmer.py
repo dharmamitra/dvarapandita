@@ -3,6 +3,8 @@ import pandas as pd
 import re
 import numpy as np
 import multiprocessing
+
+from utils.constants import *
 from utils.stemming import *
 from utils.stem_chinese import *
 

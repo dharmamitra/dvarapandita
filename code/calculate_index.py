@@ -43,4 +43,3 @@ def run_calculation(path, lang):
     calculator = calculate_results(path, lang)
     calculator.run()
 
-run_calculation("../tibetan-work/folder1/", "tib")

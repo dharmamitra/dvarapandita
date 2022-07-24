@@ -1,6 +1,7 @@
 import sentencepiece as spm
 import ctranslate2
 from utils.intern_transliteration import unicode_to_internal_transliteration
+from utils.constants import *
 import re
 import os
 
@@ -67,6 +68,7 @@ def cleaned_line_preparation(string,lang):
         
 
 def chunk_line(line, maxlen):
+
     line_chunks = []
 
     chunk = ""
@@ -79,7 +81,8 @@ def chunk_line(line, maxlen):
             chunk = ""
     if chunk:
         line_chunks.append(chunk)
-    return line_chunks
+    if len(line_chunks) > 1:
+        return line_chunks
 
 def transres2stemlist(transres):
     stemlist = []
@@ -155,7 +158,10 @@ def text2lists(text_path,lang):
                 count += 1
                 
     return [filenames, line_numbers, orig_lines,cleaned_lines]
-        
+
+
+
+
 def skt_stemming(text_df):
     chunk_lists = text_df['stemmed'].apply(lambda line: chunk_line(line), 120)
     chunk_exploded = chunk_lists.explode()
@@ -180,3 +186,5 @@ def skt_stemming(text_df):
         transres_exploded.groupby(chunk_exploded.index).apply(lambda lists:
     list(itertools.chain(*lists)) )    
     return text_df
+
+

@@ -1,4 +1,4 @@
-from gensim.models import KeyedVectors
+import fasttext
 from utils.constants import *
 import numpy as np 
 import re
@@ -22,8 +22,9 @@ for lang in LANGS:
     stopwords[lang] = read_stopwords(lang)
 
 
-def get_vector_model(lang):    
-    return KeyedVectors.load_word2vec_format(VECTOR_PATH + lang + ".vec", binary=False)
+def get_vector_model(lang):
+    return fasttext.load_model(VECTOR_PATH + lang + ".bin")
+
 
 
 def get_weight(word,lang):
@@ -46,13 +47,7 @@ def vector_pool_hier_weighted(vectors,weigths):
     return np.mean(pool,axis=0)
 
 def get_vector(stem,vector_model):
-    if stem in vector_model.vocab:
-        return vector_model.get_vector(stem)
-    else:
-        # when OOV, return vector of zeros
-        return np.zeros(vector_model.vector_size)
-                
-
+    return vector_model.get_word_vector(stem)
 
 def get_sumvector(vectors,weights=False):
     if weights:

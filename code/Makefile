@@ -1,6 +1,6 @@
 # first step is stemming
 stem-tibetan:
-	invoke stem  --path "/home/basti/data/tibetan/txt-cropped/" --lang tib --threads 16
+	invoke stem  --path "/home/basti/data/tibetan/txt-exp/" --lang tib --threads 16
 
 stem-chinese:
 	invoke stem  --path "/home/basti/data/chinese/segmented-chinese/files/" --lang chn --threads 16
@@ -12,7 +12,7 @@ stem-sanskrit:
 
 # second step is vector creation 
 create-vectors-tibetan:
-	invoke create-vectorfiles --tsv-path="/home/basti/data/tibetan/txt-cropped/" --out-path="../tibetan-work/" --bucket-num 10 --lang "tib" --threads 16
+	invoke create-vectorfiles --tsv-path="/home/basti/data/tibetan/txt-exp/" --out-path="../tibetan-work/" --bucket-num 10 --lang "tib" --threads 16
 
 
 create-vectors-chinese:

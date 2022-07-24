@@ -19,7 +19,7 @@ QUERY_DEPTH = 100 # max. depth of the queries, when using 10 buckets 20 could be
 MIN_DISTANCE = 500 # min. distance between the query token and the target token, in order to avoid that queries match with themselves 
 TEXT_CHUNKSIZE=2000 # ? brauchen wir das? 
 
-
+TIB_SEQ_LENGTH = 120 # max. number of syllables in one "line" before we apply matching, local alignment etc. 
 
 STOPWORDS_PATH = "ref/"
 VECTOR_PATH = "ref/"
