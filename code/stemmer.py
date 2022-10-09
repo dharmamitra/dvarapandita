@@ -15,7 +15,7 @@ def write_df(df,path):
     df['segmentnr'] = df["filename"] + ":" + df['line_number']
     # write tsv files in chunks
     for num,chunk in df.groupby(np.arange(len(df))//TEXT_CHUNKSIZE):
-        chunk.to_csv(path + "-{}.tsv".format(num), sep='\t',index=False, columns=["segmentnr", "original", "stemmed"])
+        chunk.to_csv(path + "${}.tsv".format(num), sep='\t',index=False, columns=["segmentnr", "original", "stemmed"])
 
 
 def stem_file(data):

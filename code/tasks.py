@@ -3,7 +3,7 @@ from invoke import task
 from stemmer import run_stemmer 
 from create_vectors import create_vectors
 from calculate_index import create_index, run_calculation
-
+from merge_results import run_merge_results
 
 @task
 def stem(c, path, lang, threads=1):
@@ -21,6 +21,9 @@ def get_results_from_index(c, bucket_path, lang):
 def create_new_index(c, bucket_path):
     create_index(bucket_path)
 
+@task
+def merge_results(c, bucket_path, lang):
+    run_merge_results(bucket_path, lang)
     
     
     

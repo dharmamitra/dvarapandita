@@ -79,6 +79,7 @@ class calculate_results:
         query_files = self.create_querypaths(query_path)
         # for query_file in query_files:
         #     self.calc_results_file(query_file)
+        print("QUERY PATHS", query_files)
         pool = multiprocessing.Pool(processes=16)
         pool.map(self.calc_results_file,query_files)
         pool.close()

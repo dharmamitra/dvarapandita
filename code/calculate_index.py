@@ -1,7 +1,6 @@
 import pandas as pd 
 import numpy as np 
 import re
-import multiprocessing
 import faiss
 import os 
 from utils.constants import *

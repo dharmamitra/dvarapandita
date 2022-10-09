@@ -6,7 +6,7 @@ import re
 import os
 
 
-TIBETAN_STEMFILE="../data/verbinator_tabfile.txt"
+TIBETAN_STEMFILE="ref/verbinator_tabfile.txt"
 
 
 
@@ -24,7 +24,6 @@ def initialize_tibetan_stemmer(tibetan_stemfile):
 tib_stems = initialize_tibetan_stemmer(TIBETAN_STEMFILE)
 
 def multireplace(string,tib_stems):
-    string1 = string
     if string in tib_stems:
         string = tib_stems[string]
     return string
@@ -49,10 +48,9 @@ def prepare_tib(string):
         if not "/" in word and not "@" in word and re.search("[a-zA-Z]",word):
             # todo: Orna fragen wegen den genauen Apostroph-handling hier?
             word_stripped = word.replace("'i", "")
-            word_stripped = word.replace("'o", "")
-            # word_stripped = word.replace("'u", "")
-            word_stripped = word.replace("'ang", "")
-            word_stripped = word.replace("'am", "")            
+            word_stripped = word_stripped.replace("'o", "")
+            word_stripped = word_stripped.replace("'ang", "")
+            word_stripped = word_stripped.replace("'am", "")            
             result += multireplace(word_stripped,tib_stems).replace("'","") + " "
     return result
 
@@ -68,9 +66,7 @@ def cleaned_line_preparation(string,lang):
         
 
 def chunk_line(line, maxlen):
-
     line_chunks = []
-
     chunk = ""
     tokens = line.split(' ')
     last_index = len(tokens) - 1
@@ -81,8 +77,7 @@ def chunk_line(line, maxlen):
             chunk = ""
     if chunk:
         line_chunks.append(chunk)
-    if len(line_chunks) > 1:
-        return line_chunks
+    return line_chunks
 
 def transres2stemlist(transres):
     stemlist = []
@@ -151,10 +146,13 @@ def text2lists(text_path,lang):
                 orig_line = orig_line_preparation(orig_line, lang, text_path)
                 line_number = create_lnum(folio, count, filename)                
                 cleaned_line = cleaned_line_preparation(orig_line, lang)
-                orig_lines.append(orig_line)
-                cleaned_lines.append(cleaned_line)
-                filenames.append(filename)
-                line_numbers.append(line_number)                
+                if not re.search(r"[a-zA-Z]", cleaned_line):
+                    prefix += orig_line.strip() + " "
+                else:
+                    orig_lines.append(orig_line)
+                    cleaned_lines.append(cleaned_line)
+                    filenames.append(filename)
+                    line_numbers.append(line_number)                
                 count += 1
                 
     return [filenames, line_numbers, orig_lines,cleaned_lines]
