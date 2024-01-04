@@ -1,15 +1,11 @@
+from Bio import pairwise2
 from Bio import Align
 import re
 from utils.constants import PUNC, TIBETAN_STEMFILE
 
-def create_aligner(lang):
-    aligner = Align.PairwiseAligner()
-    aligner.mode = 'local'
-    aligner.match_score = 5
-    aligner.mismatch_score = -4
-    aligner.open_gap_score = -5
-    aligner.extend_gap_score = -5
-    return aligner
+aligner = Align.PairwiseAligner()
+aligner.mode = 'local'
+
 
 def create_replaces_dictionary(path):
     replaces_dictionary = {}
@@ -39,25 +35,29 @@ def crude_stemmer(tokens):
     return result_tokens
 
 
-def get_aligned_offsets_efficient(inquiry_text, target_text, threshold, lang, aligner):
+def get_aligned_offsets_efficient(inquiry_text, target_text, threshold, lang):
     # efficient version of get_aligned_offsets where we only look at the first 100 tokens in both directions, avoiding the algorithm to get stuck on very long matches
     if len(inquiry_text) < threshold or len(target_text) < threshold:
-        return get_aligned_offsets(inquiry_text, target_text, lang, aligner)
+        return get_aligned_offsets(inquiry_text, target_text, lang)
     else:
         inquiry_text_beg, w, target_text_beg, v, score_beg = get_aligned_offsets(inquiry_text[:threshold],
-                                                                         target_text[:threshold], lang, aligner)
+                                                                         target_text[:threshold], lang)
         x, inquiry_text_end, y, target_text_end, score_end = get_aligned_offsets(inquiry_text[-threshold:],
-                                                                         target_text[-threshold:], lang, aligner)
+                                                                         target_text[-threshold:], lang)
         score = (score_beg + score_end) / 2
         inquiry_text_end = inquiry_text_end + len(inquiry_text) - threshold
         target_text_end = target_text_end + len(target_text) - threshold
         return inquiry_text_beg, inquiry_text_end, target_text_beg, target_text_end, score
 
 
-def get_aligned_offsets(stringa, stringb, lang, aligner):
+def get_aligned_offsets(stringa, stringb, lang="tib"):
     stringa_tokens_before = stringa
     stringb_tokens_before = stringb
     if lang == "tib":
+        aligner.match_score = 5
+        aligner.mismatch_score = -4
+        aligner.open_gap_score = -5
+        aligner.extend_gap_score = -5
         stringa_tokens_before = stringa.split()
         stringb_tokens_before = stringb.split()
 
@@ -91,29 +91,25 @@ def get_aligned_offsets(stringa, stringb, lang, aligner):
 
     stringa_lemmatized = " ".join(stringa_tokens)
     stringb_lemmatized = " ".join(stringb_tokens)
-    try:
-        alignments = aligner.align(stringa_tokens, stringb_tokens)
-        if alignments:
-            stringa_beg = alignments[0].aligned[0][0][0]
-            stringa_end = alignments[0].aligned[0][-1][1]
-            stringb_beg = alignments[0].aligned[1][0][0]
-            stringb_end = alignments[0].aligned[1][-1][1]
+    alignments = aligner.align(stringa_tokens, stringb_tokens)
+    if alignments:
+        stringa_beg = alignments[0].aligned[0][0][0]
+        stringa_end = alignments[0].aligned[0][-1][1]
+        stringb_beg = alignments[0].aligned[1][0][0]
+        stringb_end = alignments[0].aligned[1][-1][1]
 
-            stringb_beg = stringb_lengths[stringb_beg]
-            if stringb_end < len(stringb_lengths):
-                stringb_end = stringb_lengths[stringb_end]
-            else:
-                stringb_end = len(stringb)
-
-            stringa_beg = stringa_lengths[stringa_beg]
-            if stringa_end < len(stringa_lengths):
-                stringa_end = stringa_lengths[stringa_end]
-            else:
-                stringa_end = len(stringa)
-
-            return stringa_beg, stringa_end, stringb_beg, stringb_end, alignments[0].score
+        stringb_beg = stringb_lengths[stringb_beg]
+        if stringb_end < len(stringb_lengths):
+            stringb_end = stringb_lengths[stringb_end]
         else:
-            return 0, 0, 0, 0, 0
-    except Exception as e:
-        print("Error during alignment: ", e)
+            stringb_end = len(stringb)
+
+        stringa_beg = stringa_lengths[stringa_beg]
+        if stringa_end < len(stringa_lengths):
+            stringa_end = stringa_lengths[stringa_end]
+        else:
+            stringa_end = len(stringa)
+
+        return stringa_beg, stringa_end, stringb_beg, stringb_end, alignments[0].score
+    else:
         return 0, 0, 0, 0, 0

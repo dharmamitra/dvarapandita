@@ -1,8 +1,17 @@
 import fasttext
+#from sentence_transformers import SentenceTransformer
+
 from utils.constants import *
 import numpy as np 
 import re
 
+def split_sanskrit_stem(stems):
+    result = []
+    for stem in stems.split("#"):
+        stem = stem.strip().split(" ")[0]
+        if len(stem) > 0:
+            result.append(stem)
+    return result
 
 
 def read_stopwords(lang):
@@ -61,4 +70,14 @@ def get_sumvectors(vector_list, weight_list, windowsize):
         k = i + windowsize
         sumvectors.append(get_sumvector(vector_list[i:k], weight_list[i:k]))
     return sumvectors
-    
+
+# write embedding class
+#class Embedder():
+#    #model = SentenceTransformer('multi-qa-mpnet-base-dot-v1') 
+#    model = SentenceTransformer('all-MiniLM-L6-v2')
+#    def __init__(self):
+#        pass
+#    def get_vectors(self,sentences):
+#        return self.model.encode(sentences)
+
+

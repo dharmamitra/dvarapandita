@@ -1,72 +1,53 @@
 import pandas as pd
 import glob
+import time
 import multiprocessing
 import re
+import json
 import os
-from ast import literal_eval
-
+import gzip
+import numpy as np
 from utils.constants import *
 from utils.merging import get_pair_clusters, construct_matches_from_pair_clusters, create_matches_with_text
-def run_merge_results(path, lang):
-    paths = []
-    filelist =  glob.glob(path + '/**/*.p', recursive=True)
-    filepaths = []
-    for current_file in filelist:
-        print(current_file)
-        if "4021" in current_file:
-            filepaths.append([current_file, lang])
-            merge_results_file([current_file, lang])
-            break
-    # pool = multiprocessing.Pool(processes=16)
-    # pool.map(self.calc_results_file,query_files)
-    # pool.close()
-
-def iterate_buckets(inquiry_df, bucket_path, head_filename, lang):
-    # let's just assume that we never gonna use more than 100 buckets
-    for i in range(100):
-        current_file_path = bucket_path + "folder" + str(i) + "/" + head_filename + "_results.tsv.gz"
-        if os.path.isfile(current_file_path):
-            process_matches(inquiry_df, current_file_path, lang)
-            
-
-def merge_results_file(data):
-    path, lang = data
-    print("MERGING RESULTS OF",path) 
-    inquiry_df = pd.read_pickle(path)
-    # remove unneeded data to reduce memory usage (esp. vectors)
-    del(inquiry_df['sumvectors'])
-    del(inquiry_df['vectors'])
-    del(inquiry_df['weights'])
-    bucket_path = path.split("folder")[0]
-    head_filename = re.sub(".+/","", path)
-    head_filename = head_filename.replace(".p","")    
-    iterate_buckets(inquiry_df, bucket_path, head_filename, lang)
-
-
+from posprocess_matches import filter_matches
     
-def process_matches(inquiry_df, match_path, lang):
-    matches = pd.read_csv(match_path, sep="\t", compression="gzip")
-    matches['query_segmentnr'] = matches['query_segmentnr'].apply(lambda x: literal_eval(x))
-    # first we convert our data into dictionaries for easier lookup
+def construct_path_json(match_path):
+    """Construct the JSON path from the match path."""
+    if "_results.tsv.gz" in match_path:
+        return match_path.replace("_results.tsv.gz", ".json.gz")
+    if "json.gz" not in match_path:
+        return match_path + ".json.gz"
+    return match_path
+
+def get_data_dicts(inquiry_df, matches):
+    """Extract the necessary data dictionaries for the matches."""
     inquiry_segments = dict(zip(inquiry_df.segmentnr, inquiry_df.original))
     target_segments = dict(zip(matches.match_segment, matches.match_sentence))
     position_pairs = list(zip(matches.query_position, matches.match_position))
     inquiry_segment_position = dict(zip(matches.query_position, matches.query_segmentnr))
     match_segment_position = dict(zip(matches.match_position, matches.match_segment))
+    return inquiry_segments, target_segments, position_pairs, inquiry_segment_position, match_segment_position
 
-    # next step: get the clusters
-    pair_clusters = get_pair_clusters(position_pairs, WINDOWSIZE[lang])
+def write_to_gzip(json_str, path_json):
+    """Write the given JSON string to a gzip file."""
+    json_bytes = json_str.encode('utf-8')
+    with gzip.GzipFile(path_json, 'w') as fout:
+        fout.write(json_bytes)
 
-    # reconstruct the matches
-    matches_segments = construct_matches_from_pair_clusters(pair_clusters,
-                                                            inquiry_segment_position,
-                                                            match_segment_position)
-    match_results = create_matches_with_text(matches_segments,
-                                    inquiry_segments,
-                                    target_segments,
-                                    lang)
-
-    print(inquiry_df)
-    print(matches)
+def process_matches(inquiry_df, matches, match_path, lang, alignment_method="local"):
+    path_json = construct_path_json(match_path)
+    print("MERGING", match_path)
     
-run_merge_results("../tibetan-work/folder1", "tib")
+    matches.replace(np.nan, '', regex=True, inplace=True)
+    
+    inquiry_segments, target_segments, position_pairs, inquiry_segment_position, match_segment_position = get_data_dicts(inquiry_df, matches)
+    
+    pair_clusters = get_pair_clusters(position_pairs, WINDOWSIZE[lang])
+    
+    matches_segments = construct_matches_from_pair_clusters(pair_clusters, inquiry_segment_position, match_segment_position)
+    match_results = create_matches_with_text(matches_segments, pair_clusters, inquiry_segments, target_segments, lang, alignment_method=alignment_method)
+    match_results = filter_matches(match_results)
+
+    json_str = json.dumps(match_results, indent=4, ensure_ascii=False) + "\n"
+    write_to_gzip(json_str, path_json)
+    print("DONE", match_path)

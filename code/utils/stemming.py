@@ -4,6 +4,8 @@ from utils.intern_transliteration import unicode_to_internal_transliteration
 from utils.constants import *
 import re
 import os
+import pandas as pd
+import itertools
 
 
 TIBETAN_STEMFILE="ref/verbinator_tabfile.txt"
@@ -43,7 +45,8 @@ def prepare_skt(string):
 
 def prepare_tib(string):    
     result = ''
-    string = string.replace("+"," ")
+    #string = string.replace("+"," ")
+    string = re.sub(r"\([0-9]+\)", "", string)
     for word in string.split():
         if not "/" in word and not "@" in word and re.search("[a-zA-Z]",word):
             # todo: Orna fragen wegen den genauen Apostroph-handling hier?
@@ -54,6 +57,10 @@ def prepare_tib(string):
             result += multireplace(word_stripped,tib_stems).replace("'","") + " "
     return result
 
+def prepare_english(string):
+    # split into sentences at punctuation
+    sentences = re.split(r'(?<=[^A-Z].[.?]) +(?=[A-Z])', string)
+    return sentences
 
 
 
@@ -65,17 +72,22 @@ def cleaned_line_preparation(string,lang):
     return string
         
 
-def chunk_line(line, maxlen):
+def chunk_line(line, maxlen, lang):
+    gap = ""
+    if lang == "tib":
+        gap = " "
     line_chunks = []
-    chunk = ""
-    tokens = line.split(' ')
+    chunk = []
+    tokens = line
+    if lang == "tib":
+        tokens = line.split(' ')
     last_index = len(tokens) - 1
     for index, token in enumerate(tokens):
-        chunk += token + " "
+        chunk.append(token)
         if index == last_index or len(chunk) > maxlen:
-            line_chunks.append(chunk)
-            chunk = ""
-    if chunk:
+            line_chunks.append(gap.join(chunk))
+            chunk = []
+    if len(chunk) > 0:
         line_chunks.append(chunk)
     return line_chunks
 
@@ -86,7 +98,9 @@ def transres2stemlist(transres):
         if result == '': break
         stem = result.split(' ')[0]
         stemlist.append(stem)
-    return stemlist
+    print(stemlist)
+    print(" ".join(stemlist))
+    return " ".join(stemlist)
 
 def create_lnum(folio,count,filename):
     # include folio numbers for KG/TG, not for other files
@@ -98,15 +112,16 @@ def create_lnum(folio,count,filename):
 
 def get_folio_number(line, lang, text_path):
     # For Tibetan, we extract the folio numbers from the lines
-    if lang == "tib" and not "NK" in text_path and not "NG" in text_path:
-        match =  re.search("@([0-9]+[abAB])",line)
-        if match:
-            return match.group(1)
-        # this is for NyGB
-        else:
-            match =  re.search("([0-9])+[^a-zA-Z@]+@",line)
+    if lang == "tib":
+        if not "NK" in text_path and not "NG" in text_path:
+            match =  re.search("@([0-9]+[abAB])",line)
             if match:
                 return match.group(1)
+            # this is for NyGB
+            else:
+                match =  re.search("([0-9])+[^a-zA-Z@]+@",line)
+                if match:
+                    return match.group(1)
 
 def orig_line_preparation(line, lang, text_path):    
     if lang == "tib":
@@ -116,13 +131,47 @@ def orig_line_preparation(line, lang, text_path):
             line = line.replace("tz","ts")
         line = line.replace(',','/')
         line = line.replace('|','/')
+        # This substitution is necessary due to a special problem in the rinchen gter mdzod texts
+        line = re.sub(r"\[.*?\]", "", line)
+        if "unicode" in line:
+            print(line)
     return line.strip()
 
 def create_fname(text_path):
     filename = os.path.basename(text_path)
+    filename = filename.replace(".txt","")
+    filename = filename.replace(".TXT","")
     filename = filename.replace(":","-") 
     return filename 
-            
+
+def crop_lines(filepath, lang):
+    lines = []
+    with open(filepath, 'r') as file:
+        for line in file:
+            line = line.strip()
+            chunks = chunk_line(line, MAX_SEQ_LENGTH[lang], lang)
+            lines.extend(chunks)
+    if lang == "chn":
+        return lines
+    else:
+        # second iteration for tib and skt only: merge lines that are shorter than maxlen / 2 with the next line
+        prefix = ""
+        cleaned_lines = []
+        for line in lines:
+            current_length = len(prefix + line)
+            if lang == "tib":
+                current_length = len(str(prefix + " " + line).split(" "))
+            if current_length < MAX_SEQ_LENGTH[lang] / 10:
+                prefix += " " + line
+            elif current_length < MAX_SEQ_LENGTH[lang] and re.search("dang[^a-zA-Z]*$", line.lower()):
+                prefix += " " + line
+            else:
+                cleaned_lines.append(prefix + " " + line)
+                prefix = ""
+        return cleaned_lines
+
+
+    return lines
 def text2lists(text_path,lang):
     orig_lines = []
     cleaned_lines = []
@@ -131,48 +180,53 @@ def text2lists(text_path,lang):
     folio = ""
     count = 0
     filename = create_fname(text_path)
-    with open(text_path,"r") as text:
-        prefix = ""
-        for orig_line in text:
-            orig_line = prefix + orig_line
-            if not re.search(r"[a-zA-Z]", orig_line):
+    lines = crop_lines(text_path, lang)
+    prefix = ""
+    for orig_line in lines:
+        orig_line = prefix + orig_line
+        if not re.search(r"[a-zA-Z]", orig_line):
+            prefix += orig_line.strip() + " "
+        else:
+            new_folio = get_folio_number(orig_line, lang, text_path)
+            if new_folio:
+                folio = new_folio
+                count = 0
+            prefix = ""
+            orig_line = orig_line_preparation(orig_line, lang, text_path)
+            line_number = create_lnum(folio, count, filename)
+            cleaned_line = cleaned_line_preparation(orig_line, lang)
+
+            if not re.search(r"[a-zA-Z]", cleaned_line):
                 prefix += orig_line.strip() + " "
-            else:                
-                new_folio = get_folio_number(orig_line, lang, text_path)
-                if new_folio:
-                    folio = new_folio
-                    count = 0
-                prefix = ""
-                orig_line = orig_line_preparation(orig_line, lang, text_path)
-                line_number = create_lnum(folio, count, filename)                
-                cleaned_line = cleaned_line_preparation(orig_line, lang)
-                if not re.search(r"[a-zA-Z]", cleaned_line):
-                    prefix += orig_line.strip() + " "
-                else:
-                    orig_lines.append(orig_line)
-                    cleaned_lines.append(cleaned_line)
-                    filenames.append(filename)
-                    line_numbers.append(line_number)                
-                count += 1
-                
+            else:
+                # Print at least a warning when encountering very long lines
+                if len(orig_line) > 1000:
+                    print("Line too long: " + orig_line)
+                    print("WARNING: Very long line in file: " + text_path)
+                orig_lines.append(orig_line)
+                cleaned_lines.append(cleaned_line)
+                filenames.append(filename)
+                line_numbers.append(line_number)
+            count += 1
+
     return [filenames, line_numbers, orig_lines,cleaned_lines]
 
 
 
 
 def skt_stemming(text_df):
-    chunk_lists = text_df['stemmed'].apply(lambda line: chunk_line(line), 120)
+    chunk_lists = text_df['stemmed'].apply(lambda line: chunk_line(line, 120))
     chunk_exploded = chunk_lists.explode()
     chunk_list = chunk_exploded.tolist()
     tokenizer = \
-        spm.SentencePieceProcessor(model_file = location + "spm/skt-tag8k.model")
+        spm.SentencePieceProcessor(model_file = SKT_STEMMER_LOCATION + "spm/skt-tag8k.model")
     tonenized_chunk_list = tokenizer.encode(chunk_list, out_type=str)
-    translator = ctranslate2.Translator(location + "model/",
+    translator = ctranslate2.Translator(SKT_STEMMER_LOCATION + "model/",
                                     intra_threads=4,
-                                    device='cpu')
+                                    device='cuda')
     transres_exploded = \
         pd.Series(translator.translate_batch(tonenized_chunk_list,
-            max_batch_size=548),
+            max_batch_size=48),
             index = chunk_exploded.index)
 
     # pd.Series.apply: https://towardsdatascience.com/avoiding-apply-ing-yourself-in-pandas-a6ade4569b7f
@@ -180,9 +234,8 @@ def skt_stemming(text_df):
         tokenizer.decode(line[0]['tokens']) )
     # leave only the stems
     transres_exploded = transres_exploded.apply(transres2stemlist)
-    text_df['stemmed'] = \
-        transres_exploded.groupby(chunk_exploded.index).apply(lambda lists:
-    list(itertools.chain(*lists)) )    
+    text_df['stemmed'] = transres_exploded#.groupby(chunk_exploded.index).apply(lambda lists:
+    #itertools.chain(*lists) )
     return text_df
 
 

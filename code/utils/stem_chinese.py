@@ -4,7 +4,7 @@ import json
 import pandas as pd
 from utils.constants import PUNC
 
-r = open("../data/chinese_replaces.txt",'r')
+r = open("ref/chinese_replaces.txt",'r')
 
 
 replaces_dictionary = {}
