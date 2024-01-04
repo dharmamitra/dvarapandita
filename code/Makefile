@@ -1,3 +1,26 @@
+TEST_DIR		:= /home/wo/bn/dvarapandita00/test-data/tib
+TEST_ORIG_RAW	:= ${TEST_DIR}/original-raw/
+TEST_ORIG_STEM	:= ${TEST_DIR}/original-stemmed/
+TEST_NEW_STEM	:= ${TEST_DIR}/testing-stemmed/
+
+RED		:= '\033[0;31m'
+GREEN	:= '\033[0;32m'
+NC		:= '\033[0m' # No Color
+
+test: build-stem-test
+	@if diff ${TEST_ORIG_STEM} ${TEST_NEW_STEM} ; then \
+		echo ${GREEN}">>>>>>>>>>>>>>>>>>> TEST PASSED >>>>>>>>>>>>>>>>>>>" ${NC}; \
+	else \
+		echo -e ${RED}"################### TEST FAILED ###################" ${NC}; \
+	fi
+	@rm -rf ${TEST_NEW_STEM}
+
+build-stem-test:
+	@rm -rf ${TEST_NEW_STEM}
+	DP_TESTMODE=1 \
+	DP_TEST_STEMMED=${TEST_STEMMED} \
+	invoke stem  --path ${TEST_ORIG_RAW} --lang tib --threads 16
+
 # first step is stemming
 stem-tibetan:
 	invoke stem  --path "/mnt/code/dvarapandita/data/tib/" --lang tib --threads 16
