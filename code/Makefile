@@ -10,7 +10,13 @@ RED		:= '\033[0;31m'
 GREEN	:= '\033[0;32m'
 NC		:= '\033[0m' # No Color
 
-test: test-stem-test
+test-all: test-stem-test test-vectors-tibetan
+
+test-stem-test:
+	@rm -rf ${TEST_NEW_STEM}
+	@DP_TESTMODE=1 \
+	DP_TEST_STEMMED=${TEST_STEMMED} \
+	invoke stem  --path ${TEST_ORIG_RAW} --lang tib --threads 16 > /dev/null
 	@if diff ${TEST_ORIG_STEM} ${TEST_NEW_STEM} ; then \
 		echo ${GREEN}">>>>>>>>>>>>>>>>>>> STEMMING TEST PASSED >>>>>>>>>>>>>>>>>>>" ${NC}; \
 	else \
@@ -18,18 +24,12 @@ test: test-stem-test
 	fi
 	@rm -rf ${TEST_NEW_STEM}
 
-test-stem-test:
-	@rm -rf ${TEST_NEW_STEM}
-	DP_TESTMODE=1 \
-	DP_TEST_STEMMED=${TEST_STEMMED} \
-	invoke stem  --path ${TEST_ORIG_RAW} --lang tib --threads 16
-
 test-vectors-tibetan:
 	@# invoke create-vectorfiles --tsv-path="${TEST_ORIG_STEM}" --out-path="${TEST_NEW_VEC}" --bucket-num 1  --lang "tib" --threads 16
-	@if cd ${TEST_NEW_VEC} && md5sum --check ${TEST_DIR}/orig_vectors.chk ; then \
-		echo ${GREEN}">>>>>>>>>>>>>>>>>>> STEMMING TEST PASSED >>>>>>>>>>>>>>>>>>>" ${NC}; \
+	@if cd ${TEST_NEW_VEC} && md5sum --check ${TEST_DIR}/orig_vectors.chk > /dev/null ; then \
+		echo ${GREEN}">>>>>>>>>>>>>>>>>>> VECTORIZATION TEST PASSED >>>>>>>>>>>>>>>>>>>" ${NC}; \
 	else \
-		echo -e ${RED}"################### STEMMING TEST FAILED ###################" ${NC}; \
+		echo -e ${RED}"################### VECTORIZATION TEST FAILED ###################" ${NC}; \
 	fi
 	@rm -rf ${TEST_NEW_STEM}
 
