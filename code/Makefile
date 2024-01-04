@@ -1,25 +1,37 @@
-TEST_DIR		:= /home/wo/bn/dvarapandita00/test-data/tib
+TEST_DIR		:= /home/wo/bn/dvarapandita/test-data/tib
 TEST_ORIG_RAW	:= ${TEST_DIR}/original-raw/
 TEST_ORIG_STEM	:= ${TEST_DIR}/original-stemmed/
+# TEST_ORIG_VEC	:= ${TEST_DIR}/original-vecs/ # do not have to be saved if tested with hash
+
 TEST_NEW_STEM	:= ${TEST_DIR}/testing-stemmed/
+TEST_NEW_VEC	:= ${TEST_DIR}/original-stemmed/ # should be changed to /testing-vecs, ${TEST_DIR}/orig_vectors.chk has to be hashed
 
 RED		:= '\033[0;31m'
 GREEN	:= '\033[0;32m'
 NC		:= '\033[0m' # No Color
 
-test: build-stem-test
+test: test-stem-test
 	@if diff ${TEST_ORIG_STEM} ${TEST_NEW_STEM} ; then \
-		echo ${GREEN}">>>>>>>>>>>>>>>>>>> TEST PASSED >>>>>>>>>>>>>>>>>>>" ${NC}; \
+		echo ${GREEN}">>>>>>>>>>>>>>>>>>> STEMMING TEST PASSED >>>>>>>>>>>>>>>>>>>" ${NC}; \
 	else \
-		echo -e ${RED}"################### TEST FAILED ###################" ${NC}; \
+		echo -e ${RED}"################### STEMMING TEST FAILED ###################" ${NC}; \
 	fi
 	@rm -rf ${TEST_NEW_STEM}
 
-build-stem-test:
+test-stem-test:
 	@rm -rf ${TEST_NEW_STEM}
 	DP_TESTMODE=1 \
 	DP_TEST_STEMMED=${TEST_STEMMED} \
 	invoke stem  --path ${TEST_ORIG_RAW} --lang tib --threads 16
+
+test-vectors-tibetan:
+	@# invoke create-vectorfiles --tsv-path="${TEST_ORIG_STEM}" --out-path="${TEST_NEW_VEC}" --bucket-num 1  --lang "tib" --threads 16
+	@if cd ${TEST_NEW_VEC} && md5sum --check ${TEST_DIR}/orig_vectors.chk ; then \
+		echo ${GREEN}">>>>>>>>>>>>>>>>>>> STEMMING TEST PASSED >>>>>>>>>>>>>>>>>>>" ${NC}; \
+	else \
+		echo -e ${RED}"################### STEMMING TEST FAILED ###################" ${NC}; \
+	fi
+	@rm -rf ${TEST_NEW_STEM}
 
 # first step is stemming
 stem-tibetan:
