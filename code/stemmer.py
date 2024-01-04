@@ -11,6 +11,17 @@ from utils.stemming import *
 # from utils.stem_chinese import stem_chinese_file
 from utils.general import test_if_should_load
 
+from pathlib import Path
+
+def testing_write(fun):
+    print(">>> {} >>>".format(os.environ.get("DP_TESTMODE")))
+    def wrapper(df, path):
+        path = Path(path).absolute()
+        (path.parent.parent / "testing-stemmed").mkdir(exist_ok=True)
+        fun(df, str(path).replace("original-raw", "testing-stemmed"))
+    return wrapper
+
+@testing_write
 def write_df(df,path):
     df['segmentnr'] = df["filename"] + ":" + df['line_number']
     # write tsv files in chunks
