@@ -35,8 +35,10 @@ def stem_file(data):
     path,lang = data
     print("NOW PROCESSING",path)
     cfile = open(path,'r')
-    path_short = os.path.splitext(path)[0]    
-    filenames, line_numbers, lines, cleaned_lines = text2lists(path,lang)    
+    path_short = os.path.splitext(path)[0]
+    lines = crop_lines(path, lang)
+    filename = create_fname(path)
+    filenames, line_numbers, lines, cleaned_lines = text2lists(filename, lines,lang)    
     text_df = pd.DataFrame({"filename": filenames, "line_number": line_numbers, 'original': lines, "stemmed": cleaned_lines})
     if lang == "skt":
         text_df = skt_stemming(text_df) # padaccheda
