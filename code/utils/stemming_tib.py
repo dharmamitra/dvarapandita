@@ -72,11 +72,10 @@ def prepare_tib(string):
     return result
 
 def tib_clean_line(filename, orig_line, current_folio, count):
-    new_folio = tib_get_folio_number(orig_line, filename)
-    if new_folio:
+    new_folio = tib_get_folio_number(orig_line, filename) # only tib
+    if new_folio: # only tib
         current_folio = new_folio
         count = 0 # insane logic
-    line_number = tib_create_lnum(current_folio, count, filename)
-    orig_line = tib_orig_line_preparation(orig_line, filename)
-    # cleaned_line = prepare_tib(orig_line)
-    return orig_line, current_folio, line_number
+    line_number = tib_create_lnum(current_folio, count, filename) # only tib with exception of NK and NG
+    orig_line = tib_orig_line_preparation(orig_line, filename) # aprt from tibetan only strip
+    return orig_line, current_folio, line_number, count
