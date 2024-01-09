@@ -39,7 +39,7 @@ def stem_file(data):
     filenames, line_numbers, lines, cleaned_lines = text2lists(path,lang)    
     text_df = pd.DataFrame({"filename": filenames, "line_number": line_numbers, 'original': lines, "stemmed": cleaned_lines})
     if lang == "skt":
-        text_df = skt_stemming(text_df)
+        text_df = skt_stemming(text_df) # padaccheda
     write_df(text_df, path_short)
 
 def preprocess_translated_file(path):

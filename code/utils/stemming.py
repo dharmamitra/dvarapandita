@@ -179,25 +179,34 @@ def text2lists(text_path,lang):
     line_numbers = []
     folio = ""
     count = 0
-    filename = create_fname(text_path)
-    lines = crop_lines(text_path, lang)
+    #####################################################################
+    filename = create_fname(text_path) # maybe should be text id?
+    ### the actual segmentation happens here:
+    lines = crop_lines(text_path, lang) # should be outside so that this func only receives the list of cropped lines
+    #####################################################################
+    # the rest of the functions just cleans the lines avoiding creating empty ones (both original and cleaned)
+    # and contes and numbers them and packs all into lists for making a DataFrame
     prefix = ""
     for orig_line in lines:
         orig_line = prefix + orig_line
-        if not re.search(r"[a-zA-Z]", orig_line):
-            prefix += orig_line.strip() + " "
+        if not re.search(r"[a-zA-Z]", orig_line): # [1] lines without text (e.g. only numbers) are skipped -- should be extended with diacritica!!!!!! make a separate func
+            prefix += orig_line.strip() + " " # the exact form of the orig line should be saved!!!
         else:
-            new_folio = get_folio_number(orig_line, lang, text_path)
-            if new_folio:
-                folio = new_folio
-                count = 0
-            prefix = ""
-            orig_line = orig_line_preparation(orig_line, lang, text_path)
-            line_number = create_lnum(folio, count, filename)
-            cleaned_line = cleaned_line_preparation(orig_line, lang)
 
-            if not re.search(r"[a-zA-Z]", cleaned_line):
-                prefix += orig_line.strip() + " "
+
+        ###############################################################################
+            new_folio = get_folio_number(orig_line, lang, text_path) # only tib
+            if new_folio: # only tib
+                folio = new_folio
+                count = 0 # insane logic
+            prefix = ""
+            orig_line = orig_line_preparation(orig_line, lang, text_path) # aprt from tibetan only strip
+            line_number = create_lnum(folio, count, filename) # only tib with exception of NK and NG
+            cleaned_line = cleaned_line_preparation(orig_line, lang) # only tib and skt
+        ################################################################################
+
+            if not re.search(r"[a-zA-Z]", cleaned_line): # [2] the cleaned line is check if empty
+                prefix += orig_line.strip() + " " # the exact form of the orig line should be saved!!!
             else:
                 # Print at least a warning when encountering very long lines
                 if len(orig_line) > 1000:
