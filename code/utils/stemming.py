@@ -172,20 +172,15 @@ def crop_lines(filepath, lang):
 
 
     return lines
-def text2lists(text_path,lang):
+
+def text2lists(filename, lines, lang):
     orig_lines = []
     cleaned_lines = []
     filenames = []
     line_numbers = []
     folio = ""
     count = 0
-    #####################################################################
-    filename = create_fname(text_path) # maybe should be text id?
-    ### the actual segmentation happens here:
-    lines = crop_lines(text_path, lang) # should be outside so that this func only receives the list of cropped lines
-    #####################################################################
-    # the rest of the functions just cleans the lines avoiding creating empty ones (both original and cleaned)
-    # and contes and numbers them and packs all into lists for making a DataFrame
+
     prefix = ""
     for orig_line in lines:
         orig_line = prefix + orig_line
@@ -195,12 +190,12 @@ def text2lists(text_path,lang):
 
 
         ###############################################################################
-            new_folio = get_folio_number(orig_line, lang, text_path) # only tib
+            new_folio = get_folio_number(orig_line, lang, filename) # only tib
             if new_folio: # only tib
                 folio = new_folio
                 count = 0 # insane logic
             prefix = ""
-            orig_line = orig_line_preparation(orig_line, lang, text_path) # aprt from tibetan only strip
+            orig_line = orig_line_preparation(orig_line, lang, filename) # aprt from tibetan only strip
             line_number = create_lnum(folio, count, filename) # only tib with exception of NK and NG
             cleaned_line = cleaned_line_preparation(orig_line, lang) # only tib and skt
         ################################################################################
