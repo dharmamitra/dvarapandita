@@ -6,7 +6,7 @@ import re
 import os
 import pandas as pd
 import itertools
-from utils.stemming_tib import tib_create_lnum, tib_get_folio_number, tib_orig_line_preparation
+from utils.stemming_tib import tib_clean_line
 
 TIBETAN_STEMFILE="ref/verbinator_tabfile.txt"
 
@@ -62,15 +62,6 @@ def prepare_english(string):
     sentences = re.split(r'(?<=[^A-Z].[.?]) +(?=[A-Z])', string)
     return sentences
 
-
-
-def cleaned_line_preparation(string,lang):
-    if lang == "skt":
-        string = prepare_skt(string)
-    elif lang == "tib":
-        string = prepare_tib(string)
-    return string
-        
 
 def chunk_line(line, maxlen, lang):
     gap = ""
@@ -143,7 +134,7 @@ def text2lists(filename, lines, lang):
     cleaned_lines = []
     filenames = []
     line_numbers = []
-    old_folio = ""
+    current_folio = ""
     count = 0
 
     prefix = ""
@@ -154,16 +145,15 @@ def text2lists(filename, lines, lang):
         else:
             prefix = ""
             if lang == "tib":
-                new_folio = tib_get_folio_number(orig_line, filename) # only tib
-                if new_folio: # only tib
-                    old_folio = new_folio
-                    count = 0 # insane logic
-                line_number = tib_create_lnum(old_folio, count, filename) # only tib with exception of NK and NG
-                orig_line = tib_orig_line_preparation(orig_line, filename) # aprt from tibetan only strip
+                orig_line, current_folio, line_number, count = \
+                    tib_clean_line(filename, orig_line, current_folio, count)
+                orig_line = orig_line.strip()
+                cleaned_line = prepare_tib(orig_line)
             else:
                 line_number = str(count)
-            orig_line = orig_line.strip()
-            cleaned_line = cleaned_line_preparation(orig_line, lang) # only tib and skt
+                orig_line = orig_line.strip()
+                if lang == "skt":
+                    cleaned_line = prepare_skt(orig_line)
         ################################################################################
 
             if not re.search(r"[a-zA-Z]", cleaned_line): # [2] the cleaned line is check if empty
