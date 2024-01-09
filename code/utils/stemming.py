@@ -6,7 +6,7 @@ import re
 import os
 import pandas as pd
 import itertools
-
+from utils.stemming_tib import tib_create_lnum, tib_get_folio_number, tib_orig_line_preparation
 
 TIBETAN_STEMFILE="ref/verbinator_tabfile.txt"
 
@@ -102,41 +102,6 @@ def transres2stemlist(transres):
     print(" ".join(stemlist))
     return " ".join(stemlist)
 
-def create_lnum(folio,count,filename):
-    # include folio numbers for KG/TG, not for other files
-    if "NK" in filename or "NG" in filename or len(folio) == 0:
-        return str(count)
-    else:
-        return folio.lower() + '-' + str(count)
-
-
-def get_folio_number(line, lang, text_path):
-    # For Tibetan, we extract the folio numbers from the lines
-    if lang == "tib":
-        if not "NK" in text_path and not "NG" in text_path:
-            match =  re.search("@([0-9]+[abAB])",line)
-            if match:
-                return match.group(1)
-            # this is for NyGB
-            else:
-                match =  re.search("([0-9])+[^a-zA-Z@]+@",line)
-                if match:
-                    return match.group(1)
-
-def orig_line_preparation(line, lang, text_path):    
-    if lang == "tib":
-        line = line.lower()
-        if "T" in text_path:
-            line = line.replace("ts","tsh")
-            line = line.replace("tz","ts")
-        line = line.replace(',','/')
-        line = line.replace('|','/')
-        # This substitution is necessary due to a special problem in the rinchen gter mdzod texts
-        line = re.sub(r"\[.*?\]", "", line)
-        if "unicode" in line:
-            print(line)
-    return line.strip()
-
 def create_fname(text_path):
     filename = os.path.basename(text_path)
     filename = filename.replace(".txt","")
@@ -178,7 +143,7 @@ def text2lists(filename, lines, lang):
     cleaned_lines = []
     filenames = []
     line_numbers = []
-    folio = ""
+    old_folio = ""
     count = 0
 
     prefix = ""
@@ -187,16 +152,17 @@ def text2lists(filename, lines, lang):
         if not re.search(r"[a-zA-Z]", orig_line): # [1] lines without text (e.g. only numbers) are skipped -- should be extended with diacritica!!!!!! make a separate func
             prefix += orig_line.strip() + " " # the exact form of the orig line should be saved!!!
         else:
-
-
-        ###############################################################################
-            new_folio = get_folio_number(orig_line, lang, filename) # only tib
-            if new_folio: # only tib
-                folio = new_folio
-                count = 0 # insane logic
             prefix = ""
-            orig_line = orig_line_preparation(orig_line, lang, filename) # aprt from tibetan only strip
-            line_number = create_lnum(folio, count, filename) # only tib with exception of NK and NG
+            if lang == "tib":
+                new_folio = tib_get_folio_number(orig_line, filename) # only tib
+                if new_folio: # only tib
+                    old_folio = new_folio
+                    count = 0 # insane logic
+                line_number = tib_create_lnum(old_folio, count, filename) # only tib with exception of NK and NG
+                orig_line = tib_orig_line_preparation(orig_line, filename) # aprt from tibetan only strip
+            else:
+                line_number = str(count)
+            orig_line = orig_line.strip()
             cleaned_line = cleaned_line_preparation(orig_line, lang) # only tib and skt
         ################################################################################
 
