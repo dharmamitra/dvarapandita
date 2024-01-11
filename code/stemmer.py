@@ -6,6 +6,7 @@ import multiprocessing
 
 from utils.constants import *
 from utils.stemming import *
+from utils.stemming_skt import skt_stemming
 # from utils.stem_chinese import *
 
 # from utils.stem_chinese import stem_chinese_file
