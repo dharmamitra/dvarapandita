@@ -5,61 +5,13 @@ from utils.constants import *
 import re
 import os
 import pandas as pd
-import itertools
-from utils.stemming_tib import tib_clean_line
+from utils.stemming_tib import tib_process_orig_line, prepare_tib
+from utils.stemming_skt import prepare_skt
 
-TIBETAN_STEMFILE="ref/verbinator_tabfile.txt"
-
-
-
-def initialize_tibetan_stemmer(tibetan_stemfile):
-    global r
-    r = open(tibetan_stemfile,'r')
-    stems = {}
-    
-    for line in r:
-        headword = line.split('\t')[0]
-        entry = line.split('\t')[2].strip()
-        stems[headword] = entry
-    return stems 
-
-tib_stems = initialize_tibetan_stemmer(TIBETAN_STEMFILE)
-
-def multireplace(string,tib_stems):
-    if string in tib_stems:
-        string = tib_stems[string]
-    return string
-
-
-
-def prepare_skt(string):
-    string = string.lower()
-    string = re.sub(r"// ?([^ ]+_[^ ]+) ?//","",string)
-    string = re.sub(r"\|\| ?([^ ]+_[^ ]+) ?\|\|","",string)
-    string = re.sub(r'[^\s]+[0-9][^\s]+',"",string)
-    string = string.replace('ñ ','ṃ ')
-    string = re.sub(r"[^a-zA-ZāĀīĪūŪṛṚṝḷḶḹṅṄñÑṭṬḍḌṇṆśŚṣṢṃḥēōḻṟṉḵṯ \n]","",string)
-    string = string.strip()
-    string = unicode_to_internal_transliteration(string)
-    return string
-
-def prepare_tib(string):    
-    result = ''
-    #string = string.replace("+"," ")
-    string = re.sub(r"\([0-9]+\)", "", string)
-    for word in string.split():
-        if not "/" in word and not "@" in word and re.search("[a-zA-Z]",word):
-            # todo: Orna fragen wegen den genauen Apostroph-handling hier?
-            word_stripped = word.replace("'i", "")
-            word_stripped = word_stripped.replace("'o", "")
-            word_stripped = word_stripped.replace("'ang", "")
-            word_stripped = word_stripped.replace("'am", "")            
-            result += multireplace(word_stripped,tib_stems).replace("'","") + " "
-    return result
 
 def prepare_english(string):
     # split into sentences at punctuation
-    sentences = re.split(r'(?<=[^A-Z].[.?]) +(?=[A-Z])', string)
+    sentences = re.split(r"(?<=[^A-Z].[.?]) +(?=[A-Z])", string)
     return sentences
 
 
@@ -82,16 +34,6 @@ def chunk_line(line, maxlen, lang):
         line_chunks.append(chunk)
     return line_chunks
 
-def transres2stemlist(transres):
-    stemlist = []
-    for result in transres.split('#'):
-        result = result.strip()
-        if result == '': break
-        stem = result.split(' ')[0]
-        stemlist.append(stem)
-    print(stemlist)
-    print(" ".join(stemlist))
-    return " ".join(stemlist)
 
 def create_fname(text_path):
     filename = os.path.basename(text_path)
@@ -99,6 +41,7 @@ def create_fname(text_path):
     filename = filename.replace(".TXT","")
     filename = filename.replace(":","-") 
     return filename 
+
 
 def crop_lines(filepath, lang):
     lines = []
@@ -126,76 +69,50 @@ def crop_lines(filepath, lang):
                 prefix = ""
         return cleaned_lines
 
-
     return lines
 
+
+def verify_orig_line(orig_line, filename):
+    # Print at least a warning when encountering very long lines
+    if len(orig_line) > 1000:
+        print("Line too long: " + orig_line)
+        print("WARNING: Very long line in file: " + filename)
+
+
 def text2lists(filename, lines, lang):
+    line_count = 0
     orig_lines = []
     cleaned_lines = []
     filenames = []
     line_numbers = []
     current_folio = ""
-    count = 0
-
     prefix = ""
     for orig_line in lines:
         orig_line = prefix + orig_line
-        if not re.search(r"[a-zA-Z]", orig_line): # [1] lines without text (e.g. only numbers) are skipped -- should be extended with diacritica!!!!!! make a separate func
-            prefix += orig_line.strip() + " " # the exact form of the orig line should be saved!!!
+        if not re.search(r"[a-zA-Z]", orig_line):  # [1] lines without text (e.g. only numbers) are skipped -- should be extended with diacritica!!!!!! make a separate func
+            prefix += (orig_line.strip() + " ")  # the exact form of the orig line should be saved!!!
         else:
             prefix = ""
+            # Prepeare original (only tib) and create cleaned line
+            #################################################################################
             if lang == "tib":
-                orig_line, current_folio, line_number, count = \
-                    tib_clean_line(filename, orig_line, current_folio, count)
-                orig_line = orig_line.strip()
+                orig_line, current_folio, line_number, line_count = tib_process_orig_line(filename, orig_line, current_folio, line_count)
+                orig_line = orig_line.strip() # BAD: now "original" tibetan line is modified two times: by tib_orig_line_preparation and by this stripping
                 cleaned_line = prepare_tib(orig_line)
             else:
-                line_number = str(count)
-                orig_line = orig_line.strip()
+                line_number = str(line_count)
                 if lang == "skt":
                     cleaned_line = prepare_skt(orig_line)
-        ################################################################################
+            ################################################################################
 
-            if not re.search(r"[a-zA-Z]", cleaned_line): # [2] the cleaned line is check if empty
-                prefix += orig_line.strip() + " " # the exact form of the orig line should be saved!!!
+            if not re.search(r"[a-zA-Z]", cleaned_line):  # [2] the cleaned line is check if empty
+                prefix += (orig_line.strip() + " ")  # the exact form of the orig line should be saved!!!
             else:
-                # Print at least a warning when encountering very long lines
-                if len(orig_line) > 1000:
-                    print("Line too long: " + orig_line)
-                    print("WARNING: Very long line in file: " + text_path)
+                verify_orig_line(orig_line, filename)
                 orig_lines.append(orig_line)
                 cleaned_lines.append(cleaned_line)
                 filenames.append(filename)
                 line_numbers.append(line_number)
-            count += 1
+            line_count += 1
 
-    return [filenames, line_numbers, orig_lines,cleaned_lines]
-
-
-
-
-def skt_stemming(text_df):
-    chunk_lists = text_df['stemmed'].apply(lambda line: chunk_line(line, 120))
-    chunk_exploded = chunk_lists.explode()
-    chunk_list = chunk_exploded.tolist()
-    tokenizer = \
-        spm.SentencePieceProcessor(model_file = SKT_STEMMER_LOCATION + "spm/skt-tag8k.model")
-    tonenized_chunk_list = tokenizer.encode(chunk_list, out_type=str)
-    translator = ctranslate2.Translator(SKT_STEMMER_LOCATION + "model/",
-                                    intra_threads=4,
-                                    device='cuda')
-    transres_exploded = \
-        pd.Series(translator.translate_batch(tonenized_chunk_list,
-            max_batch_size=48),
-            index = chunk_exploded.index)
-
-    # pd.Series.apply: https://towardsdatascience.com/avoiding-apply-ing-yourself-in-pandas-a6ade4569b7f
-    transres_exploded = transres_exploded.apply(lambda line:
-        tokenizer.decode(line[0]['tokens']) )
-    # leave only the stems
-    transres_exploded = transres_exploded.apply(transres2stemlist)
-    text_df['stemmed'] = transres_exploded#.groupby(chunk_exploded.index).apply(lambda lists:
-    #itertools.chain(*lists) )
-    return text_df
-
-
+    return [filenames, line_numbers, orig_lines, cleaned_lines]
