@@ -19,7 +19,7 @@ class LanguageNotSupported(Exception):
 class Stemmer:
     """tsv(segmentId, orig-text) --> tsv(segmentId, orig-text, tokenized-text)
     """
-    stemmed_extention = ".stemmed.csv"
+    stemmed_extention = ".stemmed.tsv"
     def __init__(self, lang: str, input_path: str, resume_mode=True) -> None:
         self.lang: str = lang
         self.src_dir: Path = self.init_src_dir(input_path)
@@ -27,13 +27,13 @@ class Stemmer:
         self.file_paths: list[Path] = self.init_file_paths()
         self.tokenizer = self.set_tokenizer()
         self.dest_dir: Path = self.make_dest_dir()
-        self.done_paths = list(self.dest_dir.rglob("*.stemmed.csv"))
+        self.done_paths = list(self.dest_dir.rglob("*.stemmed.tsv"))
         self.cleaner = self.init_cleaner()
 
     class TextFile:
         def __init__(self, stemmer, src_path) -> None:
             self.src_path = src_path
-            self.dest_path = Path(stemmer.dest_dirs / (src_path.stem + ".stemmed.csv"))
+            self.dest_path = Path(stemmer.dest_dirs / (src_path.stem + ".stemmed.tsv"))
 
     def set_tokenizer(self):
         match self.lang:
@@ -71,7 +71,8 @@ class Stemmer:
             self.process_file(file_path)
 
     def stem_segment(self, segment):
-        return self.tokenizer.encode(self.cleaner(segment), out_type=str)
+        token_list = self.tokenizer.encode(self.cleaner(segment), out_type=str)
+        return " ".join(token_list)
 
     def process_file(self, file_path):
         dest_file_path = Path(self.dest_dir / (file_path.stem + self.stemmed_extention))
