@@ -1,54 +1,73 @@
 from pathlib import Path
 from random import randint
+import multiprocessing
 
-class TextFile:
-    def __init__(self, lang, path: Path):
-        self.lang = lang
-        self.path: Path = path
-        self.name: str = path.stem
-        self.segments_df = None # Pandas DataFrame
-        self.words_df = None # Pandas DataFrame
-        self.tags = [] # could be decoded from the file name
+from text_file import TextFile
+from vectorizer import Vectorizer
 
 class FileMngr:
+    
+    langs = ["pli"]
+
+    root_path = Path("../test-data")
+    original_dir= "original"
+    stemmed_dir= "stemmed"
+    vectors_dir= "vectors"
+
     def __init__(self,
                  n_buckets,
-                 input_dir, 
-                 input_extention,
-                 output_dir,
-                 output_extention,
+                 custorm_output_dir=None,
+                 threads=0
                  ) -> None:
         self.n_buckets = n_buckets
-        self.input_dir: Path = self.init_input_dir(input_dir)
-        self.input_extention = input_extention
-        self.output_dir = output_dir
-        self.output_extention = output_extention
-        self.file_paths: list[Path] = self.find_files_by_extention(self.input_extention)
-        print(f"Vectorizer: {len(self.file_paths)} input files found")
-        self.dest_dir: Path = self.make_dest_dir()
-        self.done_paths = self.find_files_by_extention(self.output_dir)
-        print(f"Vectorizer: {len(self.file_paths)} processed files found")
+        self.threads = threads
+        self.stemmed_path = self.init_stemmed_path_dic()
 
-    def init_input_dir(self, input_dir: str) -> Path:
-        path = Path(input_dir)
-        if path.is_file():
-            return path.parent
-        elif path.is_dir():
-            return path
-        else:
-            raise FileNotFoundError
-        
-    def find_files_by_extention(self, extention) -> list[Path]:
-        result = list(self.input_dir.rglob("*" + extention)) # "*.csv"
+
+    def init_stemmed_path_dic(self):
+        stemmed_path = {}
+        for lang in self.langs:
+            stemmed_path[lang] = self.root_path / lang / self.stemmed_dir
+            stemmed_path[lang].mkdir(exist_ok=True, parents=True)
+        return stemmed_path
+
+
+    def vectors_path(self, TextFile_obj):
+        path: Path = self.root_path / TextFile_obj.lang / self.vectors_dir / (
+            "bucket_" + self.bucket_number(TextFile_obj))
+        path.mkdir(exist_ok=True, parents=True)
+        return path / TextFile_obj.vectors_file
+
+    def get_stemmed_files(self, lang) -> list[Path]:
+        result = list(self.stemmed_path[lang].rglob(
+            "*" + TextFile.stemmed_extention)) # "*.csv"
         return result
 
-    def make_dest_dir(self) -> None:
-        dest_dir = self.input_dir.parent / self.output_dir
-        dest_dir.mkdir(exist_ok=True)
-        return dest_dir
+    def make_output_path(self, custorm_output_dir) -> None:
+        if not custorm_output_dir:
+            output_path = self.input_dir / self.vectors_dir
+        output_path.mkdir(exist_ok=True)
+        return output_path
 
-    def pickle_text(self, TextFile_obj):
-        save_dir = self.file_mngr.dest_dir
+    def pickle_words_df(self, TextFile_obj):
+        file_path = self.vectors_path(TextFile_obj)
+        print(f"Saving {TextFile_obj.name} as {file_path}")
+        TextFile_obj.words_df.to_pickle(file_path)
+
+    def bucket_number(self, TextFile_obj):
         if self.n_buckets > 0:
-            save_dir /= "bucket_" + str(randint(1, self.n_buckets))
-        TextFile_obj.df.to_pickle(save_dir / TextFile_obj.name + self.file_mngr.out)
+            return f'{hash(TextFile_obj.name) % self.n_buckets:04}'
+        else:
+            return ""
+
+
+def vectorize_text(file_path):
+    Vectorizer(fm, lang).process_text(file_path)
+def vectorize_all(lang, n_buckets, threads):
+    fm = FileMngr(n_buckets=n_buckets)
+
+    list_of_paths = fm.get_stemmed_files(lang)
+    pool = multiprocessing.Pool(processes=threads)
+    pool.map(vectorize_text, list_of_paths)
+    pool.close()
+
