@@ -52,7 +52,7 @@ class TextFile:
         self.segments_df = pd.read_csv(stemmed_path / self.stemmed_file, 
                               sep=self.sep, 
                               names= self.segments_df_col_names,
-                              on_bad_lines=self.on_bad_lines)
+                              on_bad_lines=self.on_bad_lines).astype(str)
         return self
 
     def init_words_df(self):
