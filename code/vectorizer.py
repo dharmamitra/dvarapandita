@@ -39,18 +39,18 @@ class Vectorizer:
 
     def add_words_df(self, text_obj):
         # 1. the segments are splitted into word lists
-        words_df = text_obj.segments_df.drop(columns="original_text")
+        words_df = text_obj.segments_df # text_obj.segments_df.drop(columns="original_text")
         words_df["stemmed_segment"] = words_df["stemmed_segment"].apply(self.splitter)
         # 2. the frame is "streched" by the word lists
         text_obj.words_df = words_df.explode("stemmed_segment").rename(
-            columns={"stemmed_segment": "words"}
+            columns={"stemmed_segment": "stemmed"} # "words"}
         )
 
     def add_window_vecs(self, text_obj):
-        text_obj.words_df["weights"] = text_obj.words_df["words"].apply(
+        text_obj.words_df["weights"] = text_obj.words_df["stemmed"].apply( # "words"
             lambda word: self.get_weight(word)
         )
-        text_obj.words_df["vectors"] = text_obj.words_df["words"].apply(
+        text_obj.words_df["vectors"] = text_obj.words_df["stemmed"].apply( # "words"
             lambda word: self.get_vector(word)
         )
         text_obj.words_df["sumvectors"] = self.calc_win_vecs(
