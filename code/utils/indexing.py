@@ -79,14 +79,20 @@ class CalculateResults:
         return all_word_data
 
 
+    def is_result_in_parent_dir(self, filepath, query_path):
+        return os.path.isfile(filepath.replace(".p",".json.gz").replace(query_path,self.bucket_path))
+
     def create_querypaths(self, query_path):
         filelist =  glob.glob(query_path + '/**/*.p', recursive=True)
         filepaths = []
         for current_file in filelist:
             filepath = current_file
             if test_if_should_load(filepath):
-                if not os.path.isfile(filepath.replace(".p",".json.gz").replace(query_path,self.bucket_path)) and not "wordlist" in filepath:
+                if not self.is_result_in_parent_dir(filepath, query_path) and not "wordlist" in filepath:
                     filepaths.append(filepath)
+                else:
+                    print(f"Calculator: Skipping {filepath}")
+                    
         return filepaths
 
     def calc_results_folder(self, query_path):
@@ -97,9 +103,11 @@ class CalculateResults:
                 self.calc_results_file(query_file)     
         # cpu faiss is thread safe, so we can use multiprocessing
         else:   
-            pool = multiprocessing.Pool(processes=16)
-            pool.map(self.calc_results_file,query_files)
-            pool.close()
+            # pool = multiprocessing.Pool(processes=2)
+            # pool.map(self.calc_results_file,query_files)
+            # pool.close()
+            for file in query_files:
+                self.calc_results_file(file)
         
     def calc_results_file(self, query_file_path):
         # Initialize result DataFrame and retrieve query data
@@ -186,5 +194,8 @@ class CalculateResults:
 
     def run(self):
         for directory in os.listdir(self.main_path):            
-            self.calc_results_folder(self.main_path+directory)
-                                                    
+            print(f"Calculator: directory: {directory}")
+            if Path(self.main_path+directory).is_dir():
+                self.calc_results_folder(self.main_path+directory)
+            else:
+                print(f"Calculator: directory {directory} is not folder!")                                        
