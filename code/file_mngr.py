@@ -34,7 +34,7 @@ class FileMngr:
 
     def vectors_path(self, TextFile_obj):
         path: Path = self.root_path / TextFile_obj.lang / self.vectors_dir / (
-            "bucket_" + self.bucket_number(TextFile_obj))
+            "folder" + self.bucket_number(TextFile_obj))
         path.mkdir(exist_ok=True, parents=True)
         return path / TextFile_obj.vectors_file
 
