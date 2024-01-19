@@ -64,7 +64,7 @@ def get_aligned_offsets(stringa, stringb, lang, aligner):
         return 0, 0, 0, 0, 0
     stringa_tokens_before = stringa
     stringb_tokens_before = stringb
-    if lang == "tib":
+    if lang == "tib" or lang == "pli": # lang-issue
         stringa_tokens_before = stringa.split()
         stringb_tokens_before = stringb.split()
 
@@ -75,7 +75,7 @@ def get_aligned_offsets(stringa, stringb, lang, aligner):
         if not "/" in token and not "@" in token and token not in PUNC and not re.search('[0-9]', token):
             stringa_lengths.append(c)
             stringa_tokens_after.append(token)
-        if lang == "tib":
+        if lang == "tib" or lang == "pli": # lang-issue
             c += len(token) + 1
         else:
             c += len(token)
@@ -86,7 +86,7 @@ def get_aligned_offsets(stringa, stringb, lang, aligner):
         if not "/" in token and not "@" in token and token not in PUNC and not re.search('[0-9]', token):
             stringb_lengths.append(c)
             stringb_tokens_after.append(token)
-        if lang == "tib":
+        if lang == "tib" or lang == "pli": # lang-issue
             c += len(token) + 1
         else:
             c += len(token)
@@ -123,4 +123,6 @@ def get_aligned_offsets(stringa, stringb, lang, aligner):
             return 0, 0, 0, 0, 0
     except Exception as e:
         print("Error during alignment: ", e)
+        print(f"stringa_tokens_before: {stringa_tokens_before}")
+        print(f"stringb_tokens_after: {stringb_tokens_after}")
         return 0, 0, 0, 0, 0

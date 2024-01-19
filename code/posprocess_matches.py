@@ -37,7 +37,7 @@ def filter_matches(matches):
     filtered_matches = []
     for match in matches:
         if match['root_segnr'][0].split(':')[0] != match['par_segnr'][0].split(":")[0]:        
-            if match['src_lang'] == "tib":
+            if match['src_lang'] == "tib": # lang-issue
                 if test_match_tib(match):
                     filtered_matches.append(match)
             else:
@@ -56,7 +56,7 @@ def merge_matches(path):
                     data = json.load(f)
                     total_segment_numbers.extend(data[0])
                     for match in data[1]:
-                        if match['src_lang'] == "tib":
+                        if match['src_lang'] == "tib": # lang-issue
                             if test_match_tib(match):
                                 total_matches.append(match)
                         else:

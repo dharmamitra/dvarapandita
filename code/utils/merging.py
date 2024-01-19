@@ -81,7 +81,7 @@ def construct_matches_from_pair_clusters(pair_clusters,
     return results
 
 def get_length(string, lang):
-    if lang == "tib":
+    if lang == "tib": # lang-issue
         string = re.sub("[^a-zA-Z ]", "", string).strip()
         return len(string.split())
     else:
@@ -116,7 +116,7 @@ def create_matches_with_text(matches,
             target_pos_beg = min(target_positions)
             target_pos_end = max(target_positions)
 
-            if lang == "tib":
+            if lang == "tib" or lang == "pli": # lang-issue
                 inquiry_text_merged = ' '.join(inquiry_text)
                 target_text_merged = ' '.join(target_text)
             else:
