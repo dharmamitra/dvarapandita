@@ -13,9 +13,9 @@ import multiprocessing.pool
 
 faiss.omp_set_num_threads(1)
 
-class CalculateResults:
+class CalculateResults: # the class is ininiated with a path of a bucket dir but the run func works with the bucket root!!! while the index is per bucket.
     def __init__(self, bucket_path, lang, index_method="cpu", cindex=None, alignment_method="local"):
-        self.main_path = re.sub("folder.*","",bucket_path)
+        self.main_path = re.sub("folder.*","",bucket_path) # todo: change to Path.parent???
         self.wordlist = pd.read_pickle(bucket_path + "wordlist.p")
         self.segments = self.wordlist['segmentnr'].tolist()
         self.stems = self.wordlist['stemmed'].tolist()
@@ -29,7 +29,10 @@ class CalculateResults:
 
         global index
         if index_method == "cpu":
+            print("CalculateResults: Index method: ", index_method)
+            # print("CalculateResults: Index before reading: ", type(index)) # Otherwise: NameError: name 'index' is not defined
             index = faiss.read_index(bucket_path + "vectors.idx")
+            print("CalculateResults: Index after reading: ", type(index))
         else:
             index = cindex   
 

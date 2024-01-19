@@ -48,6 +48,7 @@ def build_index(total_vectors, index_method):
     index.verbose = True
     faiss.normalize_L2(total_vectors)
     index.add(total_vectors)
+    print("## ", type(index), " ## ")
     return index
 
 def create_index(bucket_path, index_method="cpu"):
@@ -59,8 +60,8 @@ def create_index(bucket_path, index_method="cpu"):
     index = build_index(total_vectors, index_method)
     if index_method == "cpu":
         faiss.write_index(index, os.path.join(bucket_path, "vectors.idx"))
-    else:
-        return index
+    # else:
+    return index # wird nur fuer GPU returnt
 
 def run_calculation(bucket_path, lang, index_method, alignment_method):    
     index = create_index(bucket_path, index_method) if index_method == "gpu" else None
