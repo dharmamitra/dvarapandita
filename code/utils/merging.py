@@ -131,15 +131,32 @@ def create_matches_with_text(matches,
                 target_text_end = len(target_text_merged)
                 score = 100
                 if alignment_method == "local":
-                    inquiry_text_beg, inquiry_text_end, target_text_beg, target_text_end, score = get_aligned_offsets_efficient(inquiry_text_merged,
-                                                                                                                                target_text_merged,
-                                                                                                                                efficient_threshold,
-                                                                                                                                lang, aligner)
+                    inquiry_text_beg, inquiry_text_end, target_text_beg, target_text_end, score = \
+                        get_aligned_offsets_efficient(inquiry_text_merged,
+                                                        target_text_merged,
+                                                        efficient_threshold,
+                                                        lang, 
+                                                        aligner)
 
 
-                target_offset_beg_final, target_offset_end_final, inquiry_offset_beg_final, inquiry_offset_end_final, target_text, current_target_segments, inquiry_text, current_inquiry_segments = shorten_segments(
-                    target_text_beg, target_text_end, inquiry_text_beg, inquiry_text_end, target_text,
-                    current_target_segments, inquiry_text, current_inquiry_segments, lang)
+                target_offset_beg_final, \
+                target_offset_end_final, \
+                inquiry_offset_beg_final, \
+                inquiry_offset_end_final, \
+                target_text, \
+                current_target_segments, \
+                inquiry_text, \
+                current_inquiry_segments = \
+                    shorten_segments(
+                        target_text_beg,
+                        target_text_end,
+                        inquiry_text_beg,
+                        inquiry_text_end,
+                        target_text,
+                        current_target_segments,
+                        inquiry_text,
+                        current_inquiry_segments,
+                        lang)
                 inquiry_text_merged = inquiry_text_merged[inquiry_text_beg:inquiry_text_end]
                 target_text_merged = target_text_merged[target_text_beg:target_text_end]
                 inquiry_text_merged = inquiry_text_merged.strip()

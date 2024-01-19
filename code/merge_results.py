@@ -19,14 +19,14 @@ def construct_path_json(match_path):
         return match_path + ".json.gz"
     return match_path
 
-def get_data_dicts(inquiry_df, matches):
+def get_data_dicts(query_df, matches): # and one list!!!
     """Extract the necessary data dictionaries for the matches."""
-    inquiry_segments = dict(zip(inquiry_df.segmentnr, inquiry_df.original))
+    query_segments = dict(zip(query_df.segmentnr, query_df.original))
     target_segments = dict(zip(matches.match_segment, matches.match_sentence))
     position_pairs = list(zip(matches.query_position, matches.match_position))
-    inquiry_segment_position = dict(zip(matches.query_position, matches.query_segmentnr))
+    query_segment_position = dict(zip(matches.query_position, matches.query_segmentnr))
     match_segment_position = dict(zip(matches.match_position, matches.match_segment))
-    return inquiry_segments, target_segments, position_pairs, inquiry_segment_position, match_segment_position
+    return query_segments, target_segments, position_pairs, query_segment_position, match_segment_position
 
 def write_to_gzip(json_str, path_json):
     """Write the given JSON string to a gzip file."""
@@ -34,13 +34,13 @@ def write_to_gzip(json_str, path_json):
     with gzip.GzipFile(path_json, 'w') as fout:
         fout.write(json_bytes)
 
-def process_matches(inquiry_df, matches, match_path, lang, alignment_method="local"):
+def process_matches(query_df, result_df, match_path, lang, alignment_method="local"):
     path_json = construct_path_json(match_path)
     print("MERGING", match_path)
     
-    matches.replace(np.nan, '', regex=True, inplace=True)
+    result_df.replace(np.nan, '', regex=True, inplace=True)
     
-    inquiry_segments, target_segments, position_pairs, inquiry_segment_position, match_segment_position = get_data_dicts(inquiry_df, matches)
+    inquiry_segments, target_segments, position_pairs, inquiry_segment_position, match_segment_position = get_data_dicts(query_df, result_df)
     
     pair_clusters = get_pair_clusters(position_pairs, WINDOWSIZE[lang])
     
