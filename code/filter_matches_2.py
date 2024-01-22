@@ -49,7 +49,8 @@ def filter_matches(matches):
     filtered_matches = []
     for match in tqdm(matches):
         if match['root_segnr'][0].split(':')[0] != match['par_segnr'][0].split(":")[0]:        
-            if match['src_lang'] == "tib":
+            match['id'] = match['root_segnr'][0] + "_" + match['par_segnr'][0]
+            if match['src_lang'] == "tib":                
                 if test_match_tib(match):                    
                     filtered_matches.append(match)
             else:
@@ -62,7 +63,7 @@ def process_path(path):
     # filter matches
     filtered_matches = filter_matches(matches)
     # write filtered matches to gzip at path
-    with gzip.open(path.replace(".json.gz", "_filtered.json.gz"), 'wt') as f:
+    with gzip.open(path, 'wt') as f:
         json.dump(filtered_matches, f)
 
 

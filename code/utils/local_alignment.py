@@ -55,6 +55,9 @@ def get_aligned_offsets_efficient(inquiry_text, target_text, threshold, lang, al
 
 
 def get_aligned_offsets(stringa, stringb, lang, aligner):
+    if len(stringa) <=3 or len(stringb) <=3:
+        print("Too short strings for alignment: ", stringa, stringb)
+        return 0, 0, 0, 0, 0
     stringa_tokens_before = stringa
     stringb_tokens_before = stringb
     if lang == "tib":
