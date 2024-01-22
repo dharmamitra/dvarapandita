@@ -7,7 +7,7 @@ WINDOWSIZE = {"skt": 6,
               "eng": 0 }
 
 THRESHOLD = {"skt": 0.03,
-              "tib": 0.04,
+              "tib": 0.02,
               "chn": 0.01,#0.01, # 0.01 ist default
               "pli": 0.01,
               "eng": 0.45 }

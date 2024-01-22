@@ -9,8 +9,9 @@ from utils.constants import *
 from utils.general import test_if_should_load
 from merge_results import process_matches
 import multiprocessing
+import multiprocessing.pool
 
-faiss.omp_set_num_threads(20)
+faiss.omp_set_num_threads(1)
 
 class CalculateResults:
     def __init__(self, bucket_path, lang, index_method="cpu", cindex=None, alignment_method="local"):
@@ -103,11 +104,37 @@ class CalculateResults:
                 self.calc_results_file(query_file)     
         # cpu faiss is thread safe, so we can use multiprocessing
         else:   
-            # pool = multiprocessing.Pool(processes=2)
-            # pool.map(self.calc_results_file,query_files)
-            # pool.close()
-            for file in query_files:
-                self.calc_results_file(file)
+            def handle_result(result):
+                # Do something with the result
+                pass
+
+            # Function to handle error (optional)
+            def handle_error(e):
+                print(f"Error: {e}")
+            results = []
+            pool = multiprocessing.Pool(processes=80)
+
+            # Iterate over each file and apply `self.calc_results_file` asynchronously
+            # it rarely happens that local alignment times out due to hard to trace bugs in the Biopython aligner library; for that reason, we need to set a timeout for each worker process to make sure that we are not stalling indefinitely
+            
+            for query_file in query_files:
+                result = pool.apply_async(self.calc_results_file, args=(query_file,),
+                                        callback=handle_result, error_callback=handle_error)
+                results.append(result)    
+
+            # Close the pool and no longer accept new tasks
+            pool.close()
+
+            # Wait for each task to complete with a timeout
+            for result in results:
+                try:
+                    # Wait for each result with a timeout of 1800 seconds
+                    result.get(timeout=1800)
+                except multiprocessing.TimeoutError:
+                    print("A task exceeded the 1800 seconds timeout.")
+
+            # Join the pool to wait for worker processes to exit
+            pool.join()
         
     def calc_results_file(self, query_file_path):
         # Initialize result DataFrame and retrieve query data
