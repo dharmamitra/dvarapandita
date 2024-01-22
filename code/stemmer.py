@@ -6,9 +6,9 @@ import multiprocessing
 
 from utils.constants import *
 from utils.stemming import *
-# from utils.stem_chinese import *
+from utils.stem_chinese import *
 
-# from utils.stem_chinese import stem_chinese_file
+from utils.stem_chinese import stem_chinese_file
 from utils.general import test_if_should_load
 
 from pathlib import Path
