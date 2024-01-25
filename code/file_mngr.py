@@ -61,13 +61,13 @@ class FileMngr:
             return ""
 
 
-def vectorize_text(file_path):
-    Vectorizer(fm, lang).process_text(file_path)
-def vectorize_all(lang, n_buckets, threads):
-    fm = FileMngr(n_buckets=n_buckets)
+# def vectorize_text(file_path):
+#     Vectorizer(fm, lang).process_text(file_path)
+# def vectorize_all(lang, n_buckets, threads):
+#     fm = FileMngr(n_buckets=n_buckets)
 
-    list_of_paths = fm.get_stemmed_files(lang)
-    pool = multiprocessing.Pool(processes=threads)
-    pool.map(vectorize_text, list_of_paths)
-    pool.close()
+#     list_of_paths = fm.get_stemmed_files(lang)
+#     pool = multiprocessing.Pool(processes=threads)
+#     pool.map(vectorize_text, list_of_paths)
+#     pool.close()
 
