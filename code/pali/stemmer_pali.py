@@ -43,7 +43,7 @@ class Stemmer:
         if not output_dir:
             self.output_dir: Path = self.make_dest_dir()
         else:
-            self.output_dir = output_dir
+            self.output_dir = Path(output_dir)
         self.done_paths = list(self.output_dir.rglob("*.stemmed.tsv"))
         self.cleaner = self.init_cleaner()
         self.sep = sep

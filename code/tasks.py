@@ -37,6 +37,7 @@ def calculate_stats(c, output_path):
 
 ########################################################################
 
+# invoke stem-pali --input-dir=/homes/nehrdich/pali-artifacts/pali_all_202401242058 --model-path=/homes/nehrdich/pali-artifacts/pali_spm_202401242058.model --output-dir=/tier2/ucb/nehrdich/pli/vectors/
 from pali.stemmer_pali import Stemmer
 import os
 import sys
@@ -44,12 +45,12 @@ import sys
 def stem_pali(c,
               input_dir,
               model_path,
-              output_dir,
+              output_dir=None,
               lang="pli"):
     stmr = Stemmer(lang=lang,
-                   model_path=model_path,
-                output_dir=output_dir,
+                   spm_model_path=model_path,
                 input_dir=input_dir,
+                output_dir=output_dir,
                 )
     stmr.process_src_dir()
 
