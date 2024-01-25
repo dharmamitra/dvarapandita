@@ -22,17 +22,29 @@ class LanguageNotSupported(Exception):
     pass
 
 class Stemmer:
+    stemmed_dir_name ="stemmed"
     """tsv(segmentId, orig-text) --> tsv(segmentId, orig-text, tokenized-text)
     """
     stemmed_extention = ".stemmed.tsv"
-    def __init__(self, lang: str, input_path: str, sep="\t", resume_mode=True) -> None:
+    def __init__(self,
+                    lang: str,
+                    spm_model_path: str,
+                    input_dir: str,
+                    output_dir: str = None,
+                    sep="\t",
+                    resume_mode=True
+                ) -> None:
         self.lang: str = lang
-        self.src_dir: Path = self.init_src_dir(input_path)
+        self.input_dir: Path = self.init_src_dir(input_dir)
+        self.spm_model_path = spm_model_path
         self.resume_mode = resume_mode
         self.file_paths: list[Path] = self.init_file_paths()
         self.tokenizer = self.set_tokenizer()
-        self.dest_dir: Path = self.make_dest_dir()
-        self.done_paths = list(self.dest_dir.rglob("*.stemmed.tsv"))
+        if not output_dir:
+            self.output_dir: Path = self.make_dest_dir()
+        else:
+            self.output_dir = output_dir
+        self.done_paths = list(self.output_dir.rglob("*.stemmed.tsv"))
         self.cleaner = self.init_cleaner()
         self.sep = sep
 
@@ -44,7 +56,7 @@ class Stemmer:
     def set_tokenizer(self):
         match self.lang:
             case "pli":
-                return spm.SentencePieceProcessor(model_file='ref/pali_spm_2024-01-15.model')  # TODO: get model
+                return spm.SentencePieceProcessor(model_file=self.spm_model_path)  # TODO: get model
             case other:
                 raise LanguageNotSupported()
 
@@ -65,12 +77,12 @@ class Stemmer:
             raise
         
     def init_file_paths(self) -> list[Path]:
-        paths = list(self.src_dir.rglob("*.tsv"))
+        paths = list(self.input_dir.rglob("*.tsv"))
         print(f"Stemmer: found original files {len(paths)}")
         return paths
 
     def make_dest_dir(self) -> None:
-        dest_dir = self.src_dir.parent / "stemmed-tsv"
+        dest_dir = self.input_dir.parent / self.stemmed_dir_name
         dest_dir.mkdir(exist_ok=True)
         return dest_dir
 
@@ -83,7 +95,7 @@ class Stemmer:
         return " ".join(token_list)
 
     def process_file(self, file_path):
-        dest_file_path = Path(self.dest_dir / (file_path.stem + self.stemmed_extention))
+        dest_file_path = Path(self.output_dir / (file_path.stem + self.stemmed_extention))
         if self.resume_mode and dest_file_path in self.done_paths:
             print(f"Skipping {file_path.stem} as it has already been processed (resume mode active)")
             return
