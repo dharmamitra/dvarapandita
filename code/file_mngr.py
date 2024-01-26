@@ -9,16 +9,18 @@ class FileMngr:
     
     langs = ["pli"]
 
-    root_path = Path("../test-data")
     original_dir= "original"
     stemmed_dir= "stemmed"
     vectors_dir= "vectors"
 
     def __init__(self,
                  n_buckets,
-                 custorm_output_dir=None,
-                 threads=0
+                 output_root_path,
+                 ref_path,
+                 threads=0,
                  ) -> None:
+        self.root_path = Path(output_root_path)
+        self.ref_path = Path(ref_path)
         self.n_buckets = n_buckets
         self.threads = threads
         self.stemmed_path = self.init_stemmed_path_dic()
