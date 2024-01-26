@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import gzip
 import pandas as pd
 from utils.constants import PUNC
 
@@ -46,7 +47,7 @@ def stem_chinese(cstring):
 def stem_chinese_file(data):
     path,lang = data
     print("NOW PROCESSING",path)
-    cfile = json.load(open(path,'r'))
+    cfile = json.load(gzip.open(path,'r'))
     
     path_short = os.path.splitext(path)[0]
     filenames = []

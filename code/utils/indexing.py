@@ -11,7 +11,6 @@ from merge_results import process_matches
 import multiprocessing
 import multiprocessing.pool
 
-faiss.omp_set_num_threads(1)
 
 class CalculateResults:
     def __init__(self, bucket_path, lang, index_method="cpu", cindex=None, alignment_method="local"):
@@ -59,8 +58,8 @@ class CalculateResults:
             
             # Adjust stem data based on language
             stems = self.stems[position]
-            if self.lang != "eng":
-                stems = " ".join(self.stems[position:position + WINDOWSIZE[self.lang]])
+            if self.lang != "eng":                
+                stems = " ".join(str(item) if isinstance(item, float) else item for item in self.stems[position:position + WINDOWSIZE[self.lang]])
             
             data = [segment, sentence, stems, position, score]
             
@@ -106,29 +105,34 @@ class CalculateResults:
             def handle_error(e):
                 print(f"Error: {e}")
             results = []
-            pool = multiprocessing.Pool(processes=80)
-
+            #pool = multiprocessing.pool.ThreadPool(processes=40)
+            pool = multiprocessing.Pool(processes=16)
+            results = pool.map(self.calc_results_file, query_files)
             # Iterate over each file and apply `self.calc_results_file` asynchronously
             # it rarely happens that local alignment times out due to hard to trace bugs in the Biopython aligner library; for that reason, we need to set a timeout for each worker process to make sure that we are not stalling indefinitely
             
-            for query_file in query_files:
-                result = pool.apply_async(self.calc_results_file, args=(query_file,),
-                                        callback=handle_result, error_callback=handle_error)
-                results.append(result)    
+            #for query_file in query_files:
+            #    result = pool.apply_async(self.calc_results_file, args=(query_file,),
+            #                            callback=handle_result, error_callback=handle_error)
+            #    results.append(result)    
 
             # Close the pool and no longer accept new tasks
-            pool.close()
+            
+            #pool.join()
+            #pool.close()
 
             # Wait for each task to complete with a timeout
-            for result in results:
-                try:
+            #for result in results:
+            #    try:
                     # Wait for each result with a timeout of 1800 seconds
-                    result.get(timeout=1800)
-                except multiprocessing.TimeoutError:
-                    print("A task exceeded the 1800 seconds timeout.")
+            #        result.get(timeout=1800)
+            #    except multiprocessing.TimeoutError:
+            #        print("A task exceeded the 1800 seconds timeout.")
 
             # Join the pool to wait for worker processes to exit
+            pool.close()
             pool.join()
+            
         
     def calc_results_file(self, query_file_path):
         # Initialize result DataFrame and retrieve query data
@@ -140,23 +144,27 @@ class CalculateResults:
         except:
             print(f"ERROR READING {query_file_path}")
             return        
+        
         query_vectors = self.prepare_query_vectors(query_df)
-        query_results = index.search(query_vectors, QUERY_DEPTH)
         
-        # Extract results
-        results = self.extract_results(query_df, query_results)
-        
-        # Convert results to DataFrame and save to JSON
-        result_df = pd.DataFrame(results)
-        #self.save_results_to_json(result_df, basename)
+        if query_vectors is not None:
+            query_results = index.search(query_vectors, QUERY_DEPTH)
+            
+            # Extract results
+            results = self.extract_results(query_df, query_results)
+            
+            # Convert results to DataFrame and save to JSON
+            result_df = pd.DataFrame(results)
+            #self.save_results_to_json(result_df, basename)
 
-        # Further processing
-        process_matches(query_df, result_df, self.bucket_path + basename, self.lang, alignment_method=self.alignment_method)
+            # Further processing
+            process_matches(query_df, result_df, self.bucket_path + basename, self.lang, alignment_method=self.alignment_method)
 
     def prepare_query_vectors(self, query_df):
         query_vectors = np.array(query_df['sumvectors'].tolist(), dtype="float32")
-        faiss.normalize_L2(query_vectors)
-        return query_vectors
+        if len(query_vectors) > 0:
+            faiss.normalize_L2(query_vectors)
+            return query_vectors
 
     def extract_results(self, query_df, query_results):
         results = {
@@ -194,8 +202,7 @@ class CalculateResults:
         total_query_sentences = query_df['original']
         query_position = min(query_position, len(total_query_stems))
         end_position = min(query_position + WINDOWSIZE[self.lang], len(total_query_stems))
-    
-        stems = " ".join(total_query_stems[query_position:end_position])
+        stems = " ".join(str(item) for item in total_query_stems[query_position:end_position])
         segmentnrs = list(dict.fromkeys(total_query_segmentnrs[query_position:end_position]))
         sentence = " ".join(total_query_sentences[query_position:end_position])
         

@@ -1,15 +1,16 @@
 #!/bin/bash
 
 # Set the language variable
-LANG=tib
+LANG=chn
 
 # Toggle variables for each step
 RUN_CREATE_VECTORFILES=false
 RUN_CREATE_NEW_INDEX=false
-RUN_GET_RESULTS=false
+RUN_GET_RESULTS=true
 RUN_MERGE_RESULTS=false
-RUN_CALCULATE_STATS=true
-NUM_BUCKETS=10
+RUN_CALCULATE_STATS=false
+# Buckets should always be a factor of 10 
+NUM_BUCKETS=100
 
 # Define directory paths
 TXT_DIR="/tier2/ucb/nehrdich/${LANG}/txt/"
@@ -34,37 +35,84 @@ create_directory "$OUT_DIR"
 if [ "$RUN_CREATE_VECTORFILES" = true ]; then
     echo '#!/bin/bash    
     #PBS -l select=1:ncpus=160
-    cd /homes/nehrdich/dvarapandita-code/code/
+    cd /homes/nehrdich/dvarapandita/code/
     ~/miniconda3/bin/invoke create-vectorfiles --tsv-path='"$TSV_DIR"' --out-path='"$WORK_DIR/"' --lang='"$LANG"' --threads=160 --bucket-num='"$NUM_BUCKETS" | qsub
 fi
 
 if [ "$RUN_CREATE_NEW_INDEX" = true ]; then
+    folder_array=()
+    count=0
     for i in $WORK_DIR/folder*; do
-        echo '#!/bin/bash    
-        #PBS -l select=1:ncpus=160        
-        cd /homes/nehrdich/dvarapandita-code/code/
-        ~/miniconda3/bin/invoke create-new-index '"$i" | qsub &
+        folder_array+=("$i")
+        ((count++))
+        if [ "$count" -eq 10 ]; then
+            # Generate the PBS script with GNU Parallel command inside
+            echo '#!/bin/bash
+#PBS -l select=1:ncpus=160
+cd /homes/nehrdich/dvarapandita/code/
+
+# Use GNU Parallel to process the folders
+parallel -j 10 --will-cite ~/miniconda3/bin/invoke create-new-index {} ::: '"${folder_array[*]}" | qsub &
+            # Reset array and count for next batch
+            folder_array=()
+            count=0
+        fi
     done
+
+    # Submit remaining folders if any
+    if [ "$count" -ne 0 ]; then
+        echo '#!/bin/bash
+#PBS -l select=1:ncpus=160
+cd /homes/nehrdich/dvarapandita/code/
+
+# Use GNU Parallel to process the folders
+parallel -j 10 --will-cite ~/miniconda3/bin/invoke create-new-index {} ::: '"${folder_array[*]}" | qsub &
+    fi
 fi
+
 
 # Queue jobs for processing each folder in WORK_DIR if toggled
 # Warning: multithreading is not yet well implemented here and highly inefficient; needs more attention
 if [ "$RUN_GET_RESULTS" = true ]; then
-    for i in $WORK_DIR/folder2; do
-        echo '#!/bin/bash    
-        #PBS -l select=1:ncpus=160
-        OMP_WAIT_POLICY=PASSIVE 
-        OMP_NUM_THREADS=1
-        cd /homes/nehrdich/dvarapandita-code/code/
-        ~/miniconda3/bin/invoke get-results-from-index --bucket-path '"$i/"' --lang='"$LANG"' --alignment-method=local --index-method=cpu' | qsub &
+    folder_array=()
+    count=0
+    for i in $WORK_DIR/folder*; do
+        folder_array+=("$i")
+        ((count++))
+        if [ "$count" -eq 10 ]; then
+            # Generate the PBS script with GNU Parallel command inside
+            echo '#!/bin/bash
+#PBS -l select=1:ncpus=160
+OMP_WAIT_POLICY=PASSIVE
+cd /homes/nehrdich/dvarapandita/code/
+
+# Use GNU Parallel to process the folders
+parallel -j 10 --will-cite ~/miniconda3/bin/invoke get-results-from-index --bucket-path {}/ --lang='"$LANG"' --alignment-method=local --index-method=cpu ::: '"${folder_array[*]}" | qsub &
+
+            # Reset array and count for next batch
+            folder_array=()
+            count=0
+        fi
     done
+
+    # Submit remaining folders if any
+    if [ "$count" -ne 0 ]; then
+        echo '#!/bin/bash
+#PBS -l select=1:ncpus=160
+OMP_WAIT_POLICY=PASSIVE
+cd /homes/nehrdich/dvarapandita/code/
+
+# Use GNU Parallel to process the folders
+parallel -j 10 --will-cite ~/miniconda3/bin/invoke get-results-from-index --bucket-path {}/ --lang='"$LANG"' --alignment-method=local --index-method=cpu ::: '"${folder_array[*]}" | qsub &
+    fi
 fi
+
 
 # Queue jobs for merging results if toggled
 if [ "$RUN_MERGE_RESULTS" = true ]; then
     echo '#!/bin/bash    
     #PBS -l select=1:ncpus=160
-    cd /homes/nehrdich/dvarapandita-code/code/
+    cd /homes/nehrdich/dvarapandita/code/
     ~/miniconda3/bin/invoke merge-results-for-db --input-path '"$WORK_DIR"' --output-path '"$OUT_DIR" | qsub
 fi
 
@@ -72,7 +120,7 @@ fi
 if [ "$RUN_CALCULATE_STATS" = true ]; then
     echo '#!/bin/bash    
     #PBS -l select=1:ncpus=160
-    cd /homes/nehrdich/dvarapandita-code/code/
+    cd /homes/nehrdich/dvarapandita/code/
     ~/miniconda3/bin/invoke calculate-stats --output-path '"$OUT_DIR" | qsub
 fi
 

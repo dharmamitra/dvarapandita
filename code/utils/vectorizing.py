@@ -55,8 +55,18 @@ def vector_pool_hier_weighted(vectors,weigths):
             pool.append(np.average(vectors[0:i],axis=0,weights=weigths[0:i]))
     return np.mean(pool,axis=0)
 
-def get_vector(stem,vector_model):
-    return vector_model.get_word_vector(stem)
+def get_vector(stem, vector_model):
+    try:
+        # Attempt to get the vector for the given stem
+        return vector_model.get_word_vector(stem)
+    except Exception as e:
+        # In case of any exception, return a zero vector
+        # Get the first word in the model's vocabulary
+        first_word = next(iter(vector_model.get_words()))
+        # Get the dimension of the vectors in the model using the first word
+        vector_dim = len(vector_model.get_word_vector(first_word))
+        # Return a zero vector of zeros with the same dimension as a NumPy array
+        return np.zeros(vector_dim)
 
 def get_sumvector(vectors,weights=False):
     if weights:
