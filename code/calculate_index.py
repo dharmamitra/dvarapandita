@@ -29,9 +29,11 @@ def load_files_from_bucket(bucket_path):
 
 def save_wordlist(df, bucket_path):
     """Drop vector related columns and save the DataFrame as wordlist."""
+    print("Saving wordlist")
     cols_to_drop = ['vectors', 'sumvectors', 'weights']
     df.drop(columns=[col for col in cols_to_drop if col in df], inplace=True)
     df.to_pickle(os.path.join(bucket_path, f"{WORDLIST_NAME}{FILE_EXTENSION}"))
+    print("Done saving wordlist")
 
 def build_index(total_vectors, index_method):
     """Build and return a FAISS index."""
@@ -52,11 +54,13 @@ def build_index(total_vectors, index_method):
 
 def create_index(bucket_path, index_method="cpu"):
     all_files = load_files_from_bucket(bucket_path)
+    print("Converting vectors to numpy")
     total_vectors = np.array(all_files['sumvectors'].tolist(), dtype="float32")
     
     save_wordlist(all_files, bucket_path)
     
     index = build_index(total_vectors, index_method)
+    print("Writing index to disk")
     if index_method == "cpu":
         faiss.write_index(index, os.path.join(bucket_path, "vectors.idx"))
     else:
