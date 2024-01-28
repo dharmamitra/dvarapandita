@@ -66,7 +66,7 @@ def vec_pali(c,
                 OUTPUT_DIR_NAME={output_dir_name} \
                 N_BUCKETS={n_buckets} \
                 N_PROC={n_proc} \
-                {python_path} vectorize_all_pali.py \
+                {python_path} pali_vectorize_all.py \
               ''')
     
 from utils.indexing import CalculateResults

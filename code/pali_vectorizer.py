@@ -122,7 +122,7 @@ class Vectorizer:
 
 
 # https://stackoverflow.com/questions/31729008/python-multiprocessing-seems-near-impossible-to-do-within-classes-using-any-clas
-#     def vectorize_all(self, lang):
+#     def pali_vectorize_all(self, lang):
 
 #         list_of_paths = self.file_mngr.get_stemmed_files(lang)
 #         pool = multiprocessing.Pool(processes=2) #self.file_mngr.threads)
