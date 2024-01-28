@@ -72,11 +72,29 @@ def vec_pali(c,
 from utils.indexing import CalculateResults
 from calculate_index import create_index
 
-# invoke calc-pali-bucket --bucket-path="/home/wo/bn/dvarapandita/test-data/pli/vectors/folder0000/"
+# invoke calc-pali-bucket --bucket-path="/tier2/ucb/nehrdich/pli/vectors/folder0000/"
 @task
 def calc_pali_bucket(c,
                     bucket_path,
               ):
+        lang = "pli"
+        index_method = "cpu"
+        alignment_method="local"
+    
+        index = create_index(bucket_path, index_method)
+        c = CalculateResults(bucket_path, lang, index_method, cindex=index, alignment_method=alignment_method)
+        c.calc_results_folder(bucket_path)
+        
+# invoke calc-pali-all-buckets --all-buckets-parent="/tier2/ucb/nehrdich/pli/vectors/"
+@task
+def calc_pali_all_buckets(c,
+                    all_buckets_parent,
+              ):
+    
+    all_buckets = [p for p in os.listdir(all_buckets_parent) if "folder" in p]
+    
+    print(all_buckets)
+    for bucket_path in all_buckets:
         lang = "pli"
         index_method = "cpu"
         alignment_method="local"
