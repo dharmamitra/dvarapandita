@@ -35,7 +35,7 @@ def calculate_stats(c, output_path):
     
 ########################################################################
 
-from code.pali_stemmer import Stemmer
+from pali_stemmer import Stemmer
 import os
 import sys
 @task

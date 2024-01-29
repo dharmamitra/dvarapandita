@@ -1,5 +1,5 @@
-from code.pali_vectorizer import Vectorizer
-from code.pali_file_mngr import FileMngr
+from pali_vectorizer import Vectorizer
+from pali_file_mngr import FileMngr
 
 import multiprocessing
 import os
