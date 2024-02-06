@@ -22,10 +22,8 @@ class LanguageNotSupported(Exception):
     pass
 
 class Stemmer:
-    """tsv(segmentId, orig-text) --> tsv(segmentId, orig-text, tokenized-text)
-    """
-    stemmed_extention = ".stemmed.tsv"
-    def __init__(self, lang: str, input_path: str, sep="\t", resume_mode=True) -> None:
+        drop_empty=True,
+    ) -> None:
         self.lang: str = lang
         self.src_dir: Path = self.init_src_dir(input_path)
         self.resume_mode = resume_mode
@@ -35,6 +33,7 @@ class Stemmer:
         self.done_paths = list(self.dest_dir.rglob("*.stemmed.tsv"))
         self.cleaner = self.init_cleaner()
         self.sep = sep
+        self.drop_empty = drop_empty
 
     class TextFile:
         def __init__(self, stemmer, src_path) -> None:
@@ -100,5 +99,7 @@ class Stemmer:
             names=column_names,
             on_bad_lines="skip",
         ).astype(str)
-        df["stemmed_segments"] = [self.stem_segment(seg) for seg in df["original_text"].tolist()]
+        if self.drop_empty:  # Lines: before: 2_886_152. after: 2_849_001
+            df = df[df[TSV_COL_ORIGINAL] != ""]
+            df = df[df[TSV_COL_STEMMED] != ""]
         return df
