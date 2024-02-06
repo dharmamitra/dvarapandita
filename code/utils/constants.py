@@ -54,3 +54,12 @@ TIBETAN_STEMFILE="ref/verbinator_tabfile.txt"
 EF_CONSTRUCTION = 100 # precision of the HNSW index, higher value = better precision, more computing time; 40 is a good tradeoff between speed and precision
 
 SKT_STEMMER_LOCATION="/mnt/code/skt-tagger-ctranslate/"
+
+TSV_COL_SEGMENTNR = "segmentnr"
+TSV_COL_ORIGINAL = "original"
+TSV_COL_STEMMED = "stemmed"
+
+DIR_NAME_STEMMED = "tsv"
+DIR_NAME_VECTORS = ""
+
+EXTENTION_STEMMED = ".tsv"

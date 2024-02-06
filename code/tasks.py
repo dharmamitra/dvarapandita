@@ -34,20 +34,27 @@ def calculate_stats(c, output_path):
     collect_stats_from_folder(output_path)
     
 ########################################################################
+# invoke stem-pali --input-dir="/home/wo/bn/paltok/output/pali_all_202401291258" --model-path="/home/wo/bn/dvarapandita/code/ref/pali_spm_2024-01-15.model"
+
 
 from pali_stemmer import Stemmer
 import os
 import sys
+
+# invoke stem-pali --input-dir="/home/wo/bn/paltok/output/pali_all_202401291258" --model-path="/home/wo/bn/dvarapandita/code/ref/pali_spm_2024-01-15.model"
 @task
 def stem_pali(c,
-              input_dir,
               model_path,
+              input_dir,
               output_dir=None,
-              lang="pli"):
+              lang="pli",
+              ):
     stmr = Stemmer(lang=lang,
-                   spm_model_path=model_path,
+                   spm_model_abspath=model_path,
                 input_dir=input_dir,
                 output_dir=output_dir,
+                archive=False,
+                resume_mode=False
                 )
     stmr.process_src_dir()
 
