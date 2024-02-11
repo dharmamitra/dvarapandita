@@ -41,6 +41,10 @@ def stem_file(data):
     filename = create_fname(path)
     filenames, line_numbers, lines, cleaned_lines = text2lists(filename, lines,lang)    
     text_df = pd.DataFrame({"filename": filenames, "line_number": line_numbers, 'original': lines, "stemmed": cleaned_lines})
+    text_df = text_df.dropna()
+    # only continue if df is not empty
+    if text_df.empty:
+        return
     if lang == "skt":
         text_df = skt_stemming(text_df) # padaccheda
     write_df(text_df, path_short)

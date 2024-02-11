@@ -6,9 +6,8 @@ LANG=chn
 # Toggle variables for each step
 RUN_CREATE_VECTORFILES=false
 RUN_CREATE_NEW_INDEX=false
-RUN_GET_RESULTS=true
-RUN_MERGE_RESULTS=false
-RUN_CALCULATE_STATS=false
+RUN_GET_RESULTS=false
+RUN_MERGE_RESULTS=true
 # Buckets should always be a factor of 10 
 NUM_BUCKETS=100
 
@@ -113,15 +112,9 @@ if [ "$RUN_MERGE_RESULTS" = true ]; then
     echo '#!/bin/bash    
     #PBS -l select=1:ncpus=160
     cd /homes/nehrdich/dvarapandita/code/
-    ~/miniconda3/bin/invoke merge-results-for-db --input-path '"$WORK_DIR"' --output-path '"$OUT_DIR" | qsub
-fi
-
-# Queue jobs for calculating stats if toggled
-if [ "$RUN_CALCULATE_STATS" = true ]; then
-    echo '#!/bin/bash    
-    #PBS -l select=1:ncpus=160
-    cd /homes/nehrdich/dvarapandita/code/
+    ~/miniconda3/bin/invoke merge-results-for-db --input-path '"$WORK_DIR"' --output-path '"$OUT_DIR"';
     ~/miniconda3/bin/invoke calculate-stats --output-path '"$OUT_DIR" | qsub
 fi
+
 
 exit 0

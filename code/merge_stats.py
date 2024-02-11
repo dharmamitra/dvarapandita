@@ -118,6 +118,6 @@ def collect_stats_from_folder(main_path):
     with gzip.open(main_path + "/stats/global_stats.json.gz", 'wb') as f:
         f.write(json.dumps(global_stats).encode('utf-8'))
             
-    #for subfolder in subfolders:
-    #    os.rmdir(subfolder)    
+    for subfolder in subfolders:
+        os.rmdir(subfolder)    
 

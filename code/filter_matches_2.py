@@ -24,7 +24,7 @@ def test_match_tib(match):
                     par_offset_beg = 0               
                 inquiry_string = "/ " + " ".join(match['root_segtext'])
                 target_string = "/ " + " ".join(match['par_segtext'])
-                inquery_string = inquiry_string[root_offset_beg:root_offset_end]
+                inquiry_string = inquiry_string[root_offset_beg:root_offset_end]
                 target_string = target_string[par_offset_beg:par_offset_end]
 
                 inquiry_string = re.sub("@.+", "", inquiry_string)
@@ -43,6 +43,23 @@ def test_match_tib(match):
                     return True
                 if re.search("/ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ //", target_string):
                     return True
+def test_match_chn(match):
+    if match['par_length'] >= 7 and match['root_length'] >= 7:
+        return True
+    else:
+        inquiry_string = "".join(match['root_segtext'])
+        target_string = "".join(match['par_segtext'])
+        inquiry_string = inquiry_string[match['root_offset_beg']-3:match['root_offset_end']+3]
+        target_string = target_string[match['par_offset_beg']-3:match['par_offset_end']+3]
+        # test if inquiry_string contains 5 chinese characters preceeded by punctuation and followed by punctuation
+        if re.search("(^[。，！？　]|[\p{Han}]{5}|[。，！？　]$)", inquiry_string):
+            return True
+        if re.search("(^[。，！？　]|[\p{Han}]{5}|[。，！？　]$)", target_string):
+            return True
+        if re.search("(^[。，！？　]|[\p{Han}]{6}|[。，！？　]$)", inquiry_string):
+            return True
+        if re.search("(^[。，！？　]|[\p{Han}]{6}|[。，！？　]$)", target_string):
+            return True
 
 
 def filter_matches(matches):
@@ -67,4 +84,4 @@ def process_path(path):
         json.dump(filtered_matches, f)
 
 
-process_path(sys.argv[1])
+#process_path(sys.argv[1])

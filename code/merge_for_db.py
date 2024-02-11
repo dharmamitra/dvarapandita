@@ -1,11 +1,8 @@
 import json
-import pandas
-import glob
 import multiprocessing
 import os
 import gzip
-import sys 
-
+from filter_matches import filter_matches
 
 
 def read_json_gz(filepath):
@@ -31,15 +28,22 @@ def process_chunk(data):
     merged_content = []    
     for filepath in file_chunk:        
         content = read_json_gz(filepath)
+        content = filter_matches(content)
         if content:
             merged_content.extend(content)
     write_chunk(merged_content, chunk_id, output_path)
 
+def write_to_gzip(json_str, path_json):
+    """Write the given JSON string to a gzip file."""
+    json_bytes = json_str.encode('utf-8')
+    with gzip.GzipFile(path_json, 'w') as fout:
+        fout.write(json_bytes)
+
 def write_chunk(chunk, chunk_id, output_path):
     """Write a chunk to a file in output_path as json.gz."""
     filename = os.path.join(output_path, f'chunk_{chunk_id}.json.gz')
-    with gzip.open(filename, 'wt') as f:
-        json.dump(chunk, f)
+    json_str = json.dumps(chunk, indent=4, ensure_ascii=False) + "\n"
+    write_to_gzip(json_str, filename)
     
 
 

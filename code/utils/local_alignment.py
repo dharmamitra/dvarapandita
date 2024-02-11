@@ -6,10 +6,21 @@ def create_aligner(lang):
     aligner = Align.PairwiseAligner()
     aligner.mode = 'local'
     # todo: the following parameters need to be adjusted based on the individual languages, as the parameters are unlikely to fit well for all cases.
-    aligner.match_score = 5
-    aligner.mismatch_score = -4
-    aligner.open_gap_score = -5
-    aligner.extend_gap_score = -5
+    if lang == "tib":
+        aligner.match_score = 5
+        aligner.mismatch_score = -4
+        aligner.open_gap_score = -5
+        aligner.extend_gap_score = -5
+    elif lang == "chn": 
+        aligner.match_score = 1
+        aligner.mismatch_score = -1
+        aligner.open_gap_score = -.8
+        aligner.extend_gap_score = -.3
+    else: 
+        aligner.match_score = 1
+        aligner.mismatch_score = -2
+        aligner.open_gap_score = -1
+        aligner.extend_gap_score = -.5
     return aligner
 
 def create_replaces_dictionary(path):

@@ -3,11 +3,11 @@ LANGS = ["skt","tib","pli","chn"]
 WINDOWSIZE = {"skt": 6,
               "tib": 7,
               "chn": 6,
-              "pli": 5,
+              "pli": 7,
               "eng": 0 }
 
 THRESHOLD = {"skt": 0.03,
-              "tib": 0.02,
+              "tib": 0.03,
               "chn": 0.01,#0.01, # 0.01 ist default
               "pli": 0.01,
               "eng": 0.45 }
@@ -28,11 +28,11 @@ MIN_LENGTH = {"skt": 20, # war mal 25
 ABSOLUTE_MIN_LENGTH = {"skt": 20, # war mal 25
               "tib": 7,
               "chn": 5,
-              "pli": 20,
+              "pli": 30,
               "eng": 10 }
 
 
-QUERY_DEPTH = 5 # max. depth of the queries, when using 10 buckets 20 could be enough; 100 is a good value with a single bucket
+QUERY_DEPTH = 3 # max. depth of the queries, this shouldn't exceed 200 after multiplying with bucket count
 MIN_DISTANCE = 500 # min. distance between the query token and the target token, in order to avoid that queries match with themselves 
 TEXT_CHUNKSIZE=2000
 
