@@ -13,9 +13,9 @@ RUN_CALCULATE_STATS=false
 NUM_BUCKETS=100
 
 # Define directory paths
-TXT_DIR="/tier2/ucb/nehrdich/${LANG}/txt/"
-TSV_DIR="/tier2/ucb/nehrdich/${LANG}/tsv/"
-WORK_DIR="/tier2/ucb/nehrdich/${LANG}/work"
+TXT_DIR="/tier2/ucb/nehrdich/${LANG}/txt/"  # not used in the script
+TSV_DIR="/tier2/ucb/nehrdich/${LANG}/tsv/"  # one tsv file per text
+WORK_DIR="/tier2/ucb/nehrdich/${LANG}/work"  # contains buckets NO trailing slash!!!
 OUT_DIR="/tier2/ucb/nehrdich/${LANG}/output/"
 
 
@@ -39,6 +39,7 @@ if [ "$RUN_CREATE_VECTORFILES" = true ]; then
     ~/miniconda3/bin/invoke create-vectorfiles --tsv-path='"$TSV_DIR"' --out-path='"$WORK_DIR/"' --lang='"$LANG"' --threads=160 --bucket-num='"$NUM_BUCKETS" | qsub
 fi
 
+# Creates batches of 10 (or less) buckets and send them to qsub
 if [ "$RUN_CREATE_NEW_INDEX" = true ]; then
     folder_array=()
     count=0
