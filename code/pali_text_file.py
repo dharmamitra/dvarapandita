@@ -10,7 +10,7 @@ class TextFile:
     #     "stemmed":  "stemmed",
     #     "vectors":  "vectors"
     # }
-    stemmed_extention = ".stemmed.tsv"
+    stemmed_extention = ".tsv"
     vectors_extention = ".p"
 
     # segments_df_col_names =     ["segmentnr", "original_text", "stemmed_segment"]
@@ -41,7 +41,7 @@ class TextFile:
         def remove_suffix(n):
             return "".join(str(self.input_path.name).split(".")[:-n])
         if self.input_path.match("*" + self.stemmed_extention):
-            return remove_suffix(2)
+            return remove_suffix(1)
         elif self.input_path.match("*" + self.vectors_extention):
             return remove_suffix(1)
         elif self.input_path.match("*.txt"):
