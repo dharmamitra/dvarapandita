@@ -12,3 +12,5 @@ venv
 *.vocab
 
 *\.[eo][0-9]*
+*.tgz
+*.zip
