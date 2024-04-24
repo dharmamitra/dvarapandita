@@ -34,7 +34,6 @@ def calculate_stats(c, output_path):
     collect_stats_from_folder(output_path)
     
 
-
 ########################################################################
 
 # invoke stem-pali --input-dir=/homes/nehrdich/pali-artifacts/pali_all_202401242058 --model-path=/homes/nehrdich/pali-artifacts/pali_spm_202401242058.model --output-dir=/tier2/ucb/nehrdich/pli/vectors/

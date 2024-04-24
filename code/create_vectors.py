@@ -63,7 +63,7 @@ def create_vectors(tsv_path, out_path, bucket_num, lang, threads):
         filename = os.fsdecode(cfile)
         #print("FILENAME", filename)
         # make sure we only read tsv-files
-        if ".tsv" in filename and "$" in filename:            
+        if ".tsv" in filename:
             if lang == "eng":
                 create_vectorfile([tsv_path+filename, out_path, lang, bucket_num])
             else:

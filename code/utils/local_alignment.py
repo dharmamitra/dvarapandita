@@ -7,6 +7,7 @@ import os
 def create_aligner(lang):
     aligner = Align.PairwiseAligner()
     aligner.mode = 'local'
+    # todo: the following parameters need to be adjusted based on the individual languages, as the parameters are unlikely to fit well for all cases.
     aligner.match_score = 5
     aligner.mismatch_score = -4
     aligner.open_gap_score = -5

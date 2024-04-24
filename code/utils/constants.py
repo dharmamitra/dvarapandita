@@ -32,7 +32,7 @@ ABSOLUTE_MIN_LENGTH = {"skt": 20, # war mal 25
               "eng": 10 }
 
 
-QUERY_DEPTH = 20 # max. depth of the queries, when using 10 buckets 20 could be enough; 100 is a good value with a single bucket
+QUERY_DEPTH = 5 # max. depth of the queries, when using 10 buckets 20 could be enough; 100 is a good value with a single bucket
 MIN_DISTANCE = 500 # min. distance between the query token and the target token, in order to avoid that queries match with themselves 
 TEXT_CHUNKSIZE=2000
 

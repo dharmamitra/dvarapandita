@@ -99,8 +99,8 @@ def run_stemmer(path, lang, num_of_threads):
             ):
                 list_of_paths.append([path + filename, lang])
         if lang == "chn":
-            if ".json" in filename:
-                list_of_paths.append([path + filename, lang])
+            if ".json.gz" in filename:
+                list_of_paths.append([path+filename,lang])
         if lang == "eng":
             if ".tsv" in filename and not "$" in filename:
                 list_of_paths.append(path + filename)
