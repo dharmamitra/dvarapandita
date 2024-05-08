@@ -53,6 +53,7 @@ def build_index(total_vectors, index_method):
     return index
 
 def create_index(bucket_path, index_method="cpu"):
+    print(f"started with {bucket_path}")
     all_files = load_files_from_bucket(bucket_path)
     print("Converting vectors to numpy")
     total_vectors = np.array(all_files['sumvectors'].tolist(), dtype="float32")

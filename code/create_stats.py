@@ -9,6 +9,7 @@ import random
 import re 
 
 def get_filename(segnr):
+    segnr = re.sub("_[0-9]+:", ":", segnr)
     return segnr.split(":")[0]
 
 def strip_match(match):    
