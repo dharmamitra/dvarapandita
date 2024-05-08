@@ -117,7 +117,7 @@ def collect_stats_from_basename(filename, main_path):
 
 def collect_stats_from_folder(input_path, main_path):
     print("Collecting stats from folder: " + input_path)
-    global_stats = { "collections": {}, 
+    global_stats = { "categories": {}, 
                     "files": {} }                    
     # subfolders are all folders in main_path that end in _stats
     subfolders = [f for f in glob.glob(input_path + "/*") if os.path.isdir(f)]
@@ -152,13 +152,6 @@ def collect_stats_from_folder(input_path, main_path):
             with gzip_ng_threaded.open(main_path + "chunk_" + str(i) + "_" + str(j) + ".json.gz", 'wb') as f:
                 f.write(json.dumps(matches[j:j+match_chunk_size]).encode('utf-8'))
     global_category_stats = calculate_global_category_stats(global_stats['files'])
-    global_stats['collections'] = global_category_stats
+    global_stats['categories'] = global_category_stats
     with gzip_ng_threaded.open(main_path + "/stats/global_stats.json.gz", 'wb') as f:
         f.write(json.dumps(global_stats).encode('utf-8'))
-<<<<<<< HEAD
-            
-    for subfolder in subfolders:
-        os.rmdir(subfolder)    
-
-=======
->>>>>>> d1b07d0 (Various code updates)
