@@ -44,8 +44,12 @@ def create_vectorfile(data):
     print("NOW PROCESSING",tsv_path)
     
     filename = os.path.basename(tsv_path).split('.tsv')[0]
-    file_df = pd.read_csv(tsv_path, sep='\t', names=['segmentnr', 'original', 'stemmed'], on_bad_lines="skip").astype(str)
-    vec_df = create_vec_df(file_df,lang)
+    file_df = pd.read_csv(
+                            tsv_path,
+                            sep='\t',
+                            # names=['segmentnr', 'original', 'stemmed'], # assumes the absence of headers so existing headers are ignored
+                            on_bad_lines="skip"
+                            ).astype(str)    vec_df = create_vec_df(file_df,lang)
     bucket_number = randint(1,buckets)
     bucket_path = out_path + "folder" + str(bucket_number)
 
