@@ -43,14 +43,15 @@ def create_vectorfile(data):
     tsv_path,out_path,lang,buckets = data
     print("NOW PROCESSING",tsv_path)
     
-    filename = os.path.basename(tsv_path).split('.')[0]
+    filename = os.path.basename(tsv_path).split('.tsv')[0]
     file_df = pd.read_csv(tsv_path, sep='\t', names=['segmentnr', 'original', 'stemmed'], on_bad_lines="skip").astype(str)
     vec_df = create_vec_df(file_df,lang)
     bucket_number = randint(1,buckets)
     bucket_path = out_path + "folder" + str(bucket_number)
 
-    if not os.path.isdir(bucket_path):
-        os.mkdir(bucket_path)
+    # if not os.path.isdir(bucket_path):
+    #     os.mkdir(bucket_path)
+    os.makedirs(bucket_path, exist_ok=True)
     vec_df.to_pickle(bucket_path + "/" + filename + ".p")
     
 
