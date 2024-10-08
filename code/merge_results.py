@@ -9,7 +9,7 @@ import gzip
 import numpy as np
 from utils.constants import *
 from utils.merging import get_pair_clusters, construct_matches_from_pair_clusters, create_matches_with_text
-from posprocess_matches import filter_matches
+from filter_matches import filter_matches
     
 def construct_path_json(match_path):
     """Construct the JSON path from the match path."""
@@ -46,8 +46,11 @@ def process_matches(inquiry_df, matches, match_path, lang, alignment_method="loc
     
     matches_segments = construct_matches_from_pair_clusters(pair_clusters, inquiry_segment_position, match_segment_position)
     match_results = create_matches_with_text(matches_segments, pair_clusters, inquiry_segments, target_segments, lang, alignment_method=alignment_method)
+    number_of_matches_before = len(match_results)
     match_results = filter_matches(match_results)
-
+    print("NUMBER OF MATCHES BEFORE FILTERING", number_of_matches_before)
+    print("NUMBER OF MATCHES AFTER FILTERING", len(match_results))
+    
     json_str = json.dumps(match_results, indent=4, ensure_ascii=False) + "\n"
     write_to_gzip(json_str, path_json)
     print("DONE", match_path)

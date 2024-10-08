@@ -24,6 +24,8 @@ def create_new_index(c, bucket_path):
 
 @task
 def merge_results_for_db(c, input_path, output_path):
+    print(input_path)
+    print(output_path)
     collect_stats_from_folder(input_path, output_path)
 
     

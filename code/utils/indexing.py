@@ -17,7 +17,7 @@ class CalculateResults:
         self.main_path = re.sub("folder.*","",bucket_path)
         self.wordlist = pd.read_pickle(bucket_path + "wordlist.p")
         self.segments = self.wordlist['segmentnr'].tolist()
-        self.stems = self.wordlist['stemmed'].tolist()
+        self.stems = self.wordlist['analyzed'].tolist()
         self.sentences = self.wordlist['original'].tolist()
         self.wordlist = self.wordlist.reset_index()
         self.wordlist_len = len(self.wordlist)
@@ -33,7 +33,8 @@ class CalculateResults:
             index = cindex   
 
 
-    def clean_results_by_threshold(self, scores, positions):
+    def _clean_results_by_threshold(self, scores, positions):        
+        #scores = self._get_margin_scores(scores)
         current_positions = []
         current_scores = []
         list_of_accepted_numbers = []
@@ -44,39 +45,37 @@ class CalculateResults:
         else:
             condition = lambda score: score < threshold
             
-        for current_position,current_score in zip(positions,scores):
+        for current_position, current_score in zip(positions,scores):
             if condition(current_score):
                 current_positions.append(current_position)
                 current_scores.append(current_score)
         return [current_positions,current_scores]
 
     ### debug this oct 12, we have a problem with the results being shifted +1 which is bad 
-    def get_word_data(self, query_position, positions, scores):
-        def get_word_data_from_position(position, score, is_end=False):
+    def _get_match_data(self, query_position, positions, scores):
+        def get_match_data_from_position(position, score):
             segment = self.segments[position]
             sentence = self.sentences[position]
             
             # Adjust stem data based on language
             stems = self.stems[position]
             if self.lang != "eng":                
-                stems = " ".join(str(item) if isinstance(item, float) else item for item in self.stems[position:position + WINDOWSIZE[self.lang]])
+                stems = " ".join(str(item) if isinstance(item, float) else item for item in self.stems[position:position + WINDOWSIZE[self.lang]])            
+            return [segment, sentence, stems, position, score]
             
-            data = [segment, sentence, stems, position, score]
-            
-            # If it's the end position and data is new, append to the list
-            if is_end and data not in all_word_data:
-                all_word_data.append(data)
-
-        all_word_data = []
+        all_match_data = []
 
         for position, score in zip(positions, scores):
             if position >= 0:  # faiss returns -1 when not enough results are found
-                get_word_data_from_position(position, score)
-                
-                end_position = position + WINDOWSIZE[self.lang]
-                if end_position < self.wordlist_len:
-                    get_word_data_from_position(end_position, score, is_end=True)        
-        return all_word_data
+                # we fetch this once for the data at the current position
+                beginning_data = get_match_data_from_position(position, score)                
+                end_position = position + WINDOWSIZE[self.lang] if position + WINDOWSIZE[self.lang] < self.wordlist_len else self.wordlist_len - 1                         
+                end_data = get_match_data_from_position(end_position, score)        
+                end_data[2] = beginning_data[2]  # stems need to be equalized
+                all_match_data.append(beginning_data)
+                if end_data not in all_match_data:
+                    all_match_data.append(end_data)
+        return all_match_data
 
 
     def create_querypaths(self, query_path):
@@ -132,7 +131,19 @@ class CalculateResults:
             # Join the pool to wait for worker processes to exit
             pool.close()
             pool.join()
-            
+    
+    def _get_margin_scores(scoresself, scores):
+        """
+        for each score, divide it by the average of the other scores
+        """
+        scores = 1 - scores
+        margin_scores = []
+        for score in scores:
+            other_scores = scores.copy()        
+            other_scores = np.delete(other_scores, np.where(other_scores == score))
+            margin_score = score / np.mean(other_scores)
+            margin_scores.append(margin_score)
+        return margin_scores
         
     def calc_results_file(self, query_file_path):
         # Initialize result DataFrame and retrieve query data
@@ -151,7 +162,7 @@ class CalculateResults:
             query_results = index.search(query_vectors, QUERY_DEPTH)
             
             # Extract results
-            results = self.extract_results(query_df, query_results)
+            results = self._extract_results(query_df, query_results)
             
             # Convert results to DataFrame and save to JSON
             result_df = pd.DataFrame(results)
@@ -166,7 +177,7 @@ class CalculateResults:
             faiss.normalize_L2(query_vectors)
             return query_vectors
 
-    def extract_results(self, query_df, query_results):
+    def _extract_results(self, query_df, query_results):
         results = {
             "query_position": [],
             "query_segmentnr": [],
@@ -180,10 +191,10 @@ class CalculateResults:
         }
         
         for query_position, (scores, positions) in enumerate(zip(query_results[0], query_results[1])):            
-            cleaned_positions, cleaned_scores = self.clean_results_by_threshold(scores, positions)        
-            word_data = self.get_word_data(query_position, cleaned_positions, cleaned_scores)
+            cleaned_positions, cleaned_scores = self._clean_results_by_threshold(scores, positions)                    
+            word_data = self._get_match_data(query_position, cleaned_positions, cleaned_scores)
             current_query_data = self.get_current_query_data(query_df, query_position)
-            for entry in word_data:
+            for entry in word_data:                
                 results["query_position"].append(query_position)
                 results["query_segmentnr"].append(current_query_data["segmentnrs"])
                 results["query_stems"].append(current_query_data["stems"])
@@ -197,14 +208,14 @@ class CalculateResults:
         return results
 
     def get_current_query_data(self, query_df, query_position):
-        total_query_stems = query_df['stemmed']
+        total_query_stems = query_df['analyzed']
         total_query_segmentnrs = query_df['segmentnr']
         total_query_sentences = query_df['original']
         query_position = min(query_position, len(total_query_stems))
         end_position = min(query_position + WINDOWSIZE[self.lang], len(total_query_stems))
         stems = " ".join(str(item) for item in total_query_stems[query_position:end_position])
         segmentnrs = list(dict.fromkeys(total_query_segmentnrs[query_position:end_position]))
-        sentence = " ".join(total_query_sentences[query_position:end_position])
+        sentence = " ".join(list(dict.fromkeys(total_query_sentences[query_position:end_position])))
         
         if self.lang == "eng":
             stems = total_query_stems[query_position]

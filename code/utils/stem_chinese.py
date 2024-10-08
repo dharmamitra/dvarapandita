@@ -48,15 +48,16 @@ def stem_chinese_file(data):
     path,lang = data
     print("NOW PROCESSING",path)
     cfile = json.load(gzip.open(path,'r'))
-    
-    path_short = os.path.splitext(path)[0]
+    path_short = os.path.splitext(path)[0].replace(".json","")
     filenames = []
     line_numbers = []
     original_lines = []
     cleaned_lines = []
-    for segmentnr in cfile:
+    for entry in cfile:
+        segmentnr = entry['from']
+        original_line = entry['source_sentence']        
         filename, line_number = segmentnr.split(":")
-        original_line = cfile[segmentnr].replace('\n','')
+        original_line = original_line.replace('\n','')
         cleaned_line = stem_chinese(original_line)
         original_lines.append(original_line)
         cleaned_lines.append(cleaned_line)

@@ -10,7 +10,7 @@ import shutil
 
 def create_vec_df(file_df,lang):
     if lang == "eng":        
-        sentences = file_df['stemmed'].tolist()        
+        sentences = file_df['analyzed'].tolist()        
         vectors = embedder.get_vectors(sentences)
         if len(vectors) != len(sentences):
             print("ERROR: NUMBER OF SENTENCES AND VECTORS DOES NOT MATCH")
@@ -22,14 +22,14 @@ def create_vec_df(file_df,lang):
         windowsize = WINDOWSIZE[lang]
         vector_model = get_vector_model(lang)
         if lang == "skt":
-            file_df['stemmed'] = file_df['stemmed'].apply(split_sanskrit_stem)  # apply(lambda line: line.split())
+            file_df['analyzed'] = file_df['analyzed'].apply(split_sanskrit_stem)  # apply(lambda line: line.split())
         else:
-            file_df['stemmed'] = file_df['stemmed'].str.split()  # apply(lambda line: line.split())
+            file_df['analyzed'] = file_df['analyzed'].str.split()  # apply(lambda line: line.split())
 
-        vec_df = file_df.explode("stemmed")
+        vec_df = file_df.explode("analyzed")
 
-        vec_df['weights'] = vec_df['stemmed'].apply(lambda word: get_weight(word,lang))
-        vec_df['vectors'] = vec_df['stemmed'].apply(lambda word:
+        vec_df['weights'] = vec_df['analyzed'].apply(lambda word: get_weight(word,lang))
+        vec_df['vectors'] = vec_df['analyzed'].apply(lambda word:
             get_vector(word,vector_model))
         vector_list = vec_df['vectors'].tolist()
         weight_list = vec_df['weights'].tolist()
@@ -40,11 +40,11 @@ def create_vec_df(file_df,lang):
 
 
 def create_vectorfile(data):    
-    tsv_path,out_path,lang,buckets = data
-    print("NOW PROCESSING",tsv_path)
+    json_path,out_path,lang,buckets = data
+    print("NOW PROCESSING",json_path)
     
-    filename = os.path.basename(tsv_path).split('.tsv')[0]
-    file_df = pd.read_csv(tsv_path, sep='\t', names=['segmentnr', 'original', 'stemmed'], on_bad_lines="skip").astype(str)
+    filename = os.path.basename(json_path).split('.json')[0]
+    file_df = pd.read_json(json_path).astype(str)
     vec_df = create_vec_df(file_df,lang)
     bucket_number = randint(1,buckets)
     bucket_path = out_path + "folder" + str(bucket_number)
@@ -55,20 +55,15 @@ def create_vectorfile(data):
     vec_df.to_pickle(bucket_path + "/" + filename + ".p")
     
 
-def create_vectors(tsv_path, out_path, bucket_num, lang, threads):
+def create_vectors(json_path, out_path, bucket_num, lang, threads):
     list_of_paths = []
-    # make sure the buckets are clean
-    #shutil.rmtree(out_path)
-    #os.mkdir(out_path)
-    for cfile in os.listdir(tsv_path):
+    for cfile in os.listdir(json_path):
         filename = os.fsdecode(cfile)
-        #print("FILENAME", filename)
-        # make sure we only read tsv-files
-        if ".tsv" in filename:
+        if ".json" in filename:
             if lang == "eng":
-                create_vectorfile([tsv_path+filename, out_path, lang, bucket_num])
+                create_vectorfile([json_path+filename, out_path, lang, bucket_num])
             else:
-                list_of_paths.append([tsv_path+filename, out_path, lang, bucket_num])
+                list_of_paths.append([json_path+filename, out_path, lang, bucket_num])
 
     if lang != "eng":
         pool = multiprocessing.Pool(processes=threads)

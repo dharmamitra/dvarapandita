@@ -5,6 +5,19 @@ import regex
 #from utils.constants import *
 from tqdm import tqdm 
 
+def rename_lang(lang):
+    if "tib" in lang:
+        return 'bo'
+    if "chn" in lang:
+        return 'zh'
+    if "eng" in lang:
+        return 'en'
+    if "skt" in lang:
+        return 'sa'
+    if 'pli' in lang:
+        return 'pa'
+
+
 def test_match_tib(match):
     if match['par_length'] >= 14:
         return True
@@ -44,12 +57,12 @@ def test_match_tib(match):
                     return True
 
 def test_match_chn(match):
-    if "論" in match['root_string'] or "論" in match['par_string']:
-        return 
-    if "經" in match['root_string'] or "經" in match['par_string']:
-        return
-    if "卷" in match['root_string'] or "卷" in match['par_string']:
-        return
+    #if "論" in match['root_string'] or "論" in match['par_string']:
+    #    return 
+    #if "經" in match['root_string'] or "經" in match['par_string']:
+    #    return
+    #if "卷" in match['root_string'] or "卷" in match['par_string']:
+    #    return
     if match['par_length'] >= 9 and match['root_length'] >= 9:
         return True
     else:
@@ -58,29 +71,32 @@ def test_match_chn(match):
         inquiry_string = inquiry_string[match['root_offset_beg']-3:match['root_offset_end']+3]
         target_string = target_string[match['par_offset_beg']-3:match['par_offset_end']+3]
         # test if inquiry_string contains 5 chinese characters preceeded by punctuation and followed by punctuation
-        if re.search("(^[。，！？　]|[\p{Han}]{5}|[。，！？　]$)", inquiry_string):
+        if regex.search("(^[。，！？　]|[\p{Han}]{5}|[。，！？　]$)", inquiry_string):
             return True
-        if re.search("(^[。，！？　]|[\p{Han}]{5}|[。，！？　]$)", target_string):
+        if regex.search("(^[。，！？　]|[\p{Han}]{5}|[。，！？　]$)", target_string):
             return True
-        if re.search("(^[。，！？　]|[\p{Han}]{6}|[。，！？　]$)", inquiry_string):
+        if regex.search("(^[。，！？　]|[\p{Han}]{6}|[。，！？　]$)", inquiry_string):
             return True
-        if re.search("(^[。，！？　]|[\p{Han}]{6}|[。，！？　]$)", target_string):
+        if regex.search("(^[。，！？　]|[\p{Han}]{6}|[。，！？　]$)", target_string):
             return True
-
 
 def filter_matches(matches):
+    print("LENGTH OF MATCHES", len(matches))
     filtered_matches = []
-    for match in tqdm(matches):
+    for match in matches:
+        if not "root_segnr" in match:
+            continue
         if match['root_segnr'][0].split(':')[0] != match['par_segnr'][0].split(":")[0]:        
             match['id'] = match['root_segnr'][0] + "_" + match['par_segnr'][0]
-            if match['src_lang'] == "tib":                
+            if match['src_lang'] == "tib":                      
                 if test_match_tib(match):                    
                     filtered_matches.append(match)
-            if match['src_lang'] == "chn":
+            elif match['src_lang'] == "chn":
                 if test_match_chn(match):
                     filtered_matches.append(match)
             else:
                 filtered_matches.append(match)
+    print("LENGTH OF FILTERED MATCHES", len(filtered_matches))
     return filtered_matches
 
 def process_path(path):

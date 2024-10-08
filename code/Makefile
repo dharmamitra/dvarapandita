@@ -49,13 +49,17 @@ prepare-english:
 
 # second step is vector creation 
 create-vectors-tibetan:
-	invoke create-vectorfiles --tsv-path="../data/tib/" --out-path="../work/tibetan/" --bucket-num 1  --lang "tib" --threads 16
+	invoke create-vectorfiles --tsv-path="../data/bo/segments/" --out-path="../work/bo/" --bucket-num 1  --lang "tib" --threads 24
 
 create-vectors-sanskrit:
-	invoke create-vectorfiles --tsv-path="../data-vedic/tsv/" --out-path="../vedic-work/" --bucket-num 1 --lang "skt" --threads 12
+	invoke create-vectorfiles --tsv-path="../data/sa/segments/" --out-path="../work/sa/" --bucket-num 1 --lang "skt" --threads 12
 
 create-vectors-chinese:
-	invoke create-vectorfiles --tsv-path="/home/basti/data/chinese/segmented-chinese/tsv-extract/" --out-path="../chinese-work/" --bucket-num 1 --lang "chn" --threads 16
+	invoke create-vectorfiles --tsv-path="../data/zh/segments/" --out-path="../work/sa/" --bucket-num 1 --lang "chn" --threads 16
+
+create-vectors-pali:
+	invoke create-vectorfiles --tsv-path="../data/pa/segments/" --out-path="../work/pa/" --bucket-num 1 --lang "pli" --threads 16
+
 
 create-vectors-english:
 	invoke create-vectorfiles --tsv-path="../data/tib-eng/" --out-path="../work/tib-eng/" --bucket-num 1 --lang "eng" --threads 1
@@ -66,10 +70,14 @@ create-index-chn:
 	invoke create-new-index "../chinese-work/folder1/" 
 
 create-index-tib:
-	invoke create-new-index "../work/tibetan/folder1/" 
+	invoke create-new-index "../work/bo/folder1/" 
 
 create-index-skt:
-	invoke create-new-index "../vedic-work/folder1/" 
+	invoke create-new-index "../work/sa/folder1/" 
+
+create-index-pli:
+	invoke create-new-index "../work/pa/folder1/" 
+
 
 create-index-eng:
 	invoke create-new-index "../work/tib-eng/folder1/"
@@ -79,10 +87,13 @@ get-results-from-index-chn:
 	invoke get-results-from-index --bucket-path "../chinese-work/folder1/" --lang="chn" --alignment-method="local" --index-method="cpu"
 
 get-results-from-index-tib:
-	invoke get-results-from-index --bucket-path "../work/tibetan/folder1/" --lang="tib" --alignment-method="local" --index-method="cpu"
+	invoke get-results-from-index --bucket-path "../work/bo/folder1/" --lang="tib" --alignment-method="local" --index-method="cpu"
 
 get-results-from-index-skt:
-	invoke get-results-from-index --bucket-path "../vedic-work/folder1/" --lang="skt" --alignment-method="local" --index-method="cpu"
+	invoke get-results-from-index --bucket-path "../work/sa/folder1/" --lang="skt" --alignment-method="local" --index-method="cpu"
+
+get-results-from-index-pli:
+	invoke get-results-from-index --bucket-path "../work/pa/folder1/" --lang="skt" --alignment-method="local" --index-method="cpu"
 
 get-results-from-index-eng:
 	invoke get-results-from-index --bucket-path "../work/tib-eng/folder1/" --lang="eng" --index-method="gpu" --alignment-method="sentence"

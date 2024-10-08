@@ -17,8 +17,7 @@ set -e # Good Idea to stop operation on first error.
 source /sw/batch/init.sh
 source ~/.profile
 # Load environment modules for your application here.
-WORK_DIR=/work/ftsx015/tib/work
-OUT_DIR=/work/ftsx015/tib/output
+
 # Actual work starting here. You might need to call
 # srun or mpirun depending on your type of application
 
@@ -28,9 +27,7 @@ OUT_DIR=/work/ftsx015/tib/output
 
 #for i in /work/ftsx015/tib/work/folder*; do srun --time=1:59:00 --partition=std  ~/anaconda3/bin/invoke create-new-index $i & done
 
-for i in $WORK_DIR/folder*; do srun --time=11:59:00 --partition=std  ~/anaconda3/bin/invoke get-results-from-index --bucket-path $i/ --lang="tib" --alignment-method="local" --index-method="cpu" & done
+for i in /work/ftsx015/tib/work/folder*; do srun --time=11:59:00 --partition=std  ~/anaconda3/bin/invoke get-results-from-index --bucket-path $i/ --lang="tib" --alignment-method="local" --index-method="cpu" & done
 
-~/anaconda3/bin/invoke merge-results-for-db --input-path $WORK_DIR --output-path $OUT_DIR 
-
-#~/anaconda3/bin/invoke calculate-stats --output-path $OUT_DIR 
+#~/anaconda3/bin/invoke get-results-from-index --bucket-path /work/ftsx015/tib/work/ --txt_path /work/ftsx015/tib/txt/ 
 

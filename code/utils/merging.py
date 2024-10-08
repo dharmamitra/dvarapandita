@@ -12,37 +12,34 @@ from utils.shorten_segments import shorten_segments
 def normalized_levenshtein(string1,string2):
     return 1 - distance(string1,string2)/len(string2)
 
-def get_pair_clusters(pair_list,windowsize):
+def get_pair_clusters(pair_list, windowsize):
     try:
-        index = spatial.cKDTree(pair_list,1000)
-    except:
+        index = spatial.cKDTree(pair_list, 1000)
+    except Exception as e:
+        print(f"Error creating KDTree: {e}")
         return []
     
     known_results = {}
     clusters = []
-    c = 0
+
     for query_pair in pair_list:
-        known_results[tuple(pair_list[0])] = 1
-        if not tuple(query_pair) in known_results:
+        if tuple(query_pair) not in known_results:
             query_pairs = [query_pair]
-            current_cluster = query_pairs
-            while 1:
+            current_cluster = []
+            while query_pairs:
                 new_results = []
-                query_results = index.query_ball_point(query_pairs, windowsize * 3)
+                query_results = index.query_ball_point(query_pairs, windowsize)
                 for query_result in query_results:
                     for result in query_result:
-                        result_pair = pair_list[result]
-                        if tuple(result_pair) not in known_results:
+                        result_pair = tuple(pair_list[result])
+                        if result_pair not in known_results:
                             new_results.append(result_pair)
-                            known_results[tuple(result_pair)] = 1
+                            known_results[result_pair] = 1
                             current_cluster.append(result_pair)
-                if len(new_results) == 0:
-                    break
-                else:
-                    query_pairs = new_results
-            if(len(current_cluster) != 0):
+                query_pairs = new_results
+            if current_cluster:
                 clusters.append(current_cluster)
-        c +=1
+
     return clusters
 
 def construct_matches_from_pair_clusters(pair_clusters,

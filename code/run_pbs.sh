@@ -4,19 +4,23 @@
 LANG=chn
 
 # Toggle variables for each step
-RUN_CREATE_VECTORFILES=false
+RUN_CREATE_VECTORFILES=true
 RUN_CREATE_NEW_INDEX=false
 RUN_GET_RESULTS=false
-RUN_MERGE_RESULTS=true
-# Buckets should always be a factor of 10 
+RUN_MERGE_RESULTS=false
+# Buckets should always be a factor of 10. For the large collections such as Tibetan, Chinese, this should be 100; Pali and Sanskrit are fine with 10 
 NUM_BUCKETS=100
 
 # Define directory paths
-TXT_DIR="/tier2/ucb/nehrdich/${LANG}/txt/"
 TSV_DIR="/tier2/ucb/nehrdich/${LANG}/tsv/"
 WORK_DIR="/tier2/ucb/nehrdich/${LANG}/work"
 OUT_DIR="/tier2/ucb/nehrdich/${LANG}/output/"
 
+if [ "$LANG" = "chn" ]; then
+  TXT_DIR="/tier2/ucb/nehrdich/chn/json/"
+else
+  TXT_DIR="/tier2/ucb/nehrdich/${LANG}/txt/"
+fi
 
 # Function to create directory if it does not exist
 create_directory() {
@@ -45,6 +49,7 @@ if [ "$RUN_CREATE_NEW_INDEX" = true ]; then
         folder_array+=("$i")
         ((count++))
         if [ "$count" -eq 10 ]; then
+            echo ${folder_array[*]}
             # Generate the PBS script with GNU Parallel command inside
             echo '#!/bin/bash
 #PBS -l select=1:ncpus=160
@@ -53,6 +58,7 @@ cd /homes/nehrdich/dvarapandita/code/
 # Use GNU Parallel to process the folders
 parallel -j 10 --will-cite ~/miniconda3/bin/invoke create-new-index {} ::: '"${folder_array[*]}" | qsub &
             # Reset array and count for next batch
+            echo sent ${folder_array[*]}
             folder_array=()
             count=0
         fi
@@ -112,8 +118,7 @@ if [ "$RUN_MERGE_RESULTS" = true ]; then
     echo '#!/bin/bash    
     #PBS -l select=1:ncpus=160
     cd /homes/nehrdich/dvarapandita/code/
-    ~/miniconda3/bin/invoke merge-results-for-db --input-path '"$WORK_DIR"' --output-path '"$OUT_DIR"';
-    ~/miniconda3/bin/invoke calculate-stats --output-path '"$OUT_DIR" | qsub
+    ~/miniconda3/bin/invoke merge-results-for-db --input-path '"$WORK_DIR"' --output-path '"$OUT_DIR" | qsub    
 fi
 
 

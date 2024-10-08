@@ -14,9 +14,40 @@ from tqdm import tqdm
 from filter_matches import filter_matches
 path = sys.argv[1]
 
+cpu_count = mp.cpu_count()
+
+cpu_count = 4
+
+def rename_lang(lang):
+    if "tib" in lang:
+        return 'bo'
+    if "chn" in lang:
+        return 'zh'
+    if "eng" in lang:
+        return 'en'
+    if "skt" in lang:
+        return 'sa'
+    if 'pli' in lang:
+        return 'pa'
+    return lang
+
+def fix_langnames(match):
+    #print("SRC_LANG BEFORE: ", match['src_lang'])   
+    #print("TGT_LANG BEFORE: ", match['tgt_lang'])
+    match_before = match.copy()
+    match['src_lang'] = rename_lang(match['src_lang'])
+    match['tgt_lang'] = rename_lang(match['tgt_lang'])
+    print("SRC_LANG AFTER: ", match['src_lang'])
+    print("TGT_LANG AFTER: ", match['tgt_lang'])
+    if not match['src_lang']:
+        print("SRC_LANG BEFORE: ", match_before['src_lang'])
+    return match
+
 def get_filename(segnr):
-    segnr = re.sub("_[0-9]+:", ":", segnr)
-    segnr = re.sub("$[0-9]+", "", segnr)
+    segnr = segnr.replace(".json", "")
+    if "ZH_" in segnr:    
+        segnr = re.sub("_[0-9]+", "", segnr)
+    segnr = re.sub("\$[0-9]+", "", segnr)
     return segnr.split(":")[0]
 
 def add_co_occ_value(matches):
@@ -41,6 +72,10 @@ def add_co_occ_value(matches):
 def get_cat_from_segmentnr(segmentnr):
     # when the segmentnr is not Pali:
     cat = ""
+    if "NY" in segmentnr:
+        return "NY"
+    elif "NK" in segmentnr:
+        return "NK"
     search = re.search("^[A-Z]+[0-9]+", segmentnr)
     if search:
         cat = search[0]
@@ -89,30 +124,41 @@ def sort_matches(matches):
     category_stats = get_category_stats(matches_shuffled)
     ids_shuffled = list(map(get_id_from_match, matches_shuffled))
     return {
-        'ids_sorted_by_root_segnr' : ids_sorted_by_root_segnr,
-        'ids_sorted_by_par_segnr' : ids_sorted_by_par_segnr,
-        'ids_sorted_by_root_length' : ids_sorted_by_root_length,
-        'ids_sorted_by_par_length' : ids_sorted_by_par_length,
-        'ids_shuffled' : ids_shuffled,
+        'parallels_sorted_by_src_pos' : ids_sorted_by_root_segnr,
+        'parallels_sorted_by_tgt_pos' : ids_sorted_by_par_segnr,
+        'parallels_sorted_by_length_src' : ids_sorted_by_root_length,
+        'parallels_sorted_by_length_tgt' : ids_sorted_by_par_length,
+        'parallels_randomized' : ids_shuffled,
         'category_stats' : category_stats
     } 
 
-def collect_stats_from_basename(filename, main_path):
-    #print("Collecting stats from basename: " + filename)
-    subfolders = [f for f in glob.glob(main_path + "/*") if os.path.isdir(f)] #and f.endswith("_stats")]
+def collect_stats_from_basename(basename, main_path):    
+    """
+    This function collects ALL matches for a given basename and sorts them for the database
+    """
+    print("Collecting stats from basename: " + basename)    
+    subfolders = [f for f in glob.glob(main_path + "/*") if os.path.isdir(f)]
     merged_stats = []
     for subfolder in subfolders:        
-        if os.path.isfile(subfolder + "/" + filename + ".json.gz"):            
-            stats = json.loads(gzip.open(subfolder + "/" + filename + ".json.gz", 'r').read())
-            merged_stats.append(stats)      
-    # change this [item for sublist in merged_stats for item in sublist] to itertools.chain.from_iterable      
+        # get files in subfolder that begin with filename and end in .json.gz, as these contain the stats relevant for the current basename
+        files = [f for f in glob.glob(subfolder + "/*") if f.endswith(".json.gz") and f.startswith(subfolder + "/" + basename)]
+        for file in files:
+            stats = json.loads(gzip.open(file, 'r').read())
+            merged_stats.append(stats)
+    
+
     merged_stats = chain.from_iterable(merged_stats)
     merged_stats = filter_matches(merged_stats)
     merged_stats = add_co_occ_value(merged_stats)    
-    merged_stats = [match for match in merged_stats if match['co_occ'] <= 20]   
+    merged_stats = [match for match in merged_stats if match['co_occ'] <= 20]   # TODO: move this into the constants config file 
+    # this is a temporary hack to provide compatibility with the old langnames
+    merged_stats = [fix_langnames(match) for match in merged_stats]
+
     sorted_stats = sort_matches(merged_stats)
-    sorted_stats['filename'] = get_filename(filename)
-    sorted_stats['id'] = get_filename(filename)
+    sorted_stats['filename'] = basename
+    sorted_stats['id'] = basename
+    print("Done collecting stats from basename: " + basename)
+
     return [sorted_stats, merged_stats] 
 
 def collect_stats_from_folder(input_path, main_path):
@@ -121,18 +167,21 @@ def collect_stats_from_folder(input_path, main_path):
                     "files": {} }                    
     # subfolders are all folders in main_path that end in _stats
     subfolders = [f for f in glob.glob(input_path + "/*") if os.path.isdir(f)]
+    
     # filenames are all files in subfolders that end in _stats.json.gz    
     filenames = []
     for subfolder in subfolders:
         filenames.extend([f[:-8] for f in glob.glob(subfolder + "/*") if f.endswith(".json.gz")])    
+    
     filenames = [f.split("/")[-1] for f in filenames]    
+    filenames = [get_filename(f) for f in filenames]
     unique_filenames = list(set(filenames))    
     # use mp to collect stats from all files in parallel in chunks of 1000 files a time
     chunksize = 200
     for i in tqdm(range(0, len(unique_filenames), chunksize)):
         print("Collecting stats from " + str(i) + " to " + str(i+chunksize) + " of " + str(len(unique_filenames)) + " files")
         chunk = unique_filenames[i:i+chunksize]
-        pool = mp.Pool(mp.cpu_count())        
+        pool = mp.Pool(cpu_count)
         results = pool.starmap(collect_stats_from_basename, [(filename, input_path) for filename in chunk])
         # get results without mp
         pool.close()
