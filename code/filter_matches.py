@@ -56,6 +56,10 @@ def test_match_tib(match):
                 if re.search("/ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ [a-zA-Z+]+ //", target_string):
                     return True
 
+def test_match_pli_skt(match):
+    if match['par_length'] >= 30:
+        return True
+
 def test_match_chn(match):
     #if "論" in match['root_string'] or "論" in match['par_string']:
     #    return 
@@ -93,6 +97,9 @@ def filter_matches(matches):
                     filtered_matches.append(match)
             elif match['src_lang'] == "chn":
                 if test_match_chn(match):
+                    filtered_matches.append(match)
+            elif match['src_lang'] == "skt" or match['src_lang'] == "pli":
+                if test_match_pli_skt(match):
                     filtered_matches.append(match)
             else:
                 filtered_matches.append(match)
