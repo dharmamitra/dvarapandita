@@ -6,16 +6,16 @@ WINDOWSIZE = {"skt": 6,
               "pli": 6,
               "eng": 0 }
 
-THRESHOLD = {"skt": 1.05,
+THRESHOLD = {"skt": 0.03,
               "tib": 0.03,
               "chn": 0.01,#0.01, # 0.01 ist default
-              "pli": 1.05,
+              "pli": 0.5,
               "eng": 0.45 }
 
-BIGGER_IS_BETTER = {"skt": True,
+BIGGER_IS_BETTER = {"skt": False,
                 "tib": False,  
                 "chn": False,
-                "pli": True,
+                "pli": False,
                 "eng": False }
 
 # we need two parameters for min_length mainly since for Tibetan, there are two scenarios: single verse-padas (min length 7) and prose matches (min length 12)

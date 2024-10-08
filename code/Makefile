@@ -90,10 +90,10 @@ get-results-from-index-tib:
 	invoke get-results-from-index --bucket-path "../work/bo/folder1/" --lang="tib" --alignment-method="local" --index-method="cpu"
 
 get-results-from-index-skt:
-	invoke get-results-from-index --bucket-path "../work/sa/folder1/" --lang="skt" --alignment-method="local" --index-method="cpu"
+	invoke get-results-from-index --bucket-path "../work/sa/folder1/" --lang="pli" --alignment-method="local" --index-method="cpu"
 
 get-results-from-index-pli:
-	invoke get-results-from-index --bucket-path "../work/pa/folder1/" --lang="skt" --alignment-method="local" --index-method="cpu"
+	invoke get-results-from-index --bucket-path "../work/pa/folder1/" --lang="pli" --alignment-method="local" --index-method="cpu"
 
 get-results-from-index-eng:
 	invoke get-results-from-index --bucket-path "../work/tib-eng/folder1/" --lang="eng" --index-method="gpu" --alignment-method="sentence"

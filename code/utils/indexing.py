@@ -36,8 +36,7 @@ class CalculateResults:
     def _clean_results_by_threshold(self, scores, positions):        
         #scores = self._get_margin_scores(scores)
         current_positions = []
-        current_scores = []
-        list_of_accepted_numbers = []
+        current_scores = []        
         threshold = THRESHOLD[self.lang]
         bigger_is_better = BIGGER_IS_BETTER[self.lang]
         if bigger_is_better:
@@ -46,6 +45,7 @@ class CalculateResults:
             condition = lambda score: score < threshold
             
         for current_position, current_score in zip(positions,scores):
+            
             if condition(current_score):
                 current_positions.append(current_position)
                 current_scores.append(current_score)
@@ -191,7 +191,7 @@ class CalculateResults:
         }
         
         for query_position, (scores, positions) in enumerate(zip(query_results[0], query_results[1])):            
-            cleaned_positions, cleaned_scores = self._clean_results_by_threshold(scores, positions)                    
+            cleaned_positions, cleaned_scores = self._clean_results_by_threshold(scores, positions)                                
             word_data = self._get_match_data(query_position, cleaned_positions, cleaned_scores)
             current_query_data = self.get_current_query_data(query_df, query_position)
             for entry in word_data:                
