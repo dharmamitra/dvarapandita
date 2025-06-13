@@ -3,13 +3,13 @@ LANGS = ["skt","tib","pli","chn"]
 WINDOWSIZE = {"skt": 6,
               "tib": 7,
               "chn": 6,
-              "pli": 7,
+              "pli": 6,
               "eng": 0 }
 
-THRESHOLD = {"skt": 0.03,
-              "tib": 0.03,
-              "chn": 0.01,#0.01, # 0.01 ist default
-              "pli": 0.01,
+THRESHOLD = {"skt": 0.12,
+              "tib": 0.10,
+              "chn": 0.01,#0.01, 
+              "pli": 0.20,
               "eng": 0.45 }
 
 BIGGER_IS_BETTER = {"skt": False,
@@ -22,7 +22,7 @@ BIGGER_IS_BETTER = {"skt": False,
 MIN_LENGTH = {"skt": 20, # war mal 25
               "tib": 11,
               "chn": 5,
-              "pli": 30,
+              "pli": 50,
               "eng": 10 }
 
 ABSOLUTE_MIN_LENGTH = {"skt": 20, # war mal 25
@@ -32,9 +32,10 @@ ABSOLUTE_MIN_LENGTH = {"skt": 20, # war mal 25
               "eng": 10 }
 
 
-QUERY_DEPTH = 5 # max. depth of the queries, this shouldn't exceed 200 after multiplying with bucket count
+QUERY_DEPTH = 5 # max. depth of the queries, this shouldn't exceed 200 after multiplying with bucket count; for chinese, tibetan 5 is okay; for pali and sanskrit maybe higher, like 15?
 MIN_DISTANCE = 500 # min. distance between the query token and the target token, in order to avoid that queries match with themselves 
 TEXT_CHUNKSIZE=2000
+COOCC_THRESHOLD = 50 # defines the maximum number of co-occurrences for a match to be considered -- a co-occurrence is defined as a shorter/equal length match being contained in a longer match. 
 
 MAX_SEQ_LENGTH = {"tib": 50,
                   "chn": 20,

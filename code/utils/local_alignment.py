@@ -1,134 +1,167 @@
+"""
+Provides functionality for local sequence alignment with timeout handling and language-specific configurations.
+"""
+
 from Bio import Align
 import re
+from multiprocessing import Process, Queue
+import time
+import random
+from typing import Tuple, Dict, List, Optional
 from utils.constants import PUNC, TIBETAN_STEMFILE
 
-def create_aligner(lang):
+# Type aliases
+AlignmentResult = Tuple[int, int, int, int, float]  # (start1, end1, start2, end2, score)
+
+class AlignerConfig:
+    """Configuration parameters for different language aligners."""
+    CONFIGS = {
+        "tib": {
+            "match_score": 5,
+            "mismatch_score": -4,
+            "open_gap_score": -5,
+            "extend_gap_score": -5
+        },
+        "chn": {
+            "match_score": 1,
+            "mismatch_score": -1,
+            "open_gap_score": -0.8,
+            "extend_gap_score": -0.3
+        },
+        "default": {
+            "match_score": 1,
+            "mismatch_score": -2,
+            "open_gap_score": -1,
+            "extend_gap_score": -0.5
+        }
+    }
+
+def create_aligner(lang: str) -> Align.PairwiseAligner:
+    """Create and configure a PairwiseAligner for the specified language."""
     aligner = Align.PairwiseAligner()
     aligner.mode = 'local'
-    # todo: the following parameters need to be adjusted based on the individual languages, as the parameters are unlikely to fit well for all cases.
-    if lang == "tib":
-        aligner.match_score = 5
-        aligner.mismatch_score = -4
-        aligner.open_gap_score = -5
-        aligner.extend_gap_score = -5
-    elif lang == "chn": 
-        aligner.match_score = 1
-        aligner.mismatch_score = -1
-        aligner.open_gap_score = -.8
-        aligner.extend_gap_score = -.3
-    else: 
-        aligner.match_score = 1
-        aligner.mismatch_score = -2
-        aligner.open_gap_score = -1
-        aligner.extend_gap_score = -.5
+    
+    config = AlignerConfig.CONFIGS.get(lang, AlignerConfig.CONFIGS['default'])
+    for attr, value in config.items():
+        setattr(aligner, attr, value)
+    
     return aligner
 
-def create_replaces_dictionary(path):
-    replaces_dictionary = {}
-    r = open(path, "r")
-    for line in r:
-        headword = line.split('\t')[0]
-        entry = line.split('\t')[2]
-        replaces_dictionary[headword] = entry.strip()
-    return replaces_dictionary
+class TokenProcessor:
+    """Handles token processing and stemming operations."""
+    
+    def __init__(self, stem_file: str):
+        self.replaces_dictionary = self._load_stem_dictionary(stem_file)
 
-replaces_dictionary = create_replaces_dictionary(TIBETAN_STEMFILE)
+    @staticmethod
+    def _load_stem_dictionary(path: str) -> Dict[str, str]:
+        """Load stemming dictionary from file."""
+        replaces_dictionary = {}
+        try:
+            with open(path, "r") as f:
+                for line in f:
+                    parts = line.split('\t')
+                    if len(parts) >= 3:
+                        replaces_dictionary[parts[0]] = parts[2].strip()
+        except (IOError, IndexError) as e:
+            print(f"Error reading dictionary file: {e}")
+        return replaces_dictionary
 
-def multireplace(string):
-    if string in replaces_dictionary:
-        string = replaces_dictionary[string]
-    return string
-
-
-def crude_stemmer(tokens):
-    tokens = [multireplace(x) for x in tokens]
-    result_tokens = []
-    for token in tokens:
+    def stem_token(self, token: str) -> str:
+        """Apply stemming to a single token."""
+        if token in self.replaces_dictionary:
+            token = self.replaces_dictionary[token]
         token = re.sub(r"([a-z])\'.*", r"\1", token)
-        if "/" in tokens:
-            token = token + str(random.randint(1, 100))
-        result_tokens.append(token)
-    return result_tokens
+        if "/" in token:
+            token += str(random.randint(1, 100))
+        return token
 
+    def process_tokens(self, tokens: List[str], lang: str) -> Tuple[List[str], List[int]]:
+        """Process tokens and track their positions."""
+        processed_tokens = []
+        token_positions = []
+        current_pos = 0
+        
+        for token in tokens:
+            if not any(char in token for char in ['/', '@', *PUNC]) and not re.search('[0-9]', token):
+                token_positions.append(current_pos)
+                processed_tokens.append(token)
+            current_pos += len(token) + (1 if lang == "tib" else 0)
+            
+        return processed_tokens, token_positions
 
-def get_aligned_offsets_efficient(inquiry_text, target_text, threshold, lang, aligner):
-    # efficient version of get_aligned_offsets where we only look at the first 100 tokens in both directions, avoiding the algorithm to get stuck on very long matches
+# Initialize global token processor
+token_processor = TokenProcessor(TIBETAN_STEMFILE)
+
+def get_aligned_offsets(stringa: str, stringb: str, lang: str, 
+                       aligner: Align.PairwiseAligner, 
+                       timeout: int = 30) -> AlignmentResult:
+    """
+    Get aligned offsets between two strings with timeout handling.
+    Returns (start1, end1, start2, end2, score) or (0,0,0,0,0) if alignment fails.
+    """
+    if len(stringa) <= 3 or len(stringb) <= 3:
+        return 0, 0, 0, 0, 0
+
+    # Process tokens
+    stringa_tokens = stringa.split() if lang == "tib" else list(stringa)
+    stringb_tokens = stringb.split() if lang == "tib" else list(stringb)
+    
+    stringa_processed, stringa_positions = token_processor.process_tokens(stringa_tokens, lang)
+    stringb_processed, stringb_positions = token_processor.process_tokens(stringb_tokens, lang)
+    
+    # Apply stemming
+    stringa_stemmed = [token_processor.stem_token(token) for token in stringa_processed]
+    stringb_stemmed = [token_processor.stem_token(token) for token in stringb_processed]
+    
+    # Configure aligner alphabet
+    aligner.alphabet = list(set(stringa_stemmed + stringb_stemmed))
+
+    if len(stringa_stemmed) < 6 or len(stringb_stemmed) < 6:        
+        return 0, 0, 0, 0, 0
+    
+    try:
+        # Perform alignment directly
+        alignments = aligner.align(stringa_stemmed, stringb_stemmed)
+        if not alignments:
+            return 0, 0, 0, 0, 0
+            
+        result = alignments[0]
+        
+        # Calculate final positions
+        start1 = stringa_positions[result.aligned[0][0][0]]
+        end1 = stringa_positions[result.aligned[0][-1][1]] if result.aligned[0][-1][1] < len(stringa_positions) else len(stringa)
+        start2 = stringb_positions[result.aligned[1][0][0]]
+        end2 = stringb_positions[result.aligned[1][-1][1]] if result.aligned[1][-1][1] < len(stringb_positions) else len(stringb)
+        
+        return start1, end1, start2, end2, result.score
+        
+    except Exception as e:
+        print("Error during alignment:", str(e))
+        return 0, 0, 0, 0, 0
+
+def get_aligned_offsets_efficient(inquiry_text: str, target_text: str, 
+                                threshold: int, lang: str, 
+                                aligner: Align.PairwiseAligner) -> AlignmentResult:
+    """
+    Efficient version of get_aligned_offsets for long texts.
+    Only processes the first and last 'threshold' characters.
+    """
     if len(inquiry_text) < threshold or len(target_text) < threshold:
         return get_aligned_offsets(inquiry_text, target_text, lang, aligner)
-    else:
-        inquiry_text_beg, w, target_text_beg, v, score_beg = get_aligned_offsets(inquiry_text[:threshold],
-                                                                         target_text[:threshold], lang, aligner)
-        x, inquiry_text_end, y, target_text_end, score_end = get_aligned_offsets(inquiry_text[-threshold:],
-                                                                         target_text[-threshold:], lang, aligner)
-        score = (score_beg + score_end) / 2
-        inquiry_text_end = inquiry_text_end + len(inquiry_text) - threshold
-        target_text_end = target_text_end + len(target_text) - threshold
-        return inquiry_text_beg, inquiry_text_end, target_text_beg, target_text_end, score
-
-
-def get_aligned_offsets(stringa, stringb, lang, aligner):
-    if len(stringa) <=3 or len(stringb) <=3:
-        print("Too short strings for alignment: ", stringa, stringb)
-        return 0, 0, 0, 0, 0
-    stringa_tokens_before = stringa
-    stringb_tokens_before = stringb
-    if lang == "tib":
-        stringa_tokens_before = stringa.split()
-        stringb_tokens_before = stringb.split()
-
-    c = 0
-    stringa_lengths = []
-    stringa_tokens_after = []
-    for token in stringa_tokens_before:
-        if not "/" in token and not "@" in token and token not in PUNC and not re.search('[0-9]', token):
-            stringa_lengths.append(c)
-            stringa_tokens_after.append(token)
-        if lang == "tib":
-            c += len(token) + 1
-        else:
-            c += len(token)
-    c = 0
-    stringb_lengths = []
-    stringb_tokens_after = []
-    for token in stringb_tokens_before:
-        if not "/" in token and not "@" in token and token not in PUNC and not re.search('[0-9]', token):
-            stringb_lengths.append(c)
-            stringb_tokens_after.append(token)
-        if lang == "tib":
-            c += len(token) + 1
-        else:
-            c += len(token)
-
-    stringa_tokens = crude_stemmer(stringa_tokens_after)
-    stringb_tokens = crude_stemmer(stringb_tokens_after)
-    alphabet = list(set(stringa_tokens + stringb_tokens))
-    aligner.alphabet = alphabet
-
-    stringa_lemmatized = " ".join(stringa_tokens)
-    stringb_lemmatized = " ".join(stringb_tokens)
-    try:
-        alignments = aligner.align(stringa_tokens, stringb_tokens)
-        if alignments:
-            stringa_beg = alignments[0].aligned[0][0][0]
-            stringa_end = alignments[0].aligned[0][-1][1]
-            stringb_beg = alignments[0].aligned[1][0][0]
-            stringb_end = alignments[0].aligned[1][-1][1]
-
-            stringb_beg = stringb_lengths[stringb_beg]
-            if stringb_end < len(stringb_lengths):
-                stringb_end = stringb_lengths[stringb_end]
-            else:
-                stringb_end = len(stringb)
-
-            stringa_beg = stringa_lengths[stringa_beg]
-            if stringa_end < len(stringa_lengths):
-                stringa_end = stringa_lengths[stringa_end]
-            else:
-                stringa_end = len(stringa)
-
-            return stringa_beg, stringa_end, stringb_beg, stringb_end, alignments[0].score
-        else:
-            return 0, 0, 0, 0, 0
-    except Exception as e:
-        print("Error during alignment: ", e)
-        return 0, 0, 0, 0, 0
+    
+    # Get alignments for beginning and end portions
+    start_alignment = get_aligned_offsets(inquiry_text[:threshold],
+                                        target_text[:threshold], 
+                                        lang, aligner)
+    
+    end_alignment = get_aligned_offsets(inquiry_text[-threshold:],
+                                      target_text[-threshold:], 
+                                      lang, aligner)
+    
+    # Adjust end positions
+    inquiry_end = end_alignment[1] + len(inquiry_text) - threshold
+    target_end = end_alignment[3] + len(target_text) - threshold
+    avg_score = (start_alignment[4] + end_alignment[4]) / 2
+    
+    return start_alignment[0], inquiry_end, start_alignment[2], target_end, avg_score

@@ -24,6 +24,8 @@ def load_files_from_bucket(bucket_path):
         for file in os.listdir(bucket_path)
         if file.endswith(FILE_EXTENSION) and WORDLIST_NAME not in file and test_if_should_load(file)
     ]   
+    if not files:
+        return pd.DataFrame()
     dataframes = (read_file(file) for file in files)
     return pd.concat(dataframes, ignore_index=True)
 

@@ -3,7 +3,8 @@ from invoke import task
 from stemmer import run_stemmer 
 from create_vectors import create_vectors
 from calculate_index import create_index, run_calculation
-from merge_stats import collect_stats_from_folder
+from merge_stats import collect_matches_from_folder
+from merge_matches_exp import collect_matches_from_folder_exp
 
 
 @task
@@ -24,7 +25,13 @@ def create_new_index(c, bucket_path):
 
 @task
 def merge_results_for_db(c, input_path, output_path):
-    collect_stats_from_folder(input_path, output_path)
+    print(input_path)
+    print(output_path)
+    collect_matches_from_folder(input_path, output_path)
 
-    
-    
+@task
+def merge_results_for_db_exp(c, input_path, output_path):
+    print(input_path)
+    print(output_path)
+    collect_matches_from_folder_exp(input_path, output_path)
+
