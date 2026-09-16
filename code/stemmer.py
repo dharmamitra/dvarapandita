@@ -1,6 +1,5 @@
 import os 
 import pandas as pd
-import re
 import numpy as np
 import multiprocessing
 
@@ -15,7 +14,6 @@ from utils.general import test_if_should_load
 from pathlib import Path
 
 def testing_write(fun):
-    print(">>> {} >>>".format(os.environ.get("DP_TESTMODE")))
     def wrapper(df, path):
         path = Path(path).absolute()
         (path.parent.parent / "testing-stemmed").mkdir(exist_ok=True)
@@ -35,7 +33,6 @@ def write_df(df,path):
 def stem_file(data):
     path,lang = data
     print("NOW PROCESSING",path)
-    cfile = open(path,'r')
     path_short = os.path.splitext(path)[0]
     lines = crop_lines(path, lang)
     filename = create_fname(path)
@@ -86,10 +83,10 @@ def run_stemmer(path,lang,num_of_threads):
 
     pool = multiprocessing.Pool(processes=num_of_threads)
     if lang == "skt" or lang == "tib":
-        quote_results = pool.map(stem_file, list_of_paths)
+        pool.map(stem_file, list_of_paths)
     if lang == "chn":
-        quote_results = pool.map(stem_chinese_file, list_of_paths)
+        pool.map(stem_chinese_file, list_of_paths)
     if lang == "eng":
-        quote_results = pool.map(preprocess_translated_file, list_of_paths)
+        pool.map(preprocess_translated_file, list_of_paths)
     pool.close()
 

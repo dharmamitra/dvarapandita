@@ -10,3 +10,5 @@ venv
 *.model
 *.vec
 *.vocab
+# local matching parameters (thresholds, window sizes, min lengths) are not published
+code/utils/constants.py
