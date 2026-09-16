@@ -3,24 +3,11 @@ import gzip
 import re
 import regex
 #from utils.constants import *
-from tqdm import tqdm 
 from utils.general import test_if_should_load
 
 tib_stop = set(line.strip() for line in open("ref/tib_stop.txt"))
 
 chn_stop = set(line.strip() for line in open("ref/chn_stop.txt"))
-
-def rename_lang(lang):
-    if "tib" in lang:
-        return 'bo'
-    if "chn" in lang:
-        return 'zh'
-    if "eng" in lang:
-        return 'en'
-    if "skt" in lang:
-        return 'sa'
-    if 'pli' in lang:
-        return 'pa'
 
 def test_if_stopword_tib(word):
     if word in tib_stop:
@@ -105,13 +92,13 @@ def test_match_chn(match):
         inquiry_string = inquiry_string[match['root_offset_beg']-3:match['root_offset_end']+3]
         target_string = target_string[match['par_offset_beg']-3:match['par_offset_end']+3]
         # test if inquiry_string contains 5 chinese characters preceeded by punctuation and followed by punctuation
-        if regex.search("(^[。，！？　]|[\p{Han}]{5}|[。，！？　]$)", inquiry_string):
+        if regex.search(r"(^[。，！？　]|[\p{Han}]{5}|[。，！？　]$)", inquiry_string):
             return True
-        if regex.search("(^[。，！？　]|[\p{Han}]{5}|[。，！？　]$)", target_string):
+        if regex.search(r"(^[。，！？　]|[\p{Han}]{5}|[。，！？　]$)", target_string):
             return True
-        if regex.search("(^[。，！？　]|[\p{Han}]{6}|[。，！？　]$)", inquiry_string):
+        if regex.search(r"(^[。，！？　]|[\p{Han}]{6}|[。，！？　]$)", inquiry_string):
             return True
-        if regex.search("(^[。，！？　]|[\p{Han}]{6}|[。，！？　]$)", target_string):
+        if regex.search(r"(^[。，！？　]|[\p{Han}]{6}|[。，！？　]$)", target_string):
             return True
 
 def filter_matches(matches):

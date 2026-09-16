@@ -24,7 +24,7 @@ def remove_punc(string):
     return re.sub(r"[%s]+" %PUNC.replace(" ",""), "", string)
 
 def replace_brackets(string):
-    z = re.search('(\[.+\])',string)
+    z = re.search(r'(\[.+\])',string)
     if z:
         target = z.groups()[0]
         replace = target.replace(' ','')

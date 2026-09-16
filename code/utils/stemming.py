@@ -1,10 +1,6 @@
-import sentencepiece as spm
-import ctranslate2
-from utils.intern_transliteration import unicode_to_internal_transliteration
 from utils.constants import *
 import re
 import os
-import pandas as pd
 from utils.stemming_tib import tib_process_orig_line, prepare_tib
 from utils.stemming_skt import prepare_skt
 

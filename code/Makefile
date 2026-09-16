@@ -1,4 +1,4 @@
-TEST_DIR		:= /home/wo/bn/dvarapandita/test-data/tib
+TEST_DIR		:= $(abspath ../test-data/tib)
 TEST_ORIG_RAW	:= ${TEST_DIR}/original-raw/
 TEST_ORIG_STEM	:= ${TEST_DIR}/original-stemmed/
 # TEST_ORIG_VEC	:= ${TEST_DIR}/original-vecs/ # do not have to be saved if tested with hash

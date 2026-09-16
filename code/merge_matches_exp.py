@@ -1,19 +1,15 @@
 import json
-import glob 
-import natsort
+import glob
+import subprocess
 import os
-import random
-import re
 import gzip
-from tqdm import tqdm
 from filter_matches import filter_matches
+from merge_results import get_filename
 from utils.coocc import add_co_occ_value
 from utils.deduplicate import deduplicate_matches
 from utils.constants import COOCC_THRESHOLD
 from pathlib import Path
 from multiprocessing import Pool
-from itertools import islice
-import math
 from datetime import datetime
 
 use_multiprocessing = True
@@ -68,20 +64,8 @@ def fix_langnames(match):
     match['tgt_lang'] = rename_lang(match['tgt_lang'])
     return match
 
-def get_filename(segnr):
-    segnr = segnr.replace(".json.gz", "")
-    if "ZH_" in segnr:
-        segnr = re.sub("_[0-9][0-9][0-9]$", "", segnr)
-        segnr = re.sub("_[0-9][0-9][0-9]:", ":", segnr)
-    segnr = re.sub(r"\$[0-9]+", "", segnr)
-    segnr = segnr.split(":")[0]
-    return segnr
-
 def get_cat_from_segmentnr(segmentnr):
     return segmentnr.split("_")[1]
-
-def get_id_from_match(match):
-    return match['id']
 
 def get_category_stats(matches):
     category_stats = {}
@@ -104,34 +88,10 @@ def calculate_global_category_stats(file_stats):
             global_category_stats[root_cat][cat] += length
     return global_category_stats
 
-def sort_matches(matches):
-    matches_sorted_by_root_segnr = natsort.natsorted(matches, key=lambda x: x['root_segnr'])
-    ids_sorted_by_root_segnr = list(map(get_id_from_match, matches_sorted_by_root_segnr))
-    matches_sorted_by_par_segnr = natsort.natsorted(matches, key=lambda x: x['par_segnr'])
-    ids_sorted_by_par_segnr = list(map(get_id_from_match, matches_sorted_by_par_segnr))
-    matches_sorted_by_root_length = sorted(matches, key=lambda x: x['root_length'])[::-1]
-    ids_sorted_by_root_length = list(map(get_id_from_match, matches_sorted_by_root_length))
-    matches_sorted_by_par_length = sorted(matches, key=lambda x: x['par_length'])[::-1]
-    ids_sorted_by_par_length = list(map(get_id_from_match, matches_sorted_by_par_length))
-    matches_shuffled = random.sample(matches, len(matches))
-    category_stats = get_category_stats(matches_shuffled)
-    ids_shuffled = list(map(get_id_from_match, matches_shuffled))
-    return {
-        'parallels_sorted_by_src_pos': ids_sorted_by_root_segnr,
-        'parallels_sorted_by_tgt_pos': ids_sorted_by_par_segnr,
-        'parallels_sorted_by_length_src': ids_sorted_by_root_length,
-        'parallels_sorted_by_length_tgt': ids_sorted_by_par_length,
-        'parallels_randomized': ids_shuffled,
-        'category_stats': category_stats
-    }
-
 def process_file_matches(matches, filename):
     """Process matches from a single file and return stats and filtered matches."""
     try:
         print(f"\n[{datetime.now()}] Starting process_file_matches for {filename}")
-        
-        # Fix language names
-        
         
         # Filter matches
         print(f"[{datetime.now()}] Number of matches before filtering: {len(matches)}")
@@ -156,19 +116,19 @@ def process_file_matches(matches, filename):
         category_stats = get_category_stats(filtered_matches)
         print(f"[{datetime.now()}] Finished calculating category stats")
         
-        # Create stats object
+        # Only filename + category_stats are kept per file; they feed the global
+        # category rollup written to stats/global_stats.json.gz.
         stats_obj = {
             'filename': filename,
             'category_stats': category_stats,
-            **sort_matches(filtered_matches)
         }
         print(f"[{datetime.now()}] Finished creating stats object")
-        
-        return stats_obj, filtered_matches, category_stats
-        
+
+        return stats_obj, filtered_matches
+
     except Exception as e:
         print(f"Error processing matches for {filename}: {str(e)}")
-        return None, [], {}
+        return None, []
 
 def process_single_file(file_path, output_path):
     """Process a single file and return its results"""
@@ -176,12 +136,11 @@ def process_single_file(file_path, output_path):
         # Get filename from input path
         filename = Path(file_path).stem.replace('.ndjson', '')
         
-        # Check if output files already exist
+        # Check if output file already exists
         matches_output = os.path.join(output_path, f"{filename}.ndjson.gz")
-        stats_output = os.path.join(output_path, "stats", f"{filename}_stats.json.gz")
-        
-        if os.path.exists(matches_output) and os.path.exists(stats_output):
-            print(f"Output files already exist for {filename}, skipping...")
+
+        if os.path.exists(matches_output):
+            print(f"Output file already exists for {filename}, skipping...")
             return None
 
         print(f"Starting to process: {file_path}")
@@ -190,9 +149,14 @@ def process_single_file(file_path, output_path):
         # Create temporary uncompressed file
         temp_file = file_path.replace('.gz', '.temp')
         try:
-            # Gunzip the file using system command
-            os.system(f"gunzip -c '{file_path}' > '{temp_file}'")
-            
+            # Gunzip using subprocess (no shell) so paths with apostrophes work
+            with open(temp_file, 'wb') as out:
+                subprocess.run(
+                    ['gunzip', '-c', file_path],
+                    stdout=out,
+                    check=True,
+                    shell=False,
+                )
             # Read the uncompressed file
             with open(temp_file, 'r', encoding='utf-8') as f:
                 for line_number, line in enumerate(f, 1):
@@ -212,7 +176,7 @@ def process_single_file(file_path, output_path):
                         
         except Exception as e:
             print(f"Error reading file {file_path}: {str(e)}")
-            return None
+            return {'read_error': file_path}
         finally:
             # Clean up temporary file
             if os.path.exists(temp_file):
@@ -221,35 +185,45 @@ def process_single_file(file_path, output_path):
         # Only process if we actually got some matches
         if not current_matches:
             print(f"No valid matches found in {file_path}")
-            return None, []
+            return None
 
-        stats_obj, filtered_matches, cat_stats = process_file_matches(
-            current_matches, filename)
+        # Use canonical filename from segment ID so apostrophes are preserved
+        # (input path may be sanitized or break under shell; match content is source of truth)
+        filename = get_filename(current_matches[0]['root_segnr'][0])
+
+        stats_obj, filtered_matches = process_file_matches(current_matches, filename)
 
         # write matches to file using NDJSON
         safe_write_gzip_ndjson(filtered_matches, os.path.join(output_path, f"{filename}.ndjson.gz"))
         print(f"Wrote matches for {filename}")
-        
-        # write stats to file using regular JSON
-        safe_write_gzip_json(stats_obj, os.path.join(output_path, "stats", f"{filename}_stats.json.gz"))
-        print(f"Wrote stats for {filename}")
-        
+
         print(f"Finished processing: {file_path}")
         return stats_obj
             
     except Exception as e:
         print(f"Error processing file {file_path}: {str(e)}")
-        return None, []
+        return None
 
-def process_batch(file_batch, output_path, do_multiprocessing=True):
-    """Process a batch of files in parallel and return their results"""
+def process_batch(
+    file_batch,
+    output_path,
+    do_multiprocessing=True,
+    num_processes=None,
+):
+    """Process a batch of files in parallel and return their results."""
     batch_stats = []
     print("PROCESSING BATCH: ", file_batch)
-    
+
+    nproc = num_processes if num_processes is not None and num_processes > 0 else (
+        os.cpu_count() or 1
+    )
+
     if do_multiprocessing:
-        with Pool() as pool:
-            results = pool.starmap(process_single_file, 
-                                 [(file, output_path) for file in file_batch])
+        with Pool(processes=nproc) as pool:
+            results = pool.starmap(
+                process_single_file,
+                [(file, output_path) for file in file_batch],
+            )
     else:
         results = [process_single_file(file, output_path) for file in file_batch]
     
@@ -257,43 +231,66 @@ def process_batch(file_batch, output_path, do_multiprocessing=True):
     for stats_obj in results:
         if stats_obj:
             batch_stats.append(stats_obj)
-            
+
     return batch_stats
 
 def chunk_files(files, chunk_size):
     for i in range(0, len(files), chunk_size):
         yield files[i:i + chunk_size]
 
-def process_sorted_files(input_path, output_path, batch_size=100000, use_multiprocessing=False):
+def process_sorted_files(
+    input_path,
+    output_path,
+    batch_size=100000,
+    use_multiprocessing=False,
+    num_processes=None,
+):
     os.makedirs(output_path, exist_ok=True)
     os.makedirs(os.path.join(output_path, "stats"), exist_ok=True)
-    
+
     global_stats = {"categories": {}, "files": {}}
-    
+    unreadable = []
+
     input_files = glob.glob(os.path.join(input_path, "**/*.ndjson.gz"), recursive=True)
-    
-    
-    # Process files in parallel using multiprocessing
-    total_batches = math.ceil(len(input_files)/batch_size)    
+
     # Process batches directly without extra list wrapping
     for batch_idx, file_batch in enumerate(chunk_files(input_files, batch_size)):
-        batch_stats = process_batch(file_batch, output_path, 
-                                  do_multiprocessing=use_multiprocessing)
+        batch_stats = process_batch(
+            file_batch,
+            output_path,
+            do_multiprocessing=use_multiprocessing,
+            num_processes=num_processes,
+        )
         
         # Update global stats
         for stat in batch_stats:
             if 'filename' in stat:
                 global_stats['files'][stat['filename']] = stat['category_stats']
-        
+            elif 'read_error' in stat:
+                unreadable.append(stat['read_error'])
+
     global_stats['categories'] = calculate_global_category_stats(global_stats['files'])
     safe_write_gzip_json(global_stats, os.path.join(output_path, "stats", "global_stats.json.gz"))
+    if unreadable:
+        print(f"WARNING: {len(unreadable)} match file(s) could not be read and were skipped:")
+        for f in unreadable:
+            print("   ", f)
+        safe_write_gzip_json(unreadable, os.path.join(output_path, "stats", "unreadable_inputs.json.gz"))
 
 
-def collect_matches_from_folder_exp(input_path, output_path):
-    """Main function to process pre-sorted files."""
+def collect_matches_from_folder_exp(input_path, output_path, num_processes=None):
+    """Main function to process pre-sorted files.
+
+    num_processes: worker count for per-batch multiprocessing. None or <=0 uses os.cpu_count().
+    """
     try:
         print("Processing path: ", input_path)
-        process_sorted_files(input_path, output_path, use_multiprocessing=use_multiprocessing)
+        process_sorted_files(
+            input_path,
+            output_path,
+            use_multiprocessing=use_multiprocessing,
+            num_processes=num_processes,
+        )
         print("Processing complete.")
     except Exception as e:
         print(f"Error during processing: {str(e)}")

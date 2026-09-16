@@ -1,7 +1,4 @@
-import pandas as pd
-import glob
 import time
-import multiprocessing
 import re
 import json
 import os
@@ -12,6 +9,13 @@ from utils.merging import get_pair_clusters, construct_matches_from_pair_cluster
 from filter_matches import filter_matches
 import fcntl
 import contextlib
+
+def _json_default(value):
+    """json.dumps fallback: NumPy scalars to native Python types."""
+    if isinstance(value, np.generic):
+        return value.item()
+    raise TypeError(f"Object of type {type(value).__name__} is not JSON serializable")
+
 
 def get_filename(segnr):
     segnr = segnr.replace(".json.gz", "")
@@ -25,28 +29,47 @@ def get_filename(segnr):
 
 @contextlib.contextmanager
 def file_lock(path):
-    """Context manager for file locking with retry mechanism."""
+    """Context manager: exclusive flock on <path>.lock for appending to <path>.
+
+    The lock file is deliberately NOT removed after unlocking. Removing it let a
+    waiting process acquire the lock on the old (unlinked) inode while a newcomer
+    created and locked a fresh file of the same name, so two workers appended
+    gzip streams to the same match file at once and corrupted it. Lock files are
+    cleaned up once by the parent after the worker pool has finished
+    (see remove_lock_files).
+    """
     lock_path = f"{path}.lock"
     max_retries = 20
     retry_delay = 1  # seconds
-    
+
     for attempt in range(max_retries):
         try:
-            with open(lock_path, 'w') as lock_file:
+            with open(lock_path, 'a') as lock_file:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
                 try:
-                    fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
                     yield
-                    break  # Success - exit the retry loop
                 finally:
                     fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
-                    try:
-                        os.remove(lock_path)
-                    except OSError:
-                        pass
+            break  # Success - exit the retry loop
         except OSError as e:
             if attempt == max_retries - 1:  # Last attempt
                 raise  # Re-raise the last error if all retries failed
             time.sleep(retry_delay)  # Wait before retrying
+
+
+def remove_lock_files(matches_dir):
+    """Delete the *.lock files left behind by file_lock; call when no worker is writing."""
+    if not os.path.isdir(matches_dir):
+        return 0
+    n = 0
+    for fn in os.listdir(matches_dir):
+        if fn.endswith(".lock"):
+            try:
+                os.remove(os.path.join(matches_dir, fn))
+                n += 1
+            except OSError:
+                pass
+    return n
 
 def construct_path_json(match_path, inquiry_file):
     """Construct the JSON path with a random number in the matches folder."""
@@ -75,7 +98,7 @@ def append_to_gzip(match_results, path_json):
     """Append matches as NDJSON to a gzip file."""
     with file_lock(path_json):
         # Convert each match to a JSON line
-        json_lines = [json.dumps(match, ensure_ascii=False) + '\n' 
+        json_lines = [json.dumps(match, ensure_ascii=False, default=_json_default) + '\n' 
                      for match in match_results]
         
         # Append to the gzip file
@@ -97,10 +120,9 @@ def process_matches(inquiry_df, matches, match_path, lang, alignment_method="loc
     print("MATCH RESULTS", len(match_results))
     number_of_matches_before = len(match_results)
     
-    # Convert NumPy int64 to native Python int
-    match_results = [{k: int(v) if isinstance(v, np.int64) else v for k, v in match.items()} 
-                    for match in match_results]
-    
+    # NumPy scalars (if any slipped through) are converted at JSON encoding time
+    # via _json_default; positions are plain ints now, so no per-field pass here.
+
     match_results = filter_matches(match_results)
     print("NUMBER OF MATCHES BEFORE FILTERING", number_of_matches_before)
     print("NUMBER OF MATCHES AFTER FILTERING", len(match_results))
@@ -120,13 +142,12 @@ def process_matches(inquiry_df, matches, match_path, lang, alignment_method="loc
             matches_by_file[filename].append(match)
         
         # Write matches to separate files by filename
-        matches_dir = os.path.dirname(match_path)
         for filename, file_matches in matches_by_file.items():
             output_path = construct_path_json(match_path, filename)
             print("WRITING", output_path)
             # Use file lock when writing
             with file_lock(output_path):
-                json_lines = [json.dumps(match, ensure_ascii=False) + '\n' 
+                json_lines = [json.dumps(match, ensure_ascii=False, default=_json_default) + '\n' 
                             for match in file_matches]
                 
                 with gzip.open(output_path, 'at') as f:

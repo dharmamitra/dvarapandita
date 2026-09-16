@@ -1,14 +1,12 @@
 from scipy import spatial
-from natsort import natsorted
+from scipy.sparse import coo_matrix
+from scipy.sparse.csgraph import connected_components
 from utils.local_alignment import get_aligned_offsets_efficient, create_aligner
 from utils.constants import *
-from tqdm import tqdm
 import re
 from Levenshtein import distance
-from utils.test_quote import test_quote
 from utils.shorten_segments import shorten_segments
 import numpy as np
-from collections import defaultdict
 
 
 def normalized_levenshtein(string1, string2):
@@ -19,9 +17,14 @@ def normalized_levenshtein(string1, string2):
 
 def get_pair_clusters(pair_list, windowsize):
     """
-    Find continuous chains of pairs where consecutive pairs are at most windowsize apart.
-    Optimized for large datasets with thousands of items.
-    
+    Find continuous chains of pairs where consecutive pairs are at most windowsize apart
+    (Chebyshev distance, i.e. both coordinates within windowsize).
+
+    Connected components are found with a KD-tree neighbour query instead of a
+    Python-level grid walk. Output is identical to the former implementation:
+    a list of clusters, each a sorted list of (x, y) tuples, clusters ordered by
+    the first input index they contain.
+
     Args:
         pair_list: List of tuples containing (x,y) coordinates
         windowsize: Maximum allowed distance between consecutive pairs
@@ -30,64 +33,39 @@ def get_pair_clusters(pair_list, windowsize):
         return []
     if not isinstance(pair_list, (list, tuple)):
         return []
-    
-    # Convert to numpy array for faster operations
-    pairs = np.array(pair_list)
-    
-    # Create a spatial hash grid for quick neighbor lookups
-    # Round positions to grid cells of size windowsize
-    grid_size = windowsize
-    grid = defaultdict(list)
-    
-    # Map pairs to grid cells
-    for i, (x, y) in enumerate(pairs):
-        cell_x = x // grid_size
-        cell_y = y // grid_size
-        grid[(cell_x, cell_y)].append(i)
-    
-    # Find clusters using grid
-    visited = set()
-    clusters = []
-    
-    def get_neighbors(idx):
-        x, y = pairs[idx]
-        cell_x, cell_y = x // grid_size, y // grid_size
-        
-        # Check neighboring cells
-        neighbor_indices = []
-        for dx in (-1, 0, 1):
-            for dy in (-1, 0, 1):
-                cell = (cell_x + dx, cell_y + dy)
-                if cell in grid:
-                    for neighbor_idx in grid[cell]:
-                        if neighbor_idx != idx and neighbor_idx not in visited:
-                            nx, ny = pairs[neighbor_idx]
-                            if (abs(nx - x) <= windowsize and 
-                                abs(ny - y) <= windowsize):
-                                neighbor_indices.append(neighbor_idx)
-        return neighbor_indices
-    
-    # Use iterative approach instead of recursive for better performance
-    for start_idx in range(len(pairs)):
-        if start_idx in visited:
-            continue
-            
-        current_cluster = []
-        to_visit = [start_idx]
-        
-        while to_visit:
-            idx = to_visit.pop()
-            if idx not in visited:
-                visited.add(idx)
-                current_cluster.append(tuple(pairs[idx]))
-                to_visit.extend(get_neighbors(idx))
-        
-        if current_cluster:
-            # Sort cluster by position for consistency
-            current_cluster.sort()
-            clusters.append(current_cluster)
-    
-    return clusters
+    if len(pair_list) == 0:
+        return []
+
+    pairs = np.asarray(pair_list, dtype=np.int64)
+    n = len(pairs)
+    if n == 1:
+        return [[tuple(int(v) for v in pairs[0])]]
+
+    tree = spatial.cKDTree(pairs)
+    # sparse_distance_matrix / query_pairs with p=inf gives Chebyshev neighbours
+    neighbours = tree.query_pairs(windowsize, p=np.inf, output_type="ndarray")
+    if len(neighbours):
+        graph = coo_matrix(
+            (np.ones(len(neighbours), dtype=np.int8), (neighbours[:, 0], neighbours[:, 1])),
+            shape=(n, n),
+        )
+        _, labels = connected_components(graph, directed=False)
+    else:
+        labels = np.arange(n)
+
+    # Relabel components by first appearance so clusters come out in input order,
+    # then one lexsort by (component, x, y) gives every cluster already sorted.
+    first_seen = np.full(labels.max() + 1, -1, dtype=np.int64)
+    uniq, first_idx = np.unique(labels, return_index=True)
+    rank = np.empty_like(first_idx)
+    rank[np.argsort(first_idx)] = np.arange(len(first_idx))
+    first_seen[uniq] = rank
+    comp = first_seen[labels]
+    order = np.lexsort((pairs[:, 1], pairs[:, 0], comp))
+    sorted_pairs = pairs[order].tolist()
+    boundaries = np.flatnonzero(np.diff(comp[order])) + 1
+    bounds = [0] + boundaries.tolist() + [n]
+    return [[tuple(m) for m in sorted_pairs[a:b]] for a, b in zip(bounds, bounds[1:])]
 
 
 def construct_matches_from_pair_clusters(pair_clusters,
@@ -98,25 +76,25 @@ def construct_matches_from_pair_clusters(pair_clusters,
         first_segmentnr = list(inquiry_segment_position.keys())[2]
         first_segmentnr = inquiry_segment_position[first_segmentnr][0]
         inquiry_filename = first_segmentnr.split(":")[0]
-        inquiry_filename = re.sub("\$[0-9]+", "", inquiry_filename)
+        inquiry_filename = re.sub(r"\$[0-9]+", "", inquiry_filename)
         inquiry_filename = inquiry_filename.replace(".txt", "")
 
+        prefix_len = len(inquiry_filename)
         for cluster in pair_clusters:
             inquiry_segments = []
             match_segments = []
-            cluster = list(set(cluster))
-            inquiry_positions, match_positions = zip(*cluster)
-            if match_segment_position[match_positions[0]][0:len(inquiry_filename)] != inquiry_filename:
-                inquiry_positions = list(inquiry_positions)
-                match_positions = list(match_positions)
-                inquiry_positions.sort()
-                match_positions.sort()
-                for inquiry_position in inquiry_positions:
+            cluster_set = set(cluster)
+            # same element the former list(set(cluster))[0] picked
+            first_match_position = next(iter(cluster_set))[1]
+            if match_segment_position[first_match_position][0:prefix_len] != inquiry_filename:
+                # duplicates in the sorted position lists never changed the
+                # deduplicated output, so iterate unique positions only
+                for inquiry_position in sorted({x for x, _ in cluster_set}):
                     inquiry_segment = inquiry_segment_position[inquiry_position]
                     if isinstance(inquiry_segment[0], str):
                         inquiry_segments.extend(inquiry_segment)
 
-                for match_position in match_positions:
+                for match_position in sorted({y for _, y in cluster_set}):
                     match_segment = match_segment_position[match_position]
                     if isinstance(match_segment, str):
                         match_segments.append(match_segment)
@@ -126,12 +104,15 @@ def construct_matches_from_pair_clusters(pair_clusters,
     return results
 
 
+_NON_LETTER_RE = re.compile("[^a-zA-Z ]")
+
+
 def get_length(string, lang):
     if not isinstance(string, str):
         return 0
     if lang == "tib":
         try:
-            string = re.sub("[^a-zA-Z ]", "", string).strip()
+            string = _NON_LETTER_RE.sub("", string).strip()
             return len(string.split())
         except Exception as e:
             print(f"Error processing Tibetan string: {e}")
@@ -177,7 +158,17 @@ def process_single_match(match, positions, inquiry_segments, target_segments,
     
     if len(inquiry_merged) <= 5 or len(target_merged) <= 5:
         return None
-        
+
+    # The aligned substrings can never be longer than the full texts, so a side
+    # that cannot reach ABSOLUTE_MIN_LENGTH would be rejected in create_result_dict
+    # anyway. Cheap upper bounds: space count + 1 >= word count (tib), len otherwise.
+    min_len = ABSOLUTE_MIN_LENGTH[lang]
+    if lang == "tib":
+        if inquiry_merged.count(" ") + 1 < min_len or target_merged.count(" ") + 1 < min_len:
+            return None
+    elif len(inquiry_merged) < min_len or len(target_merged) < min_len:
+        return None
+
     # Get aligned offsets
     aligned_texts = get_aligned_text_offsets(
         inquiry_merged, target_merged, 

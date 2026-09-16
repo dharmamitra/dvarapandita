@@ -7,198 +7,275 @@ import faiss
 import pandas as pd
 from utils.constants import *
 from utils.general import test_if_should_load
-from merge_results import process_matches
+from utils.wordlist_lookup import load_wordlist_access
+from merge_results import process_matches, remove_lock_files
 import multiprocessing
 import multiprocessing.pool
+import gc
 
+# Global variables for shared index and wordlist (loaded once in parent, shared via fork)
+_G_INDEX = None
+_G_WORDLIST_ACCESS = None
+_G_WORDLIST_LEN = None
+_G_LANG = None
+_G_BUCKET_PATH = None
+_G_ALIGNMENT_METHOD = None
+_G_SRC_PATTERN = None
+
+def _init_worker(bucket_path, lang, alignment_method, src_pattern):
+    """Initialize worker process - prevent oversubscription of threads"""
+    global _G_LANG, _G_BUCKET_PATH, _G_ALIGNMENT_METHOD, _G_SRC_PATTERN
+
+    # Prevent oversubscription: keep faiss/blas single-threaded per worker
+    os.environ["OMP_NUM_THREADS"] = "1"
+    os.environ["MKL_NUM_THREADS"] = "1"
+    os.environ["OPENBLAS_NUM_THREADS"] = "1"
+    os.environ["NUMEXPR_NUM_THREADS"] = "1"
+    try:
+        faiss.omp_set_num_threads(1)
+    except:
+        pass
+
+    # These should already be set from parent via fork, but ensure they're accessible
+    _G_LANG = lang
+    _G_BUCKET_PATH = bucket_path
+    _G_ALIGNMENT_METHOD = alignment_method
+    _G_SRC_PATTERN = src_pattern
+
+
+def _calc_results_file_worker(query_file_path):
+    """Standalone worker function that accesses global variables"""
+    basename = Path(query_file_path).stem
+    
+    # File reading
+    try:
+        query_data = pd.read_pickle(query_file_path)
+        if isinstance(query_data, dict):
+            query_df = pd.DataFrame(query_data)
+        elif isinstance(query_data, pd.DataFrame):
+            query_df = query_data
+        else:
+            return
+    except Exception:
+        return
+    
+    # Prepare query vectors
+    query_vectors = None
+    if 'vector' in query_df.columns:
+        query_vectors = np.array(query_df['vector'].tolist(), dtype="float32")
+    elif 'sumvectors' in query_df.columns:
+        query_vectors = np.array(query_df['sumvectors'].tolist(), dtype="float32")
+    else:
+        return
+    
+    if len(query_vectors) == 0:
+        return
+    
+    faiss.normalize_L2(query_vectors)
+    
+    # FAISS search using shared index
+    try:
+        query_results = _G_INDEX.search(query_vectors, QUERY_DEPTH)
+    except Exception:
+        return
+    
+    # Extract results
+    results = _extract_results_worker(query_df, query_results)
+    if not results or not any(results.values()):
+        return
+        
+    result_df = pd.DataFrame(results)
+    process_matches(query_df, result_df, _G_BUCKET_PATH + basename, _G_LANG, alignment_method=_G_ALIGNMENT_METHOD)
+
+def _extract_results_worker(query_df, query_results):
+    """Extract results using global wordlist data"""
+    results = {
+        "query_position": [],
+        "query_segmentnr": [],
+        "query_stems": [],
+        "query_sentence": [],
+        "match_segment": [],
+        "match_sentence": [],
+        "match_stems": [],
+        "match_position": [],
+        "match_score": []
+    }
+
+    lang = _G_LANG
+    threshold = THRESHOLD[lang]
+    bigger_is_better = BIGGER_IS_BETTER[lang]
+    epsilon = 1e-6
+    window = WINDOWSIZE[lang]
+    wl = _G_WORDLIST_ACCESS
+
+    # Plain Python lists: per-hit pandas Series slicing was the dominant cost here.
+    total_query_stems = query_df['analyzed'].tolist()
+    total_query_segmentnrs = query_df['segmentnr'].tolist()
+    total_query_sentences = query_df['original'].tolist()
+    n_query = len(total_query_stems)
+
+    all_scores = np.asarray(query_results[0])
+    all_positions = np.asarray(query_results[1])
+    if bigger_is_better:
+        keep = all_scores > (threshold - epsilon)
+    else:
+        keep = all_scores < (threshold + epsilon)
+    keep &= all_positions >= 0  # faiss returns -1 when not enough results are found
+
+    for query_position in np.flatnonzero(keep.any(axis=1)).tolist():
+        row_keep = keep[query_position]
+        positions = all_positions[query_position][row_keep].tolist()
+        scores = all_scores[query_position][row_keep].tolist()
+
+        # Query-side window data is identical for every hit of this position.
+        qpos = min(query_position, n_query)
+        end_pos = min(qpos + window, n_query)
+        if lang == "eng":
+            qstems = total_query_stems[qpos]
+            qsegmentnrs = [total_query_segmentnrs[qpos]]
+        else:
+            qstems = " ".join(str(item) for item in total_query_stems[qpos:end_pos])
+            qsegmentnrs = list(dict.fromkeys(total_query_segmentnrs[qpos:end_pos]))
+        qsentence = " ".join(dict.fromkeys(total_query_sentences[qpos:end_pos]))
+
+        for position, score in zip(positions, scores):
+            try:
+                segment, sentence, stems = wl.hit_data(position, lang)
+            except Exception:
+                continue
+            results["query_position"].append(query_position)
+            results["query_segmentnr"].append(qsegmentnrs)
+            results["query_stems"].append(qstems)
+            results["query_sentence"].append(qsentence)
+            results["match_segment"].append(segment)
+            results["match_sentence"].append(sentence)
+            results["match_stems"].append(stems)
+            results["match_position"].append(position)
+            results["match_score"].append(score)
+
+    return results
 
 class CalculateResults:
-    def __init__(self, bucket_path, lang, index_method="cpu", cindex=None, alignment_method="local"):
-        self.main_path = re.sub("folder.*","",bucket_path)
-        self.wordlist = pd.read_pickle(bucket_path + "wordlist.p")
-        self.segments = self.wordlist['segmentnr'].tolist()
-        self.stems = self.wordlist['analyzed'].tolist()
-        self.sentences = self.wordlist['original'].tolist()
-        #self.wordlist = self.wordlist.reset_index()
-        self.wordlist_len = len(self.wordlist)
+    def __init__(
+        self,
+        bucket_path,
+        lang,
+        index_method="cpu",
+        cindex=None,
+        alignment_method="local",
+        src_pattern=None,
+        num_processes=16,
+    ):
+        global _G_INDEX, _G_WORDLIST_ACCESS, _G_WORDLIST_LEN
+        global _G_LANG, _G_BUCKET_PATH, _G_ALIGNMENT_METHOD, _G_SRC_PATTERN
+
+        self.main_path = re.sub("folder.*", "", bucket_path)
         self.lang = lang
         self.bucket_path = bucket_path
         self.alignment_method = alignment_method
         self.index_method = index_method
+        self.src_pattern = src_pattern
+        self.num_processes = num_processes
 
-        global index
         if index_method == "cpu":
-            index = faiss.read_index(bucket_path + "vectors.idx")
+            _G_INDEX = faiss.read_index(bucket_path + "vectors.idx")
         else:
-            index = cindex   
+            _G_INDEX = cindex
 
+        _G_WORDLIST_ACCESS = load_wordlist_access(bucket_path)
+        _G_WORDLIST_LEN = _G_WORDLIST_ACCESS.wordlist_len
+        self.wordlist_access = _G_WORDLIST_ACCESS
+        self.wordlist_len = _G_WORDLIST_LEN
 
-    def _clean_results_by_threshold(self, scores, positions):        
-        threshold = THRESHOLD[self.lang]
-        bigger_is_better = BIGGER_IS_BETTER[self.lang]
-        epsilon = 1e-6  # Small tolerance for floating-point comparison
-        
-        if bigger_is_better:
-            condition = lambda score: score > (threshold - epsilon)
-        else:
-            condition = lambda score: score < (threshold + epsilon)
-            
-        mask = np.array([condition(score) for score in scores])
-        current_positions = np.array(positions)[mask].tolist()
-        current_scores = np.array(scores)[mask].tolist()
-        return [current_positions, current_scores]
+        _G_LANG = lang
+        _G_BUCKET_PATH = bucket_path
+        _G_ALIGNMENT_METHOD = alignment_method
+        _G_SRC_PATTERN = src_pattern
 
-    def _get_match_data(self, query_position, positions, scores):
-        def get_match_data_from_position(position, score):
-            try:
-                segment = self.segments[position]
-                sentence = self.sentences[position]
-                
-                # Adjust stem data based on language
-                stems = self.stems[position]
-                if self.lang != "eng":                
-                    end_idx = min(position + WINDOWSIZE[self.lang], len(self.stems))
-                    stems = " ".join(str(item) if isinstance(item, float) else item 
-                                   for item in self.stems[position:end_idx])            
-                return [segment, sentence, stems, position, score]
-            except Exception as e:
-                raise
-            
-        all_match_data = []
+        self.blacklist = self._load_blacklist(lang)
+        if self.blacklist:
+            print(f"Loaded blacklist for lang={lang}: {len(self.blacklist)} entries skipped")
 
-        for position, score in zip(positions, scores):
-            if position >= 0:  # faiss returns -1 when not enough results are found
-                try:
-                    beginning_data = get_match_data_from_position(position, score)                
-                    end_position = position + WINDOWSIZE[self.lang] if position + WINDOWSIZE[self.lang] < self.wordlist_len else self.wordlist_len - 1                         
-                    end_data = get_match_data_from_position(end_position, score)        
-                    end_data[2] = beginning_data[2]  # stems need to be equalized
-                    all_match_data.append(beginning_data)
-                    if end_data not in all_match_data:
-                        all_match_data.append(end_data)
-                except Exception as e:
-                    raise
-        return all_match_data
-
+    @staticmethod
+    def _load_blacklist(lang):
+        path = os.path.join("ref", f"blacklist_{lang}.txt")
+        if not os.path.isfile(path):
+            return set()
+        entries = set()
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.split("#", 1)[0].strip()
+                if not line:
+                    continue
+                entries.add(line)
+                # also store stem so callers can match either way
+                if line.endswith(".p"):
+                    entries.add(line[:-2])
+        return entries
 
     def create_querypaths(self, query_path):
         filelist =  glob.glob(query_path + '/**/*.p', recursive=True)
         filepaths = []
+        skipped_blacklist = 0
         for current_file in filelist:
             filepath = current_file
             if test_if_should_load(filepath):
                 if not "wordlist" in filepath:
-                    filepaths.append(filepath)
+                    # Filter by pattern if specified
+                    if self.src_pattern is None or self.src_pattern in filepath:
+                        basename = os.path.basename(filepath)
+                        if basename in self.blacklist or Path(basename).stem in self.blacklist:
+                            skipped_blacklist += 1
+                            continue
+                        filepaths.append(filepath)
+        if skipped_blacklist:
+            print(f"  blacklist skipped {skipped_blacklist} file(s) under {query_path}")
         return filepaths
 
-    def calc_results_folder(self, query_path):
-        query_files = self.create_querypaths(query_path)
-        if self.index_method == "gpu": 
-            for query_file in query_files:  
-                self.calc_results_file(query_file)     
-        else:   
-            with multiprocessing.Pool(processes=16) as pool:
-                results = pool.map(self.calc_results_file, query_files)
+    def _run_query_file_list(self, query_files):
+        """Sort largest-first (LPT), then GPU sequential or CPU pool work queue."""
+        if not query_files:
+            return
 
-    def _get_margin_scores(scoresself, scores):
-        """
-        for each score, divide it by the average of the other scores
-        """
-        scores = 1 - scores
-        margin_scores = []
-        for score in scores:
-            other_scores = scores.copy()        
-            other_scores = np.delete(other_scores, np.where(other_scores == score))
-            margin_score = score / np.mean(other_scores)
-            margin_scores.append(margin_score)
-        return margin_scores
-        
-    def calc_results_file(self, query_file_path):
-        basename = Path(query_file_path).stem
-        
-        # File reading
-        try:
-            query_df = pd.read_pickle(query_file_path)
-        except Exception as e:
-            return        
-        
-        query_vectors = self.prepare_query_vectors(query_df)
-        
-        if query_vectors is not None:
+        def _size_or_zero(p):
             try:
-                query_results = index.search(query_vectors, QUERY_DEPTH)
-            except Exception as e:
-                return
-            
-            results = self._extract_results(query_df, query_results)
-            result_df = pd.DataFrame(results)
-            process_matches(query_df, result_df, self.bucket_path + basename, self.lang, alignment_method=self.alignment_method)
+                return os.path.getsize(p)
+            except OSError:
+                return 0
 
-    def prepare_query_vectors(self, query_df):
-        query_vectors = np.array(query_df['sumvectors'].tolist(), dtype="float32")
-        if len(query_vectors) > 0:
-            faiss.normalize_L2(query_vectors)
-            return query_vectors
+        query_files = sorted(query_files, key=_size_or_zero, reverse=True)
 
-    def _extract_results(self, query_df, query_results):
-        results = {
-            "query_position": [],
-            "query_segmentnr": [],
-            "query_stems": [],
-            "query_sentence": [],
-            "match_segment": [],
-            "match_sentence": [],
-            "match_stems": [],
-            "match_position": [],
-            "match_score": []
-        }
-        
-        for query_position, (scores, positions) in enumerate(zip(query_results[0], query_results[1])):
-            cleaned_positions, cleaned_scores = self._clean_results_by_threshold(scores, positions)
-            word_data = self._get_match_data(query_position, cleaned_positions, cleaned_scores)
-            current_query_data = self.get_current_query_data(query_df, query_position)
-            
-            for entry in word_data:
-                try:
-                    results["query_position"].append(query_position)
-                    results["query_segmentnr"].append(current_query_data["segmentnrs"])
-                    results["query_stems"].append(current_query_data["stems"])
-                    results["query_sentence"].append(current_query_data["sentence"])
-                    results["match_segment"].append(entry[0])
-                    results["match_sentence"].append(entry[1])
-                    results["match_stems"].append(entry[2])
-                    results["match_position"].append(entry[3])
-                    results["match_score"].append(entry[4])
-                except Exception as e:
-                    continue
-        
-        return results
+        if self.index_method == "gpu":
+            # in-process index (built on the GPU); same per-file worker as the CPU pool
+            for query_file in query_files:
+                _calc_results_file_worker(query_file)
+            remove_lock_files(os.path.join(self.main_path, "matches"))
+            return
 
-    def get_current_query_data(self, query_df, query_position):
-        total_query_stems = query_df['analyzed']
-        total_query_segmentnrs = query_df['segmentnr']
-        total_query_sentences = query_df['original']
-        query_position = min(query_position, len(total_query_stems))
-        end_position = min(query_position + WINDOWSIZE[self.lang], len(total_query_stems))
-        stems = " ".join(str(item) for item in total_query_stems[query_position:end_position])
-        segmentnrs = list(dict.fromkeys(total_query_segmentnrs[query_position:end_position]))
-        sentence = " ".join(list(dict.fromkeys(total_query_sentences[query_position:end_position])))
-        
-        if self.lang == "eng":
-            stems = total_query_stems[query_position]
-            segmentnrs = [total_query_segmentnrs[query_position]]
-            
-        return {"stems": stems, "segmentnrs": segmentnrs, "sentence": sentence}
-
-    def save_results_to_json(self, result_df, basename):
-        result_df.to_json(
-            self.bucket_path + basename + "-before-alignment.json.gz", 
-            orient="records", force_ascii=False, 
-            compression="gzip", indent=2
-        )
-
+        # The index and wordlist are shared with the workers through fork. Freezing
+        # the parent's heap keeps the workers' garbage collector from traversing
+        # (and thereby copy-on-write duplicating) those millions of long-lived
+        # wordlist objects on every full collection.
+        gc.collect()
+        gc.freeze()
+        ctx = multiprocessing.get_context("fork")
+        with ctx.Pool(
+            processes=self.num_processes,
+            initializer=_init_worker,
+            initargs=(self.bucket_path, self.lang, self.alignment_method, self.src_pattern),
+        ) as pool:
+            # chunksize=1 + imap_unordered: global queue; workers pick next task when idle.
+            for _ in pool.imap_unordered(
+                _calc_results_file_worker, query_files, chunksize=1
+            ):
+                pass
+        remove_lock_files(os.path.join(self.main_path, "matches"))
 
     def run(self):
-        for directory in os.listdir(self.main_path):            
-            self.calc_results_folder(self.main_path+directory)
+        all_query_files = []
+        for directory in os.listdir(self.main_path):
+            dir_path = os.path.join(self.main_path, directory)
+            if os.path.isdir(dir_path):
+                all_query_files.extend(self.create_querypaths(dir_path))
+        self._run_query_file_list(all_query_files)
                                                     
